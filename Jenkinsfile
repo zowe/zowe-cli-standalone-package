@@ -56,7 +56,7 @@ def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api
 
 pipeline {
     agent {
-        label 'ca-jenkins-agent'
+        label 'ca-jenkins-agent-mark-rev'
     }
 
     stages {
