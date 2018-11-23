@@ -19,7 +19,7 @@ do
     tar xzf $tar -C temp
 
     # Changes the package.json format
-    node "configure-to-bundle.js"
+    node "./scripts/configure-to-bundle.js"
 
 
     cd temp/package
