@@ -19,7 +19,7 @@ const jsonfile = require("jsonfile");
 const path = require("path");
 
 // Assumes this is being run from the 'scripts' build dir; the calling script extracts package to <root>/temp/
-const packageLocation = path.join(__dirname + "../temp/package", "package.json");
+const packageLocation = path.join(__dirname + "/../temp/package", "package.json");
 
 const packageJson = jsonfile.readFileSync(packageLocation);
 
