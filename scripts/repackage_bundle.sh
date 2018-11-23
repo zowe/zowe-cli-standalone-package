@@ -52,5 +52,8 @@ do
 done
 
 cd packed
+rename brightside-core zowe-cli *.tgz
+rename brightside-cics zowe-cics *.tgz
+rename brightside-db2 zowe-db2 *.tgz
 zip -r zowe-cli-bundle.zip *
-cp -f zowe-cli-bundle.zip ../zowe-cli-bundle.zip
+mv zowe-cli-bundle.zip ../zowe-cli-bundle.zip
