@@ -95,9 +95,9 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @brightside/db2@beta"
+                        sh "npm pack @brightside/db2@next"
                         sh "npm pack @brightside/core@beta"
-                        sh "npm pack @brightside/cics@beta"
+                        sh "npm pack @brightside/cics@next"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                     }
 
