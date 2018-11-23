@@ -10,20 +10,25 @@
 #
 ###
 
-
 mkdir -p packed
-# mkdir -p packed/odbc_cli
 
+# Loop through each tar (representing an `npm pack`), and create new tars with packed dependencies.
 for tar in "$@"
 do
     mkdir temp
     tar xzf $tar -C temp
+
+    # Changes the package.json format
     node "configure-to-bundle.js"
+
 
     cd temp/package
     cp ../../.npmrc .
     npm install
 
+    # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
+    # The plugin does not support reinstall, and deletes required files during a normal install.
+    # This block restores the plugin structure to a 'clean' state
     if [[ $tar = *"db2"* ]]; then
 
         ibm_db_ver=`node -e "package = require('./package.json');console.log(package.dependencies['ibm_db'])"`
@@ -36,6 +41,7 @@ do
         rm -rf "./node_modules/ibm_db/installer/clidriver"
     fi
 
+    # Pack the NPM Archive
     npm pack
 
     ls -lask
@@ -46,11 +52,5 @@ do
 done
 
 cd packed
-if [ -f zowe-cli-bundle.zip ]; then
-    rm -f zowe-cli-bundle.zip
-fi
-rename brightside-core zowe-cli *.tgz
-rename brightside-cics zowe-cics *.tgz
-rename brightside-db2 zowe-db2 *.tgz
 zip -r zowe-cli-bundle.zip *
 cp -f zowe-cli-bundle.zip ../zowe-cli-bundle.zip
