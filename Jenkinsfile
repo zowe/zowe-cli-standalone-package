@@ -62,12 +62,12 @@ def ZOWE_CLI_BUNDLE_VERSION = "0.9.4-SNAPSHOT"
 /**
 * The target repository for Zowe CLI Package SNAPSHOTs
 */ 
-def ARTIFACTORY_SNAPSHOT_URL = ""
+def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
 
 /**
 * The target repository for Zowe CLI Package Releases.
 */
-def ARTIFACTORY_RELEASE_URL = ""
+def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 
 
 pipeline {
@@ -115,9 +115,10 @@ pipeline {
                         sh "npm pack @brightside/core@beta"
                         sh "npm pack @brightside/cics@next"
                         sh "./scripts/repackage_bundle.sh *.tgz"
+                        sh "rename zowe-cli-bundle.zip zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
 
-                    archiveArtifacts artifacts: 'zowe-cli-bundle.zip'
+                    archiveArtifacts artifacts: "zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                 }
             }
         }
@@ -147,17 +148,17 @@ pipeline {
         stage('Publish Bundle to Artifactory') {
             steps {
                 timeout(time: 5, unit: MINUTES) {
-                    def releaseIdentifier = getReleaseIdentifier()
                     def server = Artifactory.server params.ARTIFACTORY_SERVER
-                    def targetRepository = isRelease() ? ${ARTIFACTORY_RELEASE_URL} : ${ARTIFACTORY_SNAPSHOT_URL}
+                    def targetVersion = ZOWE_CLI_BUNDLE_VERSION
+                    def targetRepository = targetVersion.contains("-SNAPSHOT")  ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
                     def uploadSpec = """{
                     "files": [{
-                        "pattern": "-*.zip",
-                        "target": "local-snapshots/org/zowe/cli/zowe-cli-package/{ARTIFACTORY_VERSION}-{RELEASE_IDENTIFIER}/"
+                        "pattern": "zowe-cli-bundle-*.zip",
+                        "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
                     }]
                     }"""
-                    uploadSpec = uploadSpec.replaceAll(/\{ARTIFACTORY_VERSION\}/, params.ATLAS_VERSION)
-                    uploadSpec = uploadSpec.replaceAll(/\{RELEASE_IDENTIFIER\}/, releaseIdentifier                    server.upload spec: \, buildInfo: buildInfo
+                    def buildInfo = Artifactory.newBuildInfo()
+                    server.upload spec: uploadSpec, buildInfo: buildInfo
                     server.publishBuildInfo buildInfo
                 }
             }
