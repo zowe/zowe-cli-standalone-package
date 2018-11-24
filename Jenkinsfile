@@ -148,18 +148,20 @@ pipeline {
         stage('Publish Bundle to Artifactory') {
             steps {
                 timeout(time: 5, unit: MINUTES) {
-                    def server = Artifactory.server params.ARTIFACTORY_SERVER
-                    def targetVersion = ZOWE_CLI_BUNDLE_VERSION
-                    def targetRepository = targetVersion.contains("-SNAPSHOT")  ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
-                    def uploadSpec = """{
-                    "files": [{
-                        "pattern": "zowe-cli-bundle-*.zip",
-                        "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
-                    }]
-                    }"""
-                    def buildInfo = Artifactory.newBuildInfo()
-                    server.upload spec: uploadSpec, buildInfo: buildInfo
-                    server.publishBuildInfo buildInfo
+                    script {
+                        def server = Artifactory.server params.ARTIFACTORY_SERVER
+                        def targetVersion = ZOWE_CLI_BUNDLE_VERSION
+                        def targetRepository = targetVersion.contains("-SNAPSHOT")  ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
+                        def uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-cli-bundle-*.zip",
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
+                        }]
+                        }"""
+                        def buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+                    }
                 }
             }
         }
