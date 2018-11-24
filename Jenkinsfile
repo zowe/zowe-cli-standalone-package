@@ -54,6 +54,22 @@ def ARTIFACTORY_EMAIL = GIT_USER_EMAIL
 */
 def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"
 
+/**
+* The Zowe CLI Bundle Version to deploy to Artifactory
+*/
+def ZOWE_CLI_BUNDLE_VERSION = "0.9.4-SNAPSHOT"
+
+/**
+* The target repository for Zowe CLI Package SNAPSHOTs
+*/ 
+def ARTIFACTORY_SNAPSHOT_URL = ""
+
+/**
+* The target repository for Zowe CLI Package Releases.
+*/
+def ARTIFACTORY_RELEASE_URL = ""
+
+
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
@@ -102,6 +118,47 @@ pipeline {
                     }
 
                     archiveArtifacts artifacts: 'zowe-cli-bundle.zip'
+                }
+            }
+        }
+        /************************************************************************
+        * STAGE
+        * -----
+        * Publish Zowe Bundle
+        *
+        * TIMEOUT
+        * -------
+        * 5 Minutes
+        *
+        * EXECUTION CONDITIONS
+        * --------------------
+        * - Always
+        *
+        * DECRIPTION
+        * ----------
+        * Take the bundled zip from prior step, and upload it to Artifactory. 
+        * Working versions will be deployed as SNAPSHOTS, and release versions as semantic
+        * versions matching planned convenience releases of the Zowe project.
+        *
+        * OUTPUTS
+        * -------
+        * A Zowe CLI Archive is published to Artifactory
+        ************************************************************************/
+        stage('Publish Bundle to Artifactory') {
+            steps {
+                timeout(time: 5, unit: MINUTES) {
+                    def releaseIdentifier = getReleaseIdentifier()
+                    def server = Artifactory.server params.ARTIFACTORY_SERVER
+                    def targetRepository = isRelease() ? ${ARTIFACTORY_RELEASE_URL} : ${ARTIFACTORY_SNAPSHOT_URL}
+                    def uploadSpec = """{
+                    "files": [{
+                        "pattern": "-*.zip",
+                        "target": "local-snapshots/org/zowe/cli/zowe-cli-package/{ARTIFACTORY_VERSION}-{RELEASE_IDENTIFIER}/"
+                    }]
+                    }"""
+                    uploadSpec = uploadSpec.replaceAll(/\{ARTIFACTORY_VERSION\}/, params.ATLAS_VERSION)
+                    uploadSpec = uploadSpec.replaceAll(/\{RELEASE_IDENTIFIER\}/, releaseIdentifier                    server.upload spec: \, buildInfo: buildInfo
+                    server.publishBuildInfo buildInfo
                 }
             }
         }
