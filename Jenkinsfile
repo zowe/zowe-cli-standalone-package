@@ -147,7 +147,7 @@ pipeline {
         ************************************************************************/
         stage('Publish Bundle to Artifactory') {
             steps {
-                timeout(time: 5, unit: MINUTES) {
+                timeout(time: 5, unit: 'MINUTES' ) {
                     script {
                         def server = Artifactory.server params.ARTIFACTORY_SERVER
                         def targetVersion = ZOWE_CLI_BUNDLE_VERSION
