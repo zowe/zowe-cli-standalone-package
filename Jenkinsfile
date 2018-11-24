@@ -115,7 +115,7 @@ pipeline {
                         sh "npm pack @brightside/core@beta"
                         sh "npm pack @brightside/cics@next"
                         sh "./scripts/repackage_bundle.sh *.tgz"
-                        sh "rename zowe-cli-bundle.zip zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                        sh "mv zowe-cli-bundle.zip zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
 
                     archiveArtifacts artifacts: "zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
