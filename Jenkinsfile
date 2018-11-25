@@ -57,7 +57,7 @@ def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "0.9.5-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "0.9.4"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -120,10 +120,10 @@ pipeline {
                         sh "npm pack @brightside/core@beta"
                         sh "npm pack @brightside/cics@next"
                         sh "./scripts/repackage_bundle.sh *.tgz"
-                        sh "mv zowe-cli-bundle.zip zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                        sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
 
-                    archiveArtifacts artifacts: "zowe-cli-bundle-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                 }
             }
         }
@@ -159,7 +159,7 @@ pipeline {
                         def targetRepository = targetVersion.contains("-SNAPSHOT")  ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
                         def uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-bundle-*.zip",
+                            "pattern": "zowe-cli-package-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
                         }]
                         }"""
