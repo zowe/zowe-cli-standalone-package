@@ -69,12 +69,6 @@ def ARTIFACTORY_SERVER = "gizaArtifactory"
 */ 
 def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
 
-/**
-* The target repository for Zowe CLI Package Releases.
-*/
-def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
-
-
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
@@ -156,7 +150,7 @@ pipeline {
                     script {
                         def server = Artifactory.server ARTIFACTORY_SERVER
                         def targetVersion = ZOWE_CLI_BUNDLE_VERSION
-                        def targetRepository = targetVersion.contains("-SNAPSHOT")  ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
+                        def targetRepository = ARTIFACTORY_SNAPSHOT_REPO
                         def uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-package-*.zip",
