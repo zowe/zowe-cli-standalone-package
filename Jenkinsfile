@@ -67,7 +67,7 @@ def ARTIFACTORY_SERVER = "gizaArtifactory"
 /**
 * The target repository for Zowe CLI Package SNAPSHOTs
 */ 
-def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
+def ARTIFACTORY_SNAPSHOT_REPO = "libs-release-local"
 
 pipeline {
     agent {
