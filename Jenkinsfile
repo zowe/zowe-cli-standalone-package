@@ -57,7 +57,7 @@ def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "0.9.5"
+def ZOWE_CLI_BUNDLE_VERSION = "0.9.6-SNAPSHOT"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -67,7 +67,7 @@ def ARTIFACTORY_SERVER = "gizaArtifactory"
 /**
 * The target repository for Zowe CLI Package SNAPSHOTs
 */ 
-def ARTIFACTORY_SNAPSHOT_REPO = "libs-release-local"
+def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
 
 pipeline {
     agent {
