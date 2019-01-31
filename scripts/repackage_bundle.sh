@@ -50,7 +50,8 @@ do
     # cleanup temp directory
     rm -rf temp/
 done
-
+# Copy licenses dir, downloaded from Jenkins file - to packed area for zip.
+cp -a licenses packed
 cd packed
 rename 's/brightside\-core*/zowe\-cli/' *
 rename 's/brightside\-cics*/zowe\-cics/' *
