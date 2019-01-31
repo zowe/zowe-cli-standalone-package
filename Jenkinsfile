@@ -74,6 +74,11 @@ def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
 */ 
 def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 
+/**
+* Zowe 1.0.0 licenses
+*/
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
+
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
@@ -110,10 +115,12 @@ pipeline {
         stage('Create Zowe CLI Bundle') {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
-            
+                    
                     sh "npm set registry https://registry.npmjs.org/"
                     sh "npm set @brightside:registry ${GIZA_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
+                        sh "mkdir -p licenses && (cd licenses && curl -X GET -s -u$USERNAME:$PASSWORD -o zowe_licenses_full.zip https://gizaartifactory.jfrog.io/gizaartifactory/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH)"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${GIZA_ARTIFACTORY_URL} --scope=@brightside'"
                     }
                     sh "npm install jsonfile"
