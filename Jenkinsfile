@@ -57,7 +57,7 @@ def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.0.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.0.1-SNAPSHOT"
 
 /**
 *  The Artifactory Server to deploy to.
