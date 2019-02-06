@@ -126,9 +126,9 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @brightside/db2@next"
-                        sh "npm pack @brightside/core@beta"
-                        sh "npm pack @brightside/cics@next"
+                        sh "npm pack @brightside/db2"
+                        sh "npm pack @brightside/core"
+                        sh "npm pack @brightside/cics"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
