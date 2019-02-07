@@ -79,6 +79,11 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 */
 def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
 
+/**
+* Master branch
+*/
+def MASTER_BRANCH = "master"
+
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
@@ -113,6 +118,13 @@ pipeline {
          * A Zowe CLI Archive containing Zowe CLI, Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin.
          ************************************************************************/
         stage('Create Zowe CLI Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     
@@ -161,6 +173,13 @@ pipeline {
         * A Zowe CLI Archive is published to Artifactory
         ************************************************************************/
         stage('Publish Bundle to Artifactory') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
             steps {
                 timeout(time: 5, unit: 'MINUTES' ) {
                     script {
@@ -193,11 +212,8 @@ pipeline {
          ************************************************************************/
         always {
             script {
-                sh 'npm logout || exit 0'
-
                 def buildStatus = currentBuild.currentResult
                 try {
-                    def previousBuild = currentBuild.getPreviousBuild()
                     def recipients = "${MASTER_RECIPIENTS_LIST}"
 
                     def subject = "${currentBuild.currentResult}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
@@ -206,52 +222,12 @@ pipeline {
                     <p>Check console output at "<a href="${RUN_DISPLAY_URL}">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>
                     """
 
-                    def details = ""
-
-                    if (previousBuild == null) {
-                        details = "<p>Initial build for new branch.</p>"
-                    } else if (currentBuild.resultIsBetterOrEqualTo(BUILD_SUCCESS) && previousBuild.resultIsWorseOrEqualTo(BUILD_UNSTABLE)) {
-                        details = "<p>Build returned to normal.</p>"
-                    }
-
-                    // Issue #53 - Previously if the first build for a branch failed, logs would not be captured.
-                    //             Now they do!
-                    if (currentBuild.resultIsWorseOrEqualTo(BUILD_UNSTABLE)) {
-                        // Archives any test artifacts for logging and debugging purposes
-                        archiveArtifacts allowEmptyArchive: true, artifacts: '__tests__/__results__/**/*.log'
-                        details = "${details}<p>Build Failure.</p>"
-                    }
-
-                    if (BRANCH_NAME == MASTER_BRANCH) {
-                        recipients = MASTER_RECIPIENTS_LIST
-
-                        details = "${details}<p>A build of master has finished.</p>"
-
-                        if (GIT_SOURCE_UPDATED == "true") {
-                            details = "${details}<p>The pipeline was able to automatically bump the pre-release version in git</p>"
-                        } else {
-                            // Most likely another PR was merged to master before we could do the commit thus we can't
-                            // have the pipeline automatically do it
-                            details = """${details}<p>The pipeline was unable to automatically bump the pre-release version in git.
-                            <b>THIS IS LIKELY NOT AN ISSUE WITH THE BUILD</b> as all the tests have to pass to get to this point.<br/><br/>
-                            <b>Possible causes of this error:</b>
-                            <ul>
-                                <li>A commit was made to <b>${MASTER_BRANCH}</b> during the current run.</li>
-                                <li>The user account tied to the build is no longer valid.</li>
-                                <li>The remote server is experiencing issues.</li>
-                            </ul>
-                            <i>THIS BUILD WILL BE MARKED AS A FAILURE AS WE CANNOT GUARENTEE THAT THE PROBLEM DOES NOT LIE IN THE
-                            BUILD AND CORRECTIVE ACTION MAY NEED TO TAKE PLACE.</i>
-                            </p>"""
-                        }
-                    }
-
                     if (details != "") {
                         echo "Sending out email with details"
                         emailext(
                                 subject: subject,
                                 to: recipients,
-                                body: "${details} ${consoleOutput}",
+                                body: "${consoleOutput}",
                                 recipientProviders: [[$class: 'DevelopersRecipientProvider'],
                                                         [$class: 'UpstreamComitterRecipientProvider'],
                                                         [$class: 'CulpritsRecipientProvider'],
