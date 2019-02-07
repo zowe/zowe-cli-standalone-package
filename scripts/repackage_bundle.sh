@@ -44,6 +44,10 @@ do
     # Pack the NPM Archive
     npm pack
 
+    # Remove the version number from the tar file
+    simpler_name=`node -e "console.log(\"$tar\".split('.')[0].slice(0,-2) + \".tgz\")"`
+    mv $tar $simpler_name
+
     ls -lask
     mv ./*.tgz ../../packed
     cd ../../
