@@ -57,7 +57,7 @@ def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.0.1-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.1.0-SNAPSHOT"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -138,9 +138,9 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @brightside/db2"
-                        sh "npm pack @brightside/core"
-                        sh "npm pack @brightside/cics"
+                        sh "npm pack @brightside/db2@lts-incremental"
+                        sh "npm pack @brightside/core@lts-incremental"
+                        sh "npm pack @brightside/cics@lts-incremental"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
