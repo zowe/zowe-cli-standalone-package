@@ -121,7 +121,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.endsWith(MASTER_BRANCH)
                     }
                 }
             }
@@ -176,7 +176,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.endsWith(MASTER_BRANCH)
                     }
                 }
             }
