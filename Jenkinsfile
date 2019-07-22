@@ -140,7 +140,7 @@ pipeline {
                     script {
                         sh "npm pack @brightside/db2@2.1.1"
                         sh "npm pack @brightside/core@2.30.0"
-                        sh "npm pack @brightside/cics@2.1.1"
+                        sh "npm pack @brightside/cics@1.1.2"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
