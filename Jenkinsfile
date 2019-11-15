@@ -82,7 +82,7 @@ def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
 /**
 * Master branch
 */
-def MASTER_BRANCH = "v1.7.0/master"
+def MASTER_BRANCH = "master"
 
 pipeline {
     agent {
