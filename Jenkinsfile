@@ -42,7 +42,7 @@ def GIT_REVISION_LOOKUP = 'git log -n 1 --pretty=format:%h'
 /**
  * The credentials id field for the artifactory username and password
  */
-def ARTIFACTORY_CREDENTIALS_ID = 'GizaArtifactory'
+def ARTIFACTORY_CREDENTIALS_ID = 'zowe.jfrog.io'
 
 /**
  * The email address for the artifactory
@@ -52,7 +52,7 @@ def ARTIFACTORY_EMAIL = GIT_USER_EMAIL
 /**
 * The Artifactory API URL which contains builds of the Zowe CLI
 */
-def GIZA_ARTIFACTORY_URL = "https://gizaartifactory.jfrog.io/gizaartifactory/api/npm/npm-local-release/"
+def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
 
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
@@ -62,7 +62,7 @@ def ZOWE_CLI_BUNDLE_VERSION = "1.6.0-SNAPSHOT"
 /**
 *  The Artifactory Server to deploy to.
 */ 
-def ARTIFACTORY_SERVER = "gizaArtifactory"
+def ARTIFACTORY_SERVER = "zoweArtifactory"
 
 /**
 * The target repository for Zowe CLI Package SNAPSHOTs
@@ -109,7 +109,7 @@ pipeline {
          *
          * DECRIPTION
          * ----------
-         * Gets the latest version of the Zowe CLI and Zowe CLI Plugins from Giza
+         * Gets the latest version of the Zowe CLI and Zowe CLI Plugins from Zowe
          * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugins -
          *  dependencies are bundled.
          *
@@ -129,11 +129,11 @@ pipeline {
                 timeout(time: 10, unit: 'MINUTES') {
                     
                     sh "npm set registry https://registry.npmjs.org/"
-                    sh "npm set @brightside:registry ${GIZA_ARTIFACTORY_URL}"
+                    sh "npm set @brightside:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && (cd licenses && curl -X GET -s -u$USERNAME:$PASSWORD -o zowe_licenses_full.zip https://gizaartifactory.jfrog.io/gizaartifactory/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH)"
-                        sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${GIZA_ARTIFACTORY_URL} --scope=@brightside'"
+                        sh "mkdir -p licenses && (cd licenses && curl -X GET -s -u$USERNAME:$PASSWORD -o zowe_licenses_full.zip https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH)"
+                        sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@brightside'"
                     }
                     sh "npm install jsonfile"
 
