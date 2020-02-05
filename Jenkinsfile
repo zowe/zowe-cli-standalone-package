@@ -57,21 +57,21 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.6.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.8.0-SNAPSHOT"
 
 /**
 *  The Artifactory Server to deploy to.
-*/ 
+*/
 def ARTIFACTORY_SERVER = "zoweArtifactory"
 
 /**
 * The target repository for Zowe CLI Package SNAPSHOTs
-*/ 
+*/
 def ARTIFACTORY_SNAPSHOT_REPO = "libs-snapshot-local"
 
 /**
 * Target Repository for Zowe CLI Package Releases
-*/ 
+*/
 def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 
 /**
@@ -127,7 +127,7 @@ pipeline {
             }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
-                    
+
                     sh "npm set registry https://registry.npmjs.org/"
                     sh "npm set @brightside:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -164,7 +164,7 @@ pipeline {
         *
         * DECRIPTION
         * ----------
-        * Take the bundled zip from prior step, and upload it to Artifactory. 
+        * Take the bundled zip from prior step, and upload it to Artifactory.
         * Working versions will be deployed as SNAPSHOTS, and release versions as semantic
         * versions matching planned convenience releases of the Zowe project.
         *
