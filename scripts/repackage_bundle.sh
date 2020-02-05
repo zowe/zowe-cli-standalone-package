@@ -57,8 +57,9 @@ done
 # Copy licenses dir, downloaded from Jenkins file - to packed area for zip.
 cp -a licenses packed
 cd packed
-rename 's/brightside\-core*/zowe\-cli/' *
-rename 's/brightside\-cics*/zowe\-cics/' *
-rename 's/brightside\-db2*/zowe\-db2/' *
+# No longer needed?
+# rename 's/brightside\-core*/zowe\-cli/' *
+# rename 's/brightside\-cics*/zowe\-cics/' *
+# rename 's/brightside\-db2*/zowe\-db2/' *
 zip -r zowe-cli-package.zip *
 mv zowe-cli-package.zip ../zowe-cli-package.zip
