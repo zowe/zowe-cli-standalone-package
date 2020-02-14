@@ -58,6 +58,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
 def ZOWE_CLI_BUNDLE_VERSION = "1.9.0-SNAPSHOT"
+def ZOWE_VERSION_NUMBER = "1.9.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -78,6 +79,12 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 * Zowe 1.0.0 licenses
 */
 def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
+
+/**
+* The locations where the pipeline will look for the License Zip
+*/
+//def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH"
+def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20Scan%20-%20Multibranch/job/staging%252Fv$ZOWE_VERSION_NUMBER/lastSuccessfulBuild/artifact/zowe_licenses_full.zip"
 
 /**
 * Master branch
@@ -133,7 +140,7 @@ pipeline {
                     sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && (cd licenses && curl -X GET -s -u$USERNAME:$PASSWORD -o zowe_licenses_full.zip https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH)"
+                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                     }
                     sh "npm install jsonfile"
