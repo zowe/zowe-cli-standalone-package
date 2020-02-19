@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.9.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.9.0"
 def ZOWE_VERSION_NUMBER = "1.9.0"
 
 /**
@@ -89,15 +89,11 @@ def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20S
 /**
 * Master branch
 */
-def MASTER_BRANCH = "master"
+def MASTER_BRANCH = "v1.9.0/master"
 
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
-    }
-
-    triggers {
-        cron('0 0 * * *')
     }
 
     stages {
@@ -146,13 +142,13 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/cli@zowe-v1-lts"
-                        sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"                        
-                        sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
+                        sh "npm pack @zowe/db2-for-zowe-cli@6.8.1"
+                        sh "npm pack @zowe/cli@4.5.0"
+                        sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"                        
+                        sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
+                        sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
+                        sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.0.0"
+                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.0.1"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
