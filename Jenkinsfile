@@ -142,8 +142,8 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @zowe/db2-for-zowe-cli@6.8.1"
-                        sh "npm pack @zowe/cli@4.5.0"
+                        sh "npm pack @zowe/db2-for-zowe-cli@4.0.5"
+                        sh "npm pack @zowe/cli@6.8.2"
                         sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"                        
                         sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
                         sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
