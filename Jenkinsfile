@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.8.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.8.1-SNAPSHOT"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -82,7 +82,7 @@ def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
 /**
 * Master branch
 */
-def MASTER_BRANCH = "v1.8.0/master"
+def MASTER_BRANCH = "v1.8.1/snapshot"
 
 pipeline {
     agent {
@@ -135,7 +135,7 @@ pipeline {
 
                     script {
                         sh "npm pack @brightside/db2@2.1.2"
-                        sh "npm pack @brightside/core@2.36.3"
+                        sh "npm pack @brightside/core@2.36.4"
                         sh "npm pack @brightside/cics@1.1.3"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
