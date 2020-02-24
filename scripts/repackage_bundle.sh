@@ -46,6 +46,8 @@ do
 
     # Remove the version number from the tar file
     simpler_name=`node -e "console.log(\"$tar\".split('.')[0].slice(0,-2) + \".tgz\")"`
+    # Remove scope only for plugins
+    simpler_name=`node -e "console.log(\"$simpler_name\" === 'zowe-cli.tgz' ? \"$simpler_name\" : \"$simpler_name\".replace('zowe-',''))"`
     mv $tar $simpler_name
 
     ls -lask
