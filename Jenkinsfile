@@ -116,14 +116,13 @@ pipeline {
          *
          * DECRIPTION
          * ----------
-         * Gets the latest version of the Zowe CLI and Zowe CLI Plugins from Zowe
-         * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugins -
+         * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
+         * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
          *  dependencies are bundled.
          *
          * OUTPUTS
          * -------
-         * A Zowe CLI Archive containing Zowe CLI, Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
-         * Zowe CLI Secure Credential Store Plugin, Zowe CLI z/OS FTP Plugin.
+         * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
          ************************************************************************/
         stage('Create Zowe CLI Bundle') {
             when {
@@ -146,18 +145,71 @@ pipeline {
                     sh "npm install jsonfile"
 
                     script {
-                        sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
                         sh "npm pack @zowe/cli@zowe-v1-lts"
-                        sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"                        
-                        sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
                         sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
                         sh "./scripts/repackage_bundle.sh *.tgz"
                         sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                     }
 
                     archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                }
+            }
+        }
+        /************************************************************************
+         * STAGE
+         * -----
+         * Build Zowe CLI Plugins Bundle
+         *
+         * TIMEOUT
+         * -------
+         * 10 Minutes
+         *
+         * EXECUTION CONDITIONS
+         * --------------------
+         * - Always
+         *
+         * DECRIPTION
+         * ----------
+         * Gets the latest version of the Zowe CLI Plugins from Zowe
+         * Artifactory. Creates an archive with 'fat' versions of the Plugins -
+         *  dependencies are bundled.
+         *
+         * OUTPUTS
+         * -------
+         * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
+         * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
+         ************************************************************************/
+        stage('Create Zowe CLI Plugins Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+
+                    sh "npm set registry https://registry.npmjs.org/"
+                    sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
+                    withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
+                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                    }
+                    sh "npm install jsonfile"
+
+                    script {
+                        sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
+                        sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"
+                        sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
+                        sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
+                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
+                        sh "./scripts/repackage_bundle.sh *.tgz"
+                        sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    }
+
+                    archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                 }
             }
         }
@@ -198,10 +250,23 @@ pipeline {
                         def server = Artifactory.server ARTIFACTORY_SERVER
                         def targetVersion = ZOWE_CLI_BUNDLE_VERSION
                         def targetRepository = targetVersion.contains("-SNAPSHOT") ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
+
+                        // Upload Core CLI and SCS (zowe-cli-package)
                         def uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-package-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
+                        }]
+                        }"""
+                        def buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Upload all other plugins (zowe-cli-plugins)
+                        def uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-cli-plugins-*.zip",
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
                         }]
                         }"""
                         def buildInfo = Artifactory.newBuildInfo()
