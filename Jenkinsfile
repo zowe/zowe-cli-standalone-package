@@ -263,13 +263,13 @@ pipeline {
                         server.publishBuildInfo buildInfo
 
                         // Upload all other plugins (zowe-cli-plugins)
-                        def uploadSpec = """{
+                        uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-plugins-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
                         }]
                         }"""
-                        def buildInfo = Artifactory.newBuildInfo()
+                        buildInfo = Artifactory.newBuildInfo()
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
                     }
