@@ -144,14 +144,15 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    script {
-                        sh "npm pack @zowe/cli@zowe-v1-lts"
-                        sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
-                        sh "./scripts/repackage_bundle.sh *.tgz"
-                        sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-                    }
+                    sh "npm pack @zowe/cli@zowe-v1-lts"
+                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
+                    sh "./scripts/repackage_bundle.sh *.tgz"
+                    sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    // Remove all tgzs after bundle is archived
+                    sh "rm -f *.tgz"
                 }
             }
         }
@@ -199,17 +200,18 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    script {
-                        sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
-                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
-                        sh "./scripts/repackage_bundle.sh *.tgz"
-                        sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-                    }
+                    sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
+                    sh "./scripts/repackage_bundle.sh *.tgz"
+                    sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    // Remove all tgzs after bundle is archived
+                    sh "rm -f *.tgz"
                 }
             }
         }
