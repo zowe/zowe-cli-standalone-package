@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.9.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.9.0"
 def ZOWE_VERSION_NUMBER = "1.9.0"
 
 /**
@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.0.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.9.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -89,15 +89,11 @@ def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20S
 /**
 * Master branch
 */
-def MASTER_BRANCH = "master"
+def MASTER_BRANCH = "v1.9.0/master"
 
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
-    }
-
-    triggers {
-        cron('0 0 * * *')
     }
 
     stages {
