@@ -57,8 +57,8 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.9.0"
-def ZOWE_VERSION_NUMBER = "1.9.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.10.0-SNAPSHOT"
+def ZOWE_VERSION_NUMBER = "1.10.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -89,7 +89,7 @@ def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20S
 /**
 * Master branch
 */
-def MASTER_BRANCH = "v1.9.0/master"
+def MASTER_BRANCH = "master"
 
 pipeline {
     agent {
