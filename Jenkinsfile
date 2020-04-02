@@ -96,6 +96,10 @@ pipeline {
         label 'ca-jenkins-agent-mark-rev'
     }
 
+    triggers {
+        cron('0 0 * * *')
+    }
+
     stages {
         /************************************************************************
          * STAGE
