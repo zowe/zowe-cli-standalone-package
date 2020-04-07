@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.9.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.10.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -89,7 +89,7 @@ def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20S
 /**
 * Master branch
 */
-def MASTER_BRANCH = "master"
+def MASTER_BRANCH = "v1.10.0/master"
 
 pipeline {
     agent {
