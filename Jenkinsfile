@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.10.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.10.0"
 def ZOWE_VERSION_NUMBER = "1.10.0"
 
 /**
@@ -140,8 +140,8 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/cli@zowe-v1-lts"
-                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/cli@6.10.1"
+                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.0.4"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
@@ -196,11 +196,11 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/db2-for-zowe-cli@4.0.5"
+                    sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
+                    sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
+                    sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
+                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.0.2"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
