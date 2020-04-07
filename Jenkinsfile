@@ -83,8 +83,8 @@ def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.9.0/zowe_licenses_full.zip"
 /**
 * The locations where the pipeline will look for the License Zip
 */
-//def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH"
-def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20Scan%20-%20Multibranch/job/staging%252Fv$ZOWE_VERSION_NUMBER/lastSuccessfulBuild/artifact/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO$ZOWE_LICENSE_ZIP_PATH"
+// def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20Scan%20-%20Multibranch/job/staging%252Fv$ZOWE_VERSION_NUMBER/lastSuccessfulBuild/artifact/zowe_licenses_full.zip"
 
 /**
 * Master branch
