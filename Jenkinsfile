@@ -57,8 +57,8 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.10.0-SNAPSHOT"
-def ZOWE_VERSION_NUMBER = "1.10.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.11.0"
+def ZOWE_VERSION_NUMBER = "1.11.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.9.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.11.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -89,7 +89,7 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 /**
 * Master branch
 */
-def MASTER_BRANCH = "master"
+def MASTER_BRANCH = "v1.11.0/master"
 
 pipeline {
     agent {
@@ -144,8 +144,8 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/cli@zowe-v1-lts"
-                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/cli@6.11.0"
+                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.0.4"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
@@ -200,11 +200,11 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/db2-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/cics-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/ims-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/mq-for-zowe-cli@zowe-v1-lts"
-                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@zowe-v1-lts"
+                    sh "npm pack @zowe/db2-for-zowe-cli@4.0.6"
+                    sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
+                    sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
+                    sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
+                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.0.2"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
