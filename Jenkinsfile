@@ -144,7 +144,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/cli@6.11.0"
+                    sh "npm pack @zowe/cli@6.11.1"
                     sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.0.4"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
