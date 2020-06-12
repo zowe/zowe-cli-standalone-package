@@ -204,7 +204,7 @@ pipeline {
                     sh "npm pack @zowe/cics-for-zowe-cli@4.0.6"
                     sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
                     sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
-                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.0.2"
+                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.1.0"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
