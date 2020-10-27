@@ -216,6 +216,70 @@ pipeline {
             }
         }
         /************************************************************************
+         * STAGE
+         * -----
+         * Build Zowe SDK Bundle
+         *
+         * TIMEOUT
+         * -------
+         * 10 Minutes
+         *
+         * EXECUTION CONDITIONS
+         * --------------------
+         * - Always
+         *
+         * DECRIPTION
+         * ----------
+         * Gets the latest version of the Zowe SDK package from Zowe
+         * Artifactory. Creates an archive with 'fat' versions of the Plugins -
+         *  dependencies are bundled.
+         *
+         * OUTPUTS
+         * -------
+         * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
+         * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
+         ************************************************************************/
+        stage('Create Zowe CLI Plugins Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+
+                    sh "npm set registry https://registry.npmjs.org/"
+                    sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
+                    withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
+                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                    }
+                    sh "npm install jsonfile"
+
+                    sh "npm pack @zowe/core-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/provisioning-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-console-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-files-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-tso-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zosmf-for-zowe-sdk@zowe-v1-lts"
+
+                    sh "./scripts/repackage_bundle.sh *.tgz"
+                    sh "mv zowe-cli-package.zip zowe-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    archiveArtifacts artifacts: "zowe-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    // Remove all tgzs after bundle is archived
+                    sh "rm -f *.tgz"
+                }
+            }
+        }
+        /************************************************************************
         * STAGE
         * -----
         * Publish Zowe Bundle
@@ -269,6 +333,17 @@ pipeline {
                         "files": [{
                             "pattern": "zowe-cli-plugins-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Upload SDK packages (zowe-sdk)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-sdk-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-sdk/${targetVersion}/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
