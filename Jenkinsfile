@@ -218,7 +218,7 @@ pipeline {
         /************************************************************************
          * STAGE
          * -----
-         * Build Zowe SDK Bundle
+         * Build Zowe NodeJS SDK Bundle
          *
          * TIMEOUT
          * -------
@@ -239,7 +239,7 @@ pipeline {
          * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
          * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
          ************************************************************************/
-        stage('Create Zowe CLI Plugins Bundle') {
+        stage('Create Zowe NodeJS SDK Bundle') {
             when {
                 allOf {
                     expression {
@@ -269,10 +269,10 @@ pipeline {
                     sh "npm pack @zowe/zos-workflows-for-zowe-sdk@zowe-v1-lts"
                     sh "npm pack @zowe/zosmf-for-zowe-sdk@zowe-v1-lts"
 
-                    sh "./scripts/repackage_bundle.sh *.tgz"
-                    sh "mv zowe-cli-package.zip zowe-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
+                    sh "mv zowe-cli-package.zip zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                    archiveArtifacts artifacts: "zowe-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     // Remove all tgzs after bundle is archived
                     sh "rm -f *.tgz"
@@ -339,16 +339,28 @@ pipeline {
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
-                        // Upload SDK packages (zowe-sdk)
+                        // Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-sdk-*.zip",
-                            "target": "${targetRepository}/org/zowe/sdk/zowe-sdk/${targetVersion}/"
+                            "pattern": "zowe-nodejs-sdk-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/${targetVersion}/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
+
+                        // TODO: Bundle and publish the python SDK
+                        // // Upload Python SDK packages (zowe-python-sdk)
+                        // uploadSpec = """{
+                        // "files": [{
+                        //     "pattern": "zowe-python-sdk-*.zip",
+                        //     "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
+                        // }]
+                        // }"""
+                        // buildInfo = Artifactory.newBuildInfo()
+                        // server.upload spec: uploadSpec, buildInfo: buildInfo
+                        // server.publishBuildInfo buildInfo
                     }
                 }
             }
