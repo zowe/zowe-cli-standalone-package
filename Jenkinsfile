@@ -230,14 +230,13 @@ pipeline {
          *
          * DECRIPTION
          * ----------
-         * Gets the latest version of the Zowe SDK package from Zowe
-         * Artifactory. Creates an archive with 'fat' versions of the Plugins -
-         *  dependencies are bundled.
+         * Gets the latest version of the Zowe NodeJS SDK package from NPM
+         * Creates an archive with 'fat' versions of the Plugins -
+         *   dependencies are bundled.
          *
          * OUTPUTS
          * -------
-         * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
-         * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
+         * A Zowe NodeJS SDK Archive.
          ************************************************************************/
         stage('Create Zowe NodeJS SDK Bundle') {
             when {
@@ -276,6 +275,53 @@ pipeline {
 
                     // Remove all tgzs after bundle is archived
                     sh "rm -f *.tgz"
+                }
+            }
+        }
+        /************************************************************************
+         * STAGE
+         * -----
+         * Build Zowe Python SDK Bundle
+         *
+         * TIMEOUT
+         * -------
+         * 10 Minutes
+         *
+         * EXECUTION CONDITIONS
+         * --------------------
+         * - Always
+         *
+         * DECRIPTION
+         * ----------
+         * Gets the latest version of the Zowe Python SDK package from pypi.org
+         *
+         * OUTPUTS
+         * -------
+         * A Zowe Python SDK Archive.
+         ************************************************************************/
+        stage('Create Zowe Python SDK Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+                    // Install python if needed
+                    // sh "apt update && apt install python3-pip || exit 0"
+                    // sh "yum -y update && yum -y install python3-pip || exit 0"
+
+                    // Download all zowe wheels into a temp folder
+                    sh "mkdir -p temp && cd temp && pip3 download $(pip3 search zowe | sed 's/ (.*//') --no-deps"
+
+                    // Zip all zowe wheels into a zowe-sdk.zip
+                    sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
+
+                    // Archive the zowe Python SDK
+                    sh "mv zowe-sdk.zip zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    archiveArtifacts artifacts: "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                 }
             }
         }
@@ -350,17 +396,16 @@ pipeline {
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
-                        // TODO: Bundle and publish the python SDK
-                        // // Upload Python SDK packages (zowe-python-sdk)
-                        // uploadSpec = """{
-                        // "files": [{
-                        //     "pattern": "zowe-python-sdk-*.zip",
-                        //     "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
-                        // }]
-                        // }"""
-                        // buildInfo = Artifactory.newBuildInfo()
-                        // server.upload spec: uploadSpec, buildInfo: buildInfo
-                        // server.publishBuildInfo buildInfo
+                        // Upload Python SDK packages (zowe-python-sdk)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-python-sdk-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
                     }
                 }
             }
