@@ -57,8 +57,8 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.10.0-SNAPSHOT"
-def ZOWE_VERSION_NUMBER = "1.10.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.16.0-SNAPSHOT"
+def ZOWE_VERSION_NUMBER = "1.16.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -309,12 +309,8 @@ pipeline {
             }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
-                    // Install python if needed
-                    // sh "apt update && apt install python3-pip || exit 0"
-                    // sh "yum -y update && yum -y install python3-pip || exit 0"
-
                     // Download all zowe wheels into a temp folder
-                    sh "mkdir -p temp && cd temp && pip3 download $(pip3 search zowe | sed 's/ (.*//') --no-deps"
+                    sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//') --no-deps"
 
                     // Zip all zowe wheels into a zowe-sdk.zip
                     sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
