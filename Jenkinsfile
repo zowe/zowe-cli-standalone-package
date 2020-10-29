@@ -258,6 +258,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
+                    sh "npm pack @zowe/imperative@zowe-v1-lts"
                     sh "npm pack @zowe/core-for-zowe-sdk@zowe-v1-lts"
                     sh "npm pack @zowe/provisioning-for-zowe-sdk@zowe-v1-lts"
                     sh "npm pack @zowe/zos-console-for-zowe-sdk@zowe-v1-lts"
@@ -310,7 +311,7 @@ pipeline {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     // Download all zowe wheels into a temp folder
-                    sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//') --no-deps"
+                    sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//')"
                     sh "cd temp && mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
 
                     // Zip all zowe wheels into a zowe-sdk.zip
