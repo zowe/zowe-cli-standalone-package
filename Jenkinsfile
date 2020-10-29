@@ -311,6 +311,7 @@ pipeline {
                 timeout(time: 10, unit: 'MINUTES') {
                     // Download all zowe wheels into a temp folder
                     sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//') --no-deps"
+                    sh "cd temp && mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
 
                     // Zip all zowe wheels into a zowe-sdk.zip
                     sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
