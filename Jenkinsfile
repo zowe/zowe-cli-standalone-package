@@ -216,6 +216,114 @@ pipeline {
             }
         }
         /************************************************************************
+         * STAGE
+         * -----
+         * Build Zowe NodeJS SDK Bundle
+         *
+         * TIMEOUT
+         * -------
+         * 10 Minutes
+         *
+         * EXECUTION CONDITIONS
+         * --------------------
+         * - Always
+         *
+         * DECRIPTION
+         * ----------
+         * Gets the latest version of the Zowe NodeJS SDK package from NPM
+         * Creates an archive with 'fat' versions of the Plugins -
+         *   dependencies are bundled.
+         *
+         * OUTPUTS
+         * -------
+         * A Zowe NodeJS SDK Archive.
+         ************************************************************************/
+        stage('Create Zowe NodeJS SDK Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+
+                    sh "npm set registry https://registry.npmjs.org/"
+                    sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
+                    withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                        // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
+                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                    }
+                    sh "npm install jsonfile"
+
+                    sh "npm pack @zowe/imperative@zowe-v1-lts"
+                    sh "npm pack @zowe/core-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/provisioning-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-console-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-files-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-tso-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@zowe-v1-lts"
+                    sh "npm pack @zowe/zosmf-for-zowe-sdk@zowe-v1-lts"
+
+                    sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
+                    sh "mv zowe-cli-package.zip zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    // Remove all tgzs after bundle is archived
+                    sh "rm -f *.tgz"
+                }
+            }
+        }
+        /************************************************************************
+         * STAGE
+         * -----
+         * Build Zowe Python SDK Bundle
+         *
+         * TIMEOUT
+         * -------
+         * 10 Minutes
+         *
+         * EXECUTION CONDITIONS
+         * --------------------
+         * - Always
+         *
+         * DECRIPTION
+         * ----------
+         * Gets the latest version of the Zowe Python SDK package from pypi.org
+         *
+         * OUTPUTS
+         * -------
+         * A Zowe Python SDK Archive.
+         ************************************************************************/
+        stage('Create Zowe Python SDK Bundle') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+                    // Download all zowe wheels into a temp folder
+                    sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//')"
+                    sh "cd temp && mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+
+                    // Zip all zowe wheels into a zowe-sdk.zip
+                    sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
+
+                    // Archive the zowe Python SDK
+                    sh "mv zowe-sdk.zip zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    archiveArtifacts artifacts: "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                }
+            }
+        }
+        /************************************************************************
         * STAGE
         * -----
         * Publish Zowe Bundle
@@ -269,6 +377,28 @@ pipeline {
                         "files": [{
                             "pattern": "zowe-cli-plugins-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Upload NodeJS SDK packages (zowe-nodejs-sdk)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-nodejs-sdk-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Upload Python SDK packages (zowe-python-sdk)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-python-sdk-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
