@@ -258,7 +258,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/imperative@6.24.5"
+                    sh "npm pack @zowe/imperative@4.9.0"
                     sh "npm pack @zowe/core-for-zowe-sdk@6.24.5"
                     sh "npm pack @zowe/provisioning-for-zowe-sdk@6.24.5"
                     sh "npm pack @zowe/zos-console-for-zowe-sdk@6.24.5"
