@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.19.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.18.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -258,7 +258,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/imperative@4.10.0"
+                    sh "npm pack @zowe/imperative@4.10.2"
                     sh "npm pack @zowe/core-for-zowe-sdk@6.25.0"
                     sh "npm pack @zowe/provisioning-for-zowe-sdk@6.25.0"
                     sh "npm pack @zowe/zos-console-for-zowe-sdk@6.25.0"
