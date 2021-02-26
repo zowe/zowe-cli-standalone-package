@@ -41,6 +41,11 @@ do
         rm -rf "./node_modules/ibm_db/installer/clidriver"
     fi
 
+    # Remove native code from Keytar module bundled with the SCS plugin
+    if [[ $tar = *"secure-credential-store"* ]]; then
+        rm -rf "./node_modules/keytar/build"
+    fi
+
     # Pack the NPM Archive
     npm pack
 

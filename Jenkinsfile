@@ -57,8 +57,8 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.16.0-SNAPSHOT"
-def ZOWE_VERSION_NUMBER = "1.16.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.20.0-SNAPSHOT"
+def ZOWE_VERSION_NUMBER = "1.20.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.9.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.20.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -139,7 +139,7 @@ pipeline {
                     sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                     }
                     sh "npm install jsonfile"
@@ -195,7 +195,7 @@ pipeline {
                     sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                     }
                     sh "npm install jsonfile"
@@ -253,7 +253,7 @@ pipeline {
                     sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                     }
                     sh "npm install jsonfile"
@@ -311,8 +311,8 @@ pipeline {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     // Download all zowe wheels into a temp folder
-                    sh "mkdir -p temp && cd temp && pip3 download \$(pip3 search zowe | sed 's/ (.*//')"
-                    sh "cd temp && mkdir -p licenses && cd licenses && curl -s -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                    sh "mkdir -p temp && cd temp && pip3 download zowe"
+                    sh "cd temp && mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
 
                     // Zip all zowe wheels into a zowe-sdk.zip
                     sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
