@@ -259,14 +259,14 @@ pipeline {
                     sh "npm install jsonfile"
 
                     sh "npm pack @zowe/imperative@4.11.2"
-                    sh "npm pack @zowe/core-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/provisioning-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/zos-console-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/zos-files-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.27.1"
+                    sh "npm pack @zowe/core-for-zowe-sdk@6.27.0"
+                    sh "npm pack @zowe/provisioning-for-zowe-sdk@6.27.0"
+                    sh "npm pack @zowe/zos-console-for-zowe-sdk@6.27.0"
+                    sh "npm pack @zowe/zos-files-for-zowe-sdk@6.27.0"
+                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.27.0"
                     sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.27.1"
-                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.27.1"
+                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.27.0"
+                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.27.0"
                     sh "npm pack @zowe/zosmf-for-zowe-sdk@6.27.1"
 
                     sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
