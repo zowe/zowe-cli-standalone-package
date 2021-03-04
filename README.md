@@ -37,7 +37,7 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
 2. Check to see if the `master` build failed due to missing licenses.
     - If so, replay the build and change the license URL to a previous version
 3. Notify `Tom Zhang` on Slack and make sure to copy a link to the PR and the build that uploaded the bundles to `libs-snapshot-local` on JFrog Artifactory
-4. After the RC is approved, we may need to update the licenses URL back to the Zowe version that's about to go GA (`?????????????`)
+4. After the RC is approved and the license zip is available, we need to update the licenses URL to the Zowe version that's about to go GA.
 5. After the Zowe Release is GA, create a git tag with the version corresponding to that of the Zowe Release.
 
 
