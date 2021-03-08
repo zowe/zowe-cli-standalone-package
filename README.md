@@ -24,14 +24,14 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
         secure-credential-store: 4.1.1 -> 4.1.3
         zos-ftp: 1.3.0 -> 1.4.0
       zowe-sdk:
-        core: 6.26.0 -> 6.27.1
-        provisioning: 6.26.0 -> 6.27.1
-        zos-console: 6.26.0 -> 6.27.1
-        zos-files: 6.26.0 -> 6.27.1
-        zos-jobs: 6.26.0 -> 6.27.1
+        core: 6.26.0 -> 6.27.0
+        provisioning: 6.26.0 -> 6.27.0
+        zos-console: 6.26.0 -> 6.27.0
+        zos-files: 6.26.0 -> 6.27.0
+        zos-jobs: 6.26.0 -> 6.27.0
         zos-tso: 6.26.0 -> 6.27.1
-        zos-uss: 6.26.0 -> 6.27.1
-        zos-workflows: 6.26.0 -> 6.27.1
+        zos-uss: 6.26.0 -> 6.27.0
+        zos-workflows: 6.26.0 -> 6.27.0
         zosmf: 6.26.0 -> 6.27.1
       ```
 2. Check to see if the `master` build failed due to missing licenses.
