@@ -89,7 +89,7 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 /**
 * Master branch
 */
-def MASTER_BRANCH = "master"
+def MASTER_BRANCH = "v1.20.0/master"
 
 pipeline {
     agent {
