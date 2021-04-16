@@ -41,8 +41,13 @@ do
         rm -rf "./node_modules/ibm_db/installer/clidriver"
     fi
 
-    # Remove native code from Keytar module bundled with the SCS plugin
+    # Extra work required for the SCS plugin to support offline install.
+    # We include prebuilt native code bundles for Keytar and clean up unwanted binaries.
     if [[ $tar = *"secure-credential-store"* ]]; then
+        mkdir -p "./node_modules/keytar/prebuilds"
+        curl -fOJ https://wash.zowe.org:8443/job/zowe-cli-scs-plugin/job/master/lastSuccessfulBuild/artifact/keytar-prebuilds.tgz
+        tar -xzf keytar-prebuilds.tgz --directory "./node_modules/keytar/prebuilds"
+        rm keytar-prebuilds.tgz
         rm -rf "./node_modules/keytar/build"
     fi
 
