@@ -272,7 +272,10 @@ pipeline {
                     sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                     sh "mv zowe-cli-package.zip zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    sh "./scripts/generate_typedoc.sh" // Outputs a zowe-node-sdk-typedoc.zip
+                    sh "mv zowe-node-sdk-typedoc.zip zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     // Remove all tgzs after bundle is archived
                     sh "rm -f *.tgz"
