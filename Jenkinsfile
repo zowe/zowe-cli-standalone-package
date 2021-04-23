@@ -94,8 +94,8 @@ def MASTER_BRANCH = "master"
 /**
 * Variables defined later in pipeline
 */
-def imperativeVersion
-def zoweCliVersion
+def imperativeVersion = ''
+def zoweCliVersion = ''
 
 pipeline {
     agent {

@@ -17,13 +17,16 @@ cliVersion=$3
 mkdir -p node-sdk
 cd node-sdk
 
+# Clone Imperative and Zowe CLI repos to get the TypeScript source
 git clone -b v${imperativeVersion} --depth 1 https://github.com/zowe/imperative.git
 git clone -b v${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
 
+# Install typedoc along with dependencies and plugins
 npm init -y
 npm install --save-dev @types/node typescript@^3.8.0 typedoc@^0.19.0 \
   @strictsoftware/typedoc-plugin-monorepo typedoc-plugin-sourcefile-url
 
+# Create directory structure for Imperative and SDK packages
 mkdir -p node_modules/@zowe/imperative
 mv imperative/{packages,README.md} node_modules/@zowe/imperative/
 mv zowe-cli/packages/core node_modules/@zowe/core-for-zowe-sdk
@@ -36,6 +39,7 @@ mv zowe-cli/packages/zosuss node_modules/@zowe/zos-uss-for-zowe-sdk
 mv zowe-cli/packages/workflows node_modules/@zowe/zos-workflows-for-zowe-sdk
 mv zowe-cli/packages/zosmf node_modules/@zowe/zosmf-for-zowe-sdk
 
+# Generate config for typedoc sourcefile-url plugin
 cat > sourcefile-map.json << EOF
 [
   {
@@ -81,6 +85,7 @@ cat > sourcefile-map.json << EOF
 ]
 EOF
 
+# Generate config for typedoc and its plugins
 cat > typedoc.json << EOF
 {
   "disableOutputCheck": true,
@@ -99,5 +104,6 @@ cat > typedoc.json << EOF
 }
 EOF
 
+# Build typedoc and zip it up
 npx typedoc ./node_modules/@zowe
 zip ../zowe-node-sdk-typedoc.zip typedoc
