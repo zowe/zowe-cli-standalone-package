@@ -91,6 +91,12 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 */
 def MASTER_BRANCH = "master"
 
+/**
+* Variables defined later in pipeline
+*/
+def imperativeVersion
+def zoweCliVersion
+
 pipeline {
     agent {
         label 'ca-jenkins-agent-mark-rev'
@@ -144,7 +150,8 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/cli@6.31.0"
+                    zoweCliVersion = "6.31.0"
+                    sh "npm pack @zowe/cli@${zoweCliVersion}"
                     sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.3"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -258,7 +265,8 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/imperative@4.13.0"
+                    imperativeVersion = "4.13.0"
+                    sh "npm pack @zowe/imperative@${imperativeVersion}"
                     sh "npm pack @zowe/core-for-zowe-sdk@6.31.0"
                     sh "npm pack @zowe/provisioning-for-zowe-sdk@6.31.0"
                     sh "npm pack @zowe/zos-console-for-zowe-sdk@6.31.0"
@@ -272,7 +280,7 @@ pipeline {
                     sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                     sh "mv zowe-cli-package.zip zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                    sh "./scripts/generate_typedoc.sh" // Outputs a zowe-node-sdk-typedoc.zip
+                    sh "./scripts/generate_typedoc.sh ${ZOWE_CLI_BUNDLE_VERSION} ${imperativeVersion} ${zoweCliVersion}" // Outputs a zowe-node-sdk-typedoc.zip
                     sh "mv zowe-node-sdk-typedoc.zip zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"

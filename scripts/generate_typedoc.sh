@@ -10,12 +10,10 @@
 #
 ###
 
-# TODO Parameterize these variables
-zoweVersion=1.21.0
-imperativeVersion=4.13.0
-cliVersion=6.31.0
+zoweVersion=$1
+imperativeVersion=$2
+cliVersion=$3
 
-rm -rf node-sdk  # TEMP
 mkdir -p node-sdk
 cd node-sdk
 
@@ -102,4 +100,4 @@ cat > typedoc.json << EOF
 EOF
 
 npx typedoc ./node_modules/@zowe
-#TODO Create zip file
+zip ../zowe-node-sdk-typedoc.zip typedoc
