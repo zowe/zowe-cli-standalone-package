@@ -23,7 +23,7 @@ git clone -b v${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
 
 # Install typedoc along with dependencies and plugins
 npm init -y
-npm install --save-dev @types/node typescript@^3.8.0 typedoc@^0.19.0 \
+npm install -D --legacy-peer-deps @types/node typescript@^3.8.0 typedoc@^0.19.0 \
   @strictsoftware/typedoc-plugin-monorepo typedoc-plugin-sourcefile-url
 
 # Create directory structure for Imperative and SDK packages
