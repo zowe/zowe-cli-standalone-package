@@ -10,6 +10,8 @@
 #
 ###
 
+set -ex
+
 zoweVersion=$1
 imperativeVersion=$2
 cliVersion=$3
@@ -28,7 +30,7 @@ npm install --save-dev @types/node typescript@^3.8.0 typedoc@^0.19.0 \
 
 # Create directory structure for Imperative and SDK packages
 mkdir -p node_modules/@zowe/imperative
-mv imperative/packages imperative/README.md node_modules/@zowe/imperative/
+mv imperative/{packages,README.md} node_modules/@zowe/imperative/
 mv zowe-cli/packages/core node_modules/@zowe/core-for-zowe-sdk
 mv zowe-cli/packages/provisioning node_modules/@zowe/provisioning-for-zowe-sdk
 mv zowe-cli/packages/zosconsole node_modules/@zowe/zos-console-for-zowe-sdk

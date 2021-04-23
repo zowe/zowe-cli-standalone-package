@@ -131,13 +131,13 @@ pipeline {
          * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
          ************************************************************************/
         stage('Create Zowe CLI Bundle') {
-            when {
-                allOf {
-                    expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                    }
-                }
-            }
+            // when {
+            //     allOf {
+            //         expression {
+            //             return BRANCH_NAME.equals(MASTER_BRANCH)
+            //         }
+            //     }
+            // }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
 
@@ -246,13 +246,13 @@ pipeline {
          * A Zowe NodeJS SDK Archive.
          ************************************************************************/
         stage('Create Zowe NodeJS SDK Bundle') {
-            when {
-                allOf {
-                    expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                    }
-                }
-            }
+            // when {
+            //     allOf {
+            //         expression {
+            //             return BRANCH_NAME.equals(MASTER_BRANCH)
+            //         }
+            //     }
+            // }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
 
