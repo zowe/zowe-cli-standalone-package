@@ -111,8 +111,8 @@ pipeline {
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
                     // We need Node.js 10 or later
-                    sh "curl -fsSL https://deb.nodesource.com/setup_12.x | bash -"
-                    sh "apt-get install -y nodejs"
+                    sh "curl -fsSL https://deb.nodesource.com/setup_12.x | sudo -E bash -"
+                    sh "sudo apt-get install -y nodejs"
                 }
             }
         }
