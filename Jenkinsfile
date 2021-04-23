@@ -94,8 +94,8 @@ def MASTER_BRANCH = "master"
 /**
 * Variables defined later in pipeline
 */
-def imperativeVersion = ''
-def zoweCliVersion = ''
+def imperativeVersion
+def zoweCliVersion
 
 pipeline {
     agent {
@@ -150,7 +150,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    zoweCliVersion = "6.31.0"
+                    script { zoweCliVersion = "6.31.0" }
                     sh "npm pack @zowe/cli@${zoweCliVersion}"
                     sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.3"
                     sh "./scripts/repackage_bundle.sh *.tgz"
@@ -265,7 +265,7 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    imperativeVersion = "4.13.0"
+                    script { imperativeVersion = "4.13.0" }
                     sh "npm pack @zowe/imperative@${imperativeVersion}"
                     sh "npm pack @zowe/core-for-zowe-sdk@6.31.0"
                     sh "npm pack @zowe/provisioning-for-zowe-sdk@6.31.0"
