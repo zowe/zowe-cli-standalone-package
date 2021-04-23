@@ -107,16 +107,6 @@ pipeline {
     }
 
     stages {
-        stage('Install Node.js 10') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    // We need Node.js 10 or later
-                    sh "curl -fsSL https://deb.nodesource.com/setup_10.x | sudo -E bash -"
-                    sh "sudo apt-get install -y nodejs"
-                }
-            }
-        }
-
         /************************************************************************
          * STAGE
          * -----
