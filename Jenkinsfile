@@ -107,6 +107,14 @@ pipeline {
     }
 
     stages {
+        stage('Install Node.js 10') {
+            timeout(time: 10, unit: 'MINUTES') {
+                // We need Node.js 10 or later
+                sh "curl -fsSL https://deb.nodesource.com/setup_10.x | bash -"
+                sh "apt-get install -y nodejs"
+            }
+        }
+
         /************************************************************************
          * STAGE
          * -----
@@ -131,13 +139,13 @@ pipeline {
          * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
          ************************************************************************/
         stage('Create Zowe CLI Bundle') {
-            // when {
-            //     allOf {
-            //         expression {
-            //             return BRANCH_NAME.equals(MASTER_BRANCH)
-            //         }
-            //     }
-            // }
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
 
@@ -246,13 +254,13 @@ pipeline {
          * A Zowe NodeJS SDK Archive.
          ************************************************************************/
         stage('Create Zowe NodeJS SDK Bundle') {
-            // when {
-            //     allOf {
-            //         expression {
-            //             return BRANCH_NAME.equals(MASTER_BRANCH)
-            //         }
-            //     }
-            // }
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
             steps {
                 timeout(time: 10, unit: 'MINUTES') {
 

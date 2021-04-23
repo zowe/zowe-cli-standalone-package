@@ -10,8 +10,6 @@
 #
 ###
 
-set -ex
-
 zoweVersion=$1
 imperativeVersion=$2
 cliVersion=$3
