@@ -106,4 +106,4 @@ EOF
 
 # Build typedoc and zip it up
 npx typedoc ./node_modules/@zowe
-zip ../zowe-node-sdk-typedoc.zip typedoc
+zip -r ../zowe-node-sdk-typedoc.zip typedoc
