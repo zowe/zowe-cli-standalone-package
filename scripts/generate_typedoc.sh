@@ -11,15 +11,13 @@
 ###
 
 zoweVersion=$1
-imperativeVersion=$2
-cliVersion=$3
 
 mkdir -p node-sdk
 cd node-sdk
 
 # Clone Imperative and Zowe CLI repos to get the TypeScript source
-git clone -b v${imperativeVersion} --depth 1 https://github.com/zowe/imperative.git
-git clone -b v${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
+git clone -b next --depth 1 https://github.com/zowe/imperative.git
+git clone -b next --depth 1 https://github.com/zowe/zowe-cli.git
 
 # Install typedoc along with dependencies and plugins
 npm init -y
@@ -44,43 +42,43 @@ cat > sourcefile-map.json << EOF
 [
   {
     "pattern": "^@zowe/imperative",
-    "replace": "https://github.com/zowe/imperative/blob/v$imperativeVersion"
+    "replace": "https://github.com/zowe/imperative/blob/next"
   },
   {
     "pattern": "^@zowe/core-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/core"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/core"
   },
   {
     "pattern": "^@zowe/provisioning-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/provisioning"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/provisioning"
   },
   {
     "pattern": "^@zowe/zos-console-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosconsole"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zosconsole"
   },
   {
     "pattern": "^@zowe/zos-files-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosfiles"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zosfiles"
   },
   {
     "pattern": "^@zowe/zos-jobs-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosjobs"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zosjobs"
   },
   {
     "pattern": "^@zowe/zos-tso-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zostso"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zostso"
   },
   {
     "pattern": "^@zowe/zos-uss-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosuss"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zosuss"
   },
   {
     "pattern": "^@zowe/zos-workflows-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/workflows"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/workflows"
   },
   {
     "pattern": "^@zowe/zosmf-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosmf"
+    "replace": "https://github.com/zowe/zowe-cli/blob/next/packages/zosmf"
   }
 ]
 EOF

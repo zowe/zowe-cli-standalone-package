@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.21.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "next"
 def ZOWE_VERSION_NUMBER = "1.21.0"
 
 /**
@@ -87,9 +87,9 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 // def ZOWE_LICENSE_ZIP_URL = "https://wash.zowe.org:8443/job/Zowe%20Dependency%20Scan%20-%20Multibranch/job/staging%252Fv$ZOWE_VERSION_NUMBER/lastSuccessfulBuild/artifact/zowe_licenses_full.zip"
 
 /**
-* Master branch
+* Next branch
 */
-def MASTER_BRANCH = "master"
+def NEXT_BRANCH = "next-typedoc"  // TODO Change me
 
 /**
 * Variables defined later in pipeline
@@ -120,7 +120,7 @@ pipeline {
          * --------------------
          * - Always
          *
-         * DECRIPTION
+         * DESCRIPTION
          * ----------
          * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
          * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
@@ -134,7 +134,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.equals(NEXT_BRANCH)
                     }
                 }
             }
@@ -150,9 +150,10 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    script { zoweCliVersion = "6.31.0" }
+                    script { zoweCliVersion = "next" }
                     sh "npm pack @zowe/cli@${zoweCliVersion}"
-                    sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.3"
+                    // SCS plug-in deprecated in @next
+                    // sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.3"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
@@ -176,7 +177,7 @@ pipeline {
          * --------------------
          * - Always
          *
-         * DECRIPTION
+         * DESCRIPTION
          * ----------
          * Gets the latest version of the Zowe CLI Plugins from Zowe
          * Artifactory. Creates an archive with 'fat' versions of the Plugins -
@@ -191,7 +192,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.equals(NEXT_BRANCH)
                     }
                 }
             }
@@ -207,11 +208,12 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    sh "npm pack @zowe/db2-for-zowe-cli@4.1.0"
-                    sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
-                    sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
-                    sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
-                    sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.4.1"
+                    sh "npm pack @zowe/db2-for-zowe-cli@next"
+                    sh "npm pack @zowe/cics-for-zowe-cli@next"
+                    sh "npm pack @zowe/ims-for-zowe-cli@next"
+                    sh "npm pack @zowe/mq-for-zowe-cli@next"
+                    // FTP plug-in doesn't have @next version yet
+                    // sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.4.1"
                     sh "./scripts/repackage_bundle.sh *.tgz"
                     sh "mv zowe-cli-package.zip zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
@@ -235,7 +237,7 @@ pipeline {
          * --------------------
          * - Always
          *
-         * DECRIPTION
+         * DESCRIPTION
          * ----------
          * Gets the latest version of the Zowe NodeJS SDK package from NPM
          * Creates an archive with 'fat' versions of the Plugins -
@@ -249,7 +251,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.equals(NEXT_BRANCH)
                     }
                 }
             }
@@ -265,17 +267,17 @@ pipeline {
                     }
                     sh "npm install jsonfile"
 
-                    script { imperativeVersion = "4.13.0" }
+                    script { imperativeVersion = "next" }
                     sh "npm pack @zowe/imperative@${imperativeVersion}"
-                    sh "npm pack @zowe/core-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/provisioning-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zos-console-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zos-files-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.30.0"
-                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.31.0"
-                    sh "npm pack @zowe/zosmf-for-zowe-sdk@6.31.0"
+                    sh "npm pack @zowe/core-for-zowe-sdk@next"
+                    sh "npm pack @zowe/provisioning-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-console-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-files-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-jobs-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-tso-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zos-workflows-for-zowe-sdk@next"
+                    sh "npm pack @zowe/zosmf-for-zowe-sdk@next"
 
                     sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                     sh "mv zowe-cli-package.zip zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -284,6 +286,11 @@ pipeline {
                     sh "mv zowe-node-sdk-typedoc.zip zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                    publishHTML(
+                        reportName: "Zowe Node.js SDK Doc",
+                        reportDir: "node-sdk/typedoc",
+                        reportFiles: "index.html"
+                    )
 
                     // Remove all tgzs after bundle is archived
                     sh "rm -f *.tgz"
@@ -303,7 +310,7 @@ pipeline {
          * --------------------
          * - Always
          *
-         * DECRIPTION
+         * DESCRIPTION
          * ----------
          * Gets the latest version of the Zowe Python SDK package from pypi.org
          *
@@ -315,7 +322,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return false  // Python SDK doesn't have @next version yet
                     }
                 }
             }
@@ -347,7 +354,7 @@ pipeline {
         * --------------------
         * - Always
         *
-        * DECRIPTION
+        * DESCRIPTION
         * ----------
         * Take the bundled zip from prior step, and upload it to Artifactory.
         * Working versions will be deployed as SNAPSHOTS, and release versions as semantic
@@ -361,7 +368,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return false  // Don't publish anything for @next release
                     }
                 }
             }
