@@ -89,7 +89,7 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 /**
 * Next branch
 */
-def NEXT_BRANCH = "next-typedoc"  // TODO Change me
+def NEXT_BRANCH = "next"
 
 /**
 * Variables defined later in pipeline
