@@ -291,8 +291,9 @@ pipeline {
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
                         reportDir: "node-sdk/typedoc",
-                        reportName: "Zowe Node.js SDK Typedoc",
-                        reportFiles: "index.html"
+                        reportFiles: "index.html",
+                        reportName: "Zowe Node.js SDK",
+                        reportTitles: "Typedoc"
                     ])
 
                     // Remove all tgzs after bundle is archived
