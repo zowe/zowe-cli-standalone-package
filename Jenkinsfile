@@ -292,7 +292,7 @@ pipeline {
                         keepAll: true,
                         reportDir: "node-sdk/typedoc",
                         reportFiles: "index.html",
-                        reportName: "Zowe Node.js SDK",
+                        reportName: "zowe-nodejs-sdk-typedoc",
                         reportTitles: "Typedoc"
                     ])
 
