@@ -10,7 +10,10 @@
 #
 ###
 
-zoweVersion=$1
+# Ignore version numbers and use "next" tag everywhere
+# zoweVersion=$1
+# imperativeVersion=$2
+# cliVersion=$3
 
 mkdir -p node-sdk
 cd node-sdk
@@ -94,7 +97,7 @@ cat > typedoc.json << EOF
   ],
   "excludeNotExported": true,
   "ignoreCompilerErrors": true,
-  "name": "Zowe Node.js SDK - v$zoweVersion",
+  "name": "Zowe Node.js SDK - vNext",
   "out": "typedoc",
   "readme": "zowe-cli/README.md",
   "external-modulemap": ".*(@zowe\/[^\/]+)\/.*",
