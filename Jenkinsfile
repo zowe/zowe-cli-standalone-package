@@ -286,11 +286,14 @@ pipeline {
                     sh "mv zowe-node-sdk-typedoc.zip zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                     archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-                    publishHTML(
-                        reportName: "Zowe Node.js SDK Doc",
+                    publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
                         reportDir: "node-sdk/typedoc",
+                        reportName: "Zowe Node.js SDK Typedoc",
                         reportFiles: "index.html"
-                    )
+                    ])
 
                     // Remove all tgzs after bundle is archived
                     sh "rm -f *.tgz"
