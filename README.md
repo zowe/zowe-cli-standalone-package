@@ -21,7 +21,7 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
         db2: 4.1.0
         ims: 2.0.1
         mq: 2.0.1
-        secure-credential-store: 4.1.4 -> 4.1.5
+        secure-credential-store: 4.1.3 -> 4.1.5
         zos-ftp: 1.4.1 -> 1.6.0
       zowe-sdk:
         core: 6.31.0 -> 6.31.1
