@@ -273,7 +273,7 @@ pipeline {
                     sh "npm pack @zowe/zos-files-for-zowe-sdk@6.31.1"
                     sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.31.1"
                     sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.31.1"
-                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.30.1"
+                    sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.31.1"
                     sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.31.1"
                     sh "npm pack @zowe/zosmf-for-zowe-sdk@6.31.1"
 
