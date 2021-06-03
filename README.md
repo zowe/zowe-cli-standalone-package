@@ -9,6 +9,7 @@ The standalone ZIP is intended to be offline-installable for those users who are
 Before every Zowe release goes GA, we need to align with the code freeze dates and produce snapshots to be promoted to RCs later in the process. Follow the steps below to accomplish that.
 
 1. Create a PR into `master` with the following changes and information:
+    - Update release number to match the RC that's going out (e.g. 1.22.0)
     - Update any packages that changed after the last Zowe Release.
     - Add a summary of the changes in the PR description like below:
       ```yaml
