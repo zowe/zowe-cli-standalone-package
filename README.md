@@ -18,7 +18,7 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
         cli: 6.31.0 -> 6.31.1
       zowe-plugins:
         cics: 4.0.2
-        db2: 4.0.7 -> 4.1.0
+        db2: 4.1.0
         ims: 2.0.1
         mq: 2.0.1
         secure-credential-store: 4.1.4 -> 4.1.5
