@@ -11,29 +11,29 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
 1. Create a PR into `master` with the following changes and information:
     - Update any packages that changed after the last Zowe Release.
     - Add a summary of the changes in the PR description like below:
-      ```
+      ```yaml
       zowe-cli:
-        imperative: 4.11.0 -> 4.11.2
+        imperative: 4.13.0 -> 4.13.1
         perf-timing: 1.0.7
-        cli: 6.26.0 -> 6.27.1
+        cli: 6.31.0 -> 6.31.1
       zowe-plugins:
         cics: 4.0.2
-        db2: 4.0.7 -> 4.1.0
+        db2: 4.1.0
         ims: 2.0.1
         mq: 2.0.1
-        secure-credential-store: 4.1.1 -> 4.1.3
-        zos-ftp: 1.3.0 -> 1.4.0
+        secure-credential-store: 4.1.3 -> 4.1.5
+        zos-ftp: 1.4.1 -> 1.6.0
       zowe-sdk:
-        core: 6.26.0 -> 6.27.0
-        provisioning: 6.26.0 -> 6.27.0
-        zos-console: 6.26.0 -> 6.27.0
-        zos-files: 6.26.0 -> 6.27.0
-        zos-jobs: 6.26.0 -> 6.27.0
-        zos-tso: 6.26.0 -> 6.27.1
-        zos-uss: 6.26.0 -> 6.27.0
-        zos-workflows: 6.26.0 -> 6.27.0
-        zosmf: 6.26.0 -> 6.27.1
-      ```
+        core: 6.31.0 -> 6.31.1
+        provisioning: 6.31.0 -> 6.31.1
+        zos-console: 6.31.0 -> 6.31.1
+        zos-files: 6.31.0 -> 6.31.1
+        zos-jobs: 6.31.0 -> 6.31.1
+        zos-tso: 6.31.0 -> 6.31.1
+        zos-uss: 6.30.0 -> 6.31.1
+        zos-workflows: 6.31.0 -> 6.31.1
+        zosmf: 6.31.0 -> 6.31.1
+        ```
 2. Check to see if the `master` build failed due to missing licenses.
     - If so, replay the build and change the license URL to a previous version
 3. Notify `Tom Zhang` on Slack and make sure to copy a link to the PR and the build that uploaded the bundles to `libs-snapshot-local` on JFrog Artifactory
