@@ -57,8 +57,8 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.21.0-SNAPSHOT"
-def ZOWE_VERSION_NUMBER = "1.21.0"
+def ZOWE_CLI_BUNDLE_VERSION = "1.22.0-SNAPSHOT"
+def ZOWE_VERSION_NUMBER = "1.22.0"
 
 /**
 *  The Artifactory Server to deploy to.
@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.21.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.22.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
