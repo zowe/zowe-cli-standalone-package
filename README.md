@@ -30,7 +30,7 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
         zos-files: 6.31.0 -> 6.31.1
         zos-jobs: 6.31.0 -> 6.31.1
         zos-tso: 6.31.0 -> 6.31.1
-        zos-uss: 6.31.0 -> 6.31.1
+        zos-uss: 6.30.0 -> 6.31.1
         zos-workflows: 6.31.0 -> 6.31.1
         zosmf: 6.31.0 -> 6.31.1
         ```
