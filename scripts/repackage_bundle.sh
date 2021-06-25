@@ -30,7 +30,6 @@ do
     # The plugin does not support reinstall, and deletes required files during a normal install.
     # This block restores the plugin structure to a 'clean' state
     if [[ $tar = *"db2"* ]]; then
-
         ibm_db_ver=`node -e "package = require('./package.json');console.log(package.dependencies['ibm_db'])"`
         npm pack "ibm_db@$ibm_db_ver"
         tar -xzf ibm_db*.tgz
@@ -45,9 +44,10 @@ do
     # We include prebuilt native code bundles for Keytar and clean up unwanted binaries.
     if [[ $tar = *"secure-credential-store"* ]]; then
         mkdir -p "./node_modules/keytar/prebuilds"
-        curl -fOJ https://wash.zowe.org:8443/job/zowe-cli-scs-plugin/job/master/lastSuccessfulBuild/artifact/keytar-prebuilds.tgz
-        tar -xzf keytar-prebuilds.tgz --directory "./node_modules/keytar/prebuilds"
-        rm keytar-prebuilds.tgz
+        keytar_ver=`node -e "package = require('./package.json');console.log(package.dependencies['keytar'])"`
+        curl -fOJ https://zowe.jfrog.io/artifactory/libs-snapshot-local/org/zowe/cli/zowe-cli-prebuilds/keytar-${keytar_ver}-prebuilds.tgz
+        tar -xzf keytar-*-prebuilds.tgz --directory "./node_modules/keytar/prebuilds"
+        rm -r keytar-*-prebuilds.tgz
         rm -rf "./node_modules/keytar/build"
     fi
 
