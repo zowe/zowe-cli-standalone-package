@@ -116,42 +116,41 @@ pipeline {
         stage('Create Bundles') {
             parallel {
                 stage('Create Bundles (LTS)') {
-                    dir("lts") {
-                        stages {
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe CLI Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
-                            * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
-                            *  dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
-                            ************************************************************************/
-                            stage('CLI Core (LTS)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                    stages {
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe CLI Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
+                        * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
+                        *  dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
+                        ************************************************************************/
+                        stage('CLI Core (LTS)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -174,41 +173,42 @@ pipeline {
                                     }
                                 }
                             }
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe CLI Plugins Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe CLI Plugins from Zowe
-                            * Artifactory. Creates an archive with 'fat' versions of the Plugins -
-                            *  dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
-                            * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
-                            ************************************************************************/
-                            stage('CLI Plugins (LTS)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                        }
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe CLI Plugins Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe CLI Plugins from Zowe
+                        * Artifactory. Creates an archive with 'fat' versions of the Plugins -
+                        *  dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
+                        * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
+                        ************************************************************************/
+                        stage('CLI Plugins (LTS)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -233,40 +233,41 @@ pipeline {
                                     }
                                 }
                             }
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe NodeJS SDK Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe NodeJS SDK package from NPM
-                            * Creates an archive with 'fat' versions of the Plugins -
-                            *   dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe NodeJS SDK Archive.
-                            ************************************************************************/
-                            stage('NodeJS SDK (LTS)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                        }
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe NodeJS SDK Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe NodeJS SDK package from NPM
+                        * Creates an archive with 'fat' versions of the Plugins -
+                        *   dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe NodeJS SDK Archive.
+                        ************************************************************************/
+                        stage('NodeJS SDK (LTS)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -301,36 +302,38 @@ pipeline {
                                     }
                                 }
                             }
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe Python SDK Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe Python SDK package from pypi.org
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe Python SDK Archive.
-                            ************************************************************************/
-                            stage('Python SDK (LTS)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                        }
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe Python SDK Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe Python SDK package from pypi.org
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe Python SDK Archive.
+                        ************************************************************************/
+                        stage('Python SDK (LTS)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
                                         // Download all zowe wheels into a temp folder
                                         sh "mkdir -p temp && cd temp && pip3 download zowe"
@@ -350,42 +353,41 @@ pipeline {
                 }
 
                 stage('Create Bundles (Next)') {
-                    dir("next") {
-                        stages {
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe CLI Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
-                            * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
-                            *  dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
-                            ************************************************************************/
-                            stage('CLI Core (Next)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                    stages {
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe CLI Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe CLI and SCS plugin from Zowe
+                        * Artifactory. Creates an archive with 'fat' versions of the CLI and Plugin -
+                        *  dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
+                        ************************************************************************/
+                        stage('CLI Core (Next)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -409,41 +411,42 @@ pipeline {
                                     }
                                 }
                             }
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe CLI Plugins Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe CLI Plugins from Zowe
-                            * Artifactory. Creates an archive with 'fat' versions of the Plugins -
-                            *  dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
-                            * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
-                            ************************************************************************/
-                            stage('CLI Plugins (Next)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                        }
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe CLI Plugins Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe CLI Plugins from Zowe
+                        * Artifactory. Creates an archive with 'fat' versions of the Plugins -
+                        *  dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe CLI Plugins Archive containing Zowe CLI DB2 Plugin, Zowe CLI CICS Plugin,
+                        * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
+                        ************************************************************************/
+                        stage('CLI Plugins (Next)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
@@ -470,40 +473,41 @@ pipeline {
                                     }
                                 }
                             }
-                            /************************************************************************
-                            * STAGE
-                            * -----
-                            * Build Zowe NodeJS SDK Bundle
-                            *
-                            * TIMEOUT
-                            * -------
-                            * 10 Minutes
-                            *
-                            * EXECUTION CONDITIONS
-                            * --------------------
-                            * - Always
-                            *
-                            * DESCRIPTION
-                            * ----------
-                            * Gets the latest version of the Zowe NodeJS SDK package from NPM
-                            * Creates an archive with 'fat' versions of the Plugins -
-                            *   dependencies are bundled.
-                            *
-                            * OUTPUTS
-                            * -------
-                            * A Zowe NodeJS SDK Archive.
-                            ************************************************************************/
-                            stage('NodeJS SDK (Next)') {
-                                when {
-                                    allOf {
-                                        expression {
-                                            return BRANCH_NAME.equals(MASTER_BRANCH)
-                                        }
+                        }
+                        /************************************************************************
+                        * STAGE
+                        * -----
+                        * Build Zowe NodeJS SDK Bundle
+                        *
+                        * TIMEOUT
+                        * -------
+                        * 10 Minutes
+                        *
+                        * EXECUTION CONDITIONS
+                        * --------------------
+                        * - Always
+                        *
+                        * DESCRIPTION
+                        * ----------
+                        * Gets the latest version of the Zowe NodeJS SDK package from NPM
+                        * Creates an archive with 'fat' versions of the Plugins -
+                        *   dependencies are bundled.
+                        *
+                        * OUTPUTS
+                        * -------
+                        * A Zowe NodeJS SDK Archive.
+                        ************************************************************************/
+                        stage('NodeJS SDK (Next)') {
+                            when {
+                                allOf {
+                                    expression {
+                                        return BRANCH_NAME.equals(MASTER_BRANCH)
                                     }
                                 }
-                                steps {
+                            }
+                            steps {
+                                dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-
                                         sh "npm set registry https://registry.npmjs.org/"
                                         sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
