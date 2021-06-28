@@ -156,14 +156,14 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
                                         script { zoweCliVersion = "6.31.1" }
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
                                         sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
-                                        sh "./scripts/repackage_bundle.sh *.tgz"
+                                        sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -214,7 +214,7 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
@@ -223,7 +223,7 @@ pipeline {
                                         sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
                                         sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
                                         sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.6.0"
-                                        sh "./scripts/repackage_bundle.sh *.tgz"
+                                        sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -273,7 +273,7 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
@@ -289,10 +289,10 @@ pipeline {
                                         sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.31.1"
                                         sh "npm pack @zowe/zosmf-for-zowe-sdk@6.31.1"
 
-                                        sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
+                                        sh "../scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                                         sh "mv zowe-cli-package.zip ../zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        sh "./scripts/generate_typedoc.sh ${ZOWE_CLI_BUNDLE_VERSION} ${imperativeVersion} ${zoweCliVersion}" // Outputs a zowe-node-sdk-typedoc.zip
+                                        sh "../scripts/generate_typedoc.sh ${ZOWE_CLI_BUNDLE_VERSION} ${imperativeVersion} ${zoweCliVersion}" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -393,7 +393,7 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
@@ -401,7 +401,7 @@ pipeline {
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
                                         // SCS plug-in deprecated in @next
                                         // sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
-                                        sh "./scripts/repackage_bundle.sh *.tgz"
+                                        sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
@@ -452,7 +452,7 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
@@ -463,7 +463,7 @@ pipeline {
                                         // FTP plug-in doesn't have @next release published yet
                                         // We bundle @latest since it's compatible with team config
                                         sh "npm pack @zowe/zos-ftp-for-zowe-cli"
-                                        sh "./scripts/repackage_bundle.sh *.tgz"
+                                        sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
@@ -513,7 +513,7 @@ pipeline {
                                         withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                                             // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
                                             sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
-                                            sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
+                                            sh "../scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                                         }
                                         sh "npm install jsonfile"
 
@@ -529,10 +529,10 @@ pipeline {
                                         sh "npm pack @zowe/zos-workflows-for-zowe-sdk@next"
                                         sh "npm pack @zowe/zosmf-for-zowe-sdk@next"
 
-                                        sh "./scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
+                                        sh "../scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                                         sh "mv zowe-cli-package.zip ../zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        sh "./scripts/generate_typedoc.sh next" // Outputs a zowe-node-sdk-typedoc.zip
+                                        sh "../scripts/generate_typedoc.sh next" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         archiveArtifacts artifacts: "../zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
