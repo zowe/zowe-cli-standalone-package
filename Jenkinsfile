@@ -114,6 +114,14 @@ pipeline {
 
     stages {
         stage('Create Bundles') {
+            when {
+                allOf {
+                    expression {
+                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                    }
+                }
+            }
+            failFast true
             parallel {
                 stage('Create Bundles (LTS)') {
                     stages {
@@ -141,13 +149,6 @@ pipeline {
                         * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
                         ************************************************************************/
                         stage('CLI Core (LTS)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -199,13 +200,6 @@ pipeline {
                         * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
                         ************************************************************************/
                         stage('CLI Plugins (LTS)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -258,13 +252,6 @@ pipeline {
                         * A Zowe NodeJS SDK Archive.
                         ************************************************************************/
                         stage('NodeJS SDK (LTS)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -325,13 +312,6 @@ pipeline {
                         * A Zowe Python SDK Archive.
                         ************************************************************************/
                         stage('Python SDK (LTS)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -378,13 +358,6 @@ pipeline {
                         * A Zowe CLI Archive containing Zowe CLI and Zowe CLI Secure Credential Store Plugin
                         ************************************************************************/
                         stage('CLI Core (Next)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -437,13 +410,6 @@ pipeline {
                         * Zowe CLI z/OS FTP Plugin, Zowe CLI IMS Plugin, and Zowe CLI MQ Plugin.
                         ************************************************************************/
                         stage('CLI Plugins (Next)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
@@ -498,13 +464,6 @@ pipeline {
                         * A Zowe NodeJS SDK Archive.
                         ************************************************************************/
                         stage('NodeJS SDK (Next)') {
-                            when {
-                                allOf {
-                                    expression {
-                                        return BRANCH_NAME.equals(MASTER_BRANCH)
-                                    }
-                                }
-                            }
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
