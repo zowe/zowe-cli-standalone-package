@@ -10,16 +10,22 @@
 #
 ###
 
-zoweVersion=$1
-imperativeVersion=$2
-cliVersion=$3
+if [ $1 != "next" ]; then
+  zoweVersion=v$1
+  imperativeVersion=v$2
+  cliVersion=v$3
+else
+  zoweVersion=vNext
+  imperativeVersion=next
+  cliVersion=next
+fi
 
 mkdir -p node-sdk
 cd node-sdk
 
 # Clone Imperative and Zowe CLI repos to get the TypeScript source
-git clone -b v${imperativeVersion} --depth 1 https://github.com/zowe/imperative.git
-git clone -b v${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
+git clone -b ${imperativeVersion} --depth 1 https://github.com/zowe/imperative.git
+git clone -b ${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
 
 # Install typedoc along with dependencies and plugins
 npm init -y
@@ -27,8 +33,8 @@ npm install -D --legacy-peer-deps @types/node typescript@^3.8.0 typedoc@^0.19.0 
   @strictsoftware/typedoc-plugin-monorepo typedoc-plugin-sourcefile-url
 
 # Transform relative URLs to absolute URLs in Imperative and CLI readmes
-sed -i "s [(]\(CONTRIBUTING\|LICENSE\) (https://github.com/zowe/imperative/blob/v$imperativeVersion/\1 " imperative/README.md
-sed -i "s \./ https://github.com/zowe/zowe-cli/blob/v$cliVersion/ " zowe-cli/README.md
+sed -i "s [(]\(CONTRIBUTING\|LICENSE\) (https://github.com/zowe/imperative/blob/$imperativeVersion/\1 " imperative/README.md
+sed -i "s \./ https://github.com/zowe/zowe-cli/blob/$cliVersion/ " zowe-cli/README.md
 
 # Create directory structure for Imperative and SDK packages
 mkdir -p node_modules/@zowe/imperative
@@ -48,43 +54,43 @@ cat > sourcefile-map.json << EOF
 [
   {
     "pattern": "^@zowe/imperative",
-    "replace": "https://github.com/zowe/imperative/blob/v$imperativeVersion"
+    "replace": "https://github.com/zowe/imperative/blob/$imperativeVersion"
   },
   {
     "pattern": "^@zowe/core-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/core"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/core"
   },
   {
     "pattern": "^@zowe/provisioning-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/provisioning"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/provisioning"
   },
   {
     "pattern": "^@zowe/zos-console-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosconsole"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosconsole"
   },
   {
     "pattern": "^@zowe/zos-files-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosfiles"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosfiles"
   },
   {
     "pattern": "^@zowe/zos-jobs-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosjobs"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosjobs"
   },
   {
     "pattern": "^@zowe/zos-tso-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zostso"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zostso"
   },
   {
     "pattern": "^@zowe/zos-uss-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosuss"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosuss"
   },
   {
     "pattern": "^@zowe/zos-workflows-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/workflows"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/workflows"
   },
   {
     "pattern": "^@zowe/zosmf-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/v${cliVersion}/packages/zosmf"
+    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosmf"
   }
 ]
 EOF
@@ -100,7 +106,7 @@ cat > typedoc.json << EOF
   ],
   "excludeNotExported": true,
   "ignoreCompilerErrors": true,
-  "name": "Zowe Node.js SDK - v$zoweVersion",
+  "name": "Zowe Node.js SDK - $zoweVersion",
   "out": "typedoc",
   "readme": "zowe-cli/README.md",
   "external-modulemap": ".*(@zowe\/[^\/]+)\/.*",

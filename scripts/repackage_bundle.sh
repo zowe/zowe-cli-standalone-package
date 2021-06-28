@@ -42,7 +42,7 @@ do
 
     # Extra work required for the SCS plugin to support offline install.
     # We include prebuilt native code bundles for Keytar and clean up unwanted binaries.
-    if [[ $tar = *"secure-credential-store"* ]]; then
+    if [[ $tar = *"secure-credential-store"* || $tar = "zowe-cli-7"* ]]; then
         mkdir -p "./node_modules/keytar/prebuilds"
         keytar_ver=`node -e "package = require('./package.json');console.log(package.dependencies['keytar'])"`
         curl -fOJ https://zowe.jfrog.io/artifactory/libs-snapshot-local/org/zowe/cli/zowe-cli-prebuilds/keytar-${keytar_ver}-prebuilds.tgz
