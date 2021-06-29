@@ -23,7 +23,7 @@ do
 
 
     cd temp/package
-    cp ../../.npmrc .
+    cp ../../../.npmrc .
     npm install
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
