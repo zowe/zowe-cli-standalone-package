@@ -58,7 +58,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
 def ZOWE_CLI_BUNDLE_VERSION = "1.22.0-SNAPSHOT"
-def ZOWE_CLI_BUNDLE_NEXT_VERSION = "next-$ZOWE_CLI_BUNDLE_VERSION"
+def ZOWE_CLI_BUNDLE_NEXT_VERSION = "next-${new Date().format("yyyyMMdd")}-SNAPSHOT"
 def ZOWE_VERSION_NUMBER = "1.22.0"
 
 /**
