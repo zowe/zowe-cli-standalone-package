@@ -120,7 +120,7 @@ pipeline {
                     sh "npm set @zowe:registry ${ZOWE_ARTIFACTORY_URL}"
                     withCredentials([usernamePassword(credentialsId: ARTIFACTORY_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         // TODO: Consider using tooling like artifactory-download-spec to get license.zip. Post-Infrastructure migration answer.
-                        sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                        sh "curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
                         sh "./scripts/npm_login.sh $USERNAME $PASSWORD \"$ARTIFACTORY_EMAIL\" '--registry=${ZOWE_ARTIFACTORY_URL} --scope=@zowe'"
                     }
                     sh "npm install jsonfile"
@@ -166,7 +166,7 @@ pipeline {
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { zoweCliVersion = "6.31.1" }
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
@@ -210,7 +210,7 @@ pipeline {
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         sh "npm pack @zowe/db2-for-zowe-cli@4.1.0"
                                         sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
@@ -255,7 +255,7 @@ pipeline {
                             steps {
                                 dir("lts") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { imperativeVersion = "4.13.1" }
                                         sh "npm pack @zowe/imperative@${imperativeVersion}"
@@ -354,7 +354,7 @@ pipeline {
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { zoweCliVersion = "next" }
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
@@ -399,7 +399,7 @@ pipeline {
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         sh "npm pack @zowe/db2-for-zowe-cli@next"
                                         sh "npm pack @zowe/cics-for-zowe-cli@next"
@@ -446,7 +446,7 @@ pipeline {
                             steps {
                                 dir("next") {
                                     timeout(time: 10, unit: 'MINUTES') {
-                                        sh "cp ../zowe_licenses_full.zip zowe_licenses_full.zip"
+                                        sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { imperativeVersion = "next" }
                                         sh "npm pack @zowe/imperative@${imperativeVersion}"
