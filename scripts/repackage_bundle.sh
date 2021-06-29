@@ -10,6 +10,7 @@
 #
 ###
 
+set -ex
 mkdir -p packed
 
 # Loop through each tar (representing an `npm pack`), and create new tars with packed dependencies.
@@ -21,9 +22,8 @@ do
     # Changes the package.json format
     node "$(dirname $0)/configure-to-bundle.js"
 
-
     cd temp/package
-    cp ../../../.npmrc .
+    cp ../../.npmrc . || true
     npm install
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
