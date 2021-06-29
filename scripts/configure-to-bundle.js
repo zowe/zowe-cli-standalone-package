@@ -34,6 +34,9 @@ packageJson.bundledDependencies = [];
 for(const x in packageJson.dependencies) {
     packageJson.bundledDependencies.push(x);
 }
+for(const x in (packageJson.optionalDependencies || {})) {
+    packageJson.bundledDependencies.push(x);
+}
 
 console.log("====NEW PACKAGE.JSON====");
 console.log(packageJson);

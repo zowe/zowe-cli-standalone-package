@@ -10,7 +10,6 @@
 #
 ###
 
-set -ex
 mkdir -p packed
 
 # Loop through each tar (representing an `npm pack`), and create new tars with packed dependencies.
@@ -23,7 +22,7 @@ do
     node "$(dirname $0)/configure-to-bundle.js"
 
     cd temp/package
-    cp ../../.npmrc . || true
+    cp ../../.npmrc .
     npm install
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
@@ -44,7 +43,7 @@ do
     # We include prebuilt native code bundles for Keytar and clean up unwanted binaries.
     if [[ $tar = *"secure-credential-store"* || $tar = "zowe-cli-7"* ]]; then
         mkdir -p "./node_modules/keytar/prebuilds"
-        keytar_ver=`node -e "package = require('./package.json');console.log(package.dependencies['keytar'])"`
+        keytar_ver=`node -e "package = require('./package.json');console.log(package.dependencies['keytar'] || package.optionalDependencies['keytar'])"`
         curl -fOJ https://zowe.jfrog.io/artifactory/libs-snapshot-local/org/zowe/cli/zowe-cli-prebuilds/keytar-${keytar_ver}-prebuilds.tgz
         tar -xzf keytar-*-prebuilds.tgz --directory "./node_modules/keytar/prebuilds"
         rm -r keytar-*-prebuilds.tgz
