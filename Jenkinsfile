@@ -113,6 +113,15 @@ pipeline {
     }
 
     stages {
+        /************************************************************************
+        * STAGE
+        * -----
+        * Setup
+        *
+        * DESCRIPTION
+        * ----------
+        * Logs in to NPM registry, downloads licenses ZIP, and installs dependencies
+        ************************************************************************/
         stage('Setup') {
             steps {
                 timeout(time: 5, unit: 'MINUTES') {
@@ -127,6 +136,15 @@ pipeline {
                 }
             }
         }
+        /************************************************************************
+        * STAGE
+        * -----
+        * Create Bundles
+        *
+        * DESCRIPTION
+        * ----------
+        * Builds Zowe CLI and SDK bundles for both LTS and Next releases
+        ************************************************************************/
         stage('Create Bundles') {
             when {
                 allOf {
