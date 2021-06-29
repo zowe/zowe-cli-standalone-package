@@ -164,8 +164,8 @@ pipeline {
                         ************************************************************************/
                         stage('CLI Core (LTS)') {
                             steps {
-                                dir("lts") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { zoweCliVersion = "6.31.1" }
@@ -174,11 +174,11 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -208,8 +208,8 @@ pipeline {
                         ************************************************************************/
                         stage('CLI Plugins (LTS)') {
                             steps {
-                                dir("lts") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         sh "npm pack @zowe/db2-for-zowe-cli@4.1.0"
@@ -220,11 +220,11 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -253,8 +253,8 @@ pipeline {
                         ************************************************************************/
                         stage('NodeJS SDK (LTS)') {
                             steps {
-                                dir("lts") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { imperativeVersion = "4.13.1" }
@@ -275,11 +275,11 @@ pipeline {
                                         sh "../scripts/generate_typedoc.sh ${ZOWE_CLI_BUNDLE_VERSION} ${imperativeVersion} ${zoweCliVersion}" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -306,8 +306,8 @@ pipeline {
                         ************************************************************************/
                         stage('Python SDK (LTS)') {
                             steps {
-                                dir("lts") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("lts") {
                                         // Download all zowe wheels into a temp folder
                                         sh "mkdir -p temp && cd temp && pip3 download zowe"
                                         sh "cd temp && mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
@@ -317,8 +317,9 @@ pipeline {
 
                                         // Archive the zowe Python SDK
                                         sh "mv zowe-sdk.zip ../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-                                        archiveArtifacts artifacts: "**/zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -352,8 +353,8 @@ pipeline {
                         ************************************************************************/
                         stage('CLI Core (Next)') {
                             steps {
-                                dir("next") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("next") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { zoweCliVersion = "next" }
@@ -363,11 +364,11 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
                                 }
                             }
                         }
@@ -397,8 +398,8 @@ pipeline {
                         ************************************************************************/
                         stage('CLI Plugins (Next)') {
                             steps {
-                                dir("next") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("next") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         sh "npm pack @zowe/db2-for-zowe-cli@next"
@@ -411,11 +412,11 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
                                 }
                             }
                         }
@@ -444,8 +445,8 @@ pipeline {
                         ************************************************************************/
                         stage('NodeJS SDK (Next)') {
                             steps {
-                                dir("next") {
-                                    timeout(time: 10, unit: 'MINUTES') {
+                                timeout(time: 10, unit: 'MINUTES') {
+                                    dir("next") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
                                         script { imperativeVersion = "next" }
@@ -466,11 +467,11 @@ pipeline {
                                         sh "../scripts/generate_typedoc.sh next" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "**/zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
-
-                                        // Remove all tgzs after bundle is archived
+                                        // Remove all tgzs after bundle has been generated
                                         sh "rm -f *.tgz"
                                     }
+
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
                                 }
                             }
                         }
