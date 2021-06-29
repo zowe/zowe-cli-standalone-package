@@ -174,7 +174,7 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
@@ -220,7 +220,7 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
@@ -275,7 +275,7 @@ pipeline {
                                         sh "../scripts/generate_typedoc.sh ${ZOWE_CLI_BUNDLE_VERSION} ${imperativeVersion} ${zoweCliVersion}" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
@@ -317,7 +317,7 @@ pipeline {
 
                                         // Archive the zowe Python SDK
                                         sh "mv zowe-sdk.zip ../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
-                                        archiveArtifacts artifacts: "../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                     }
                                 }
                             }
@@ -363,7 +363,7 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
@@ -411,7 +411,7 @@ pipeline {
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
@@ -466,7 +466,7 @@ pipeline {
                                         sh "../scripts/generate_typedoc.sh next" // Outputs a zowe-node-sdk-typedoc.zip
                                         sh "mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
-                                        archiveArtifacts artifacts: "../zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
+                                        archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
 
                                         // Remove all tgzs after bundle is archived
                                         sh "rm -f *.tgz"
