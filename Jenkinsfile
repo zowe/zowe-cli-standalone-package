@@ -534,10 +534,10 @@ pipeline {
                         def targetVersion = ZOWE_CLI_BUNDLE_VERSION
                         def targetRepository = targetVersion.contains("-SNAPSHOT") ? ARTIFACTORY_SNAPSHOT_REPO : ARTIFACTORY_RELEASE_REPO
 
-                        // Upload Core CLI and SCS (zowe-cli-package)
+                        // LTS: Upload Core CLI and SCS (zowe-cli-package)
                         def uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-package-*.zip",
+                            "pattern": "zowe-cli-package-(!next)*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
                         }]
                         }"""
@@ -545,10 +545,10 @@ pipeline {
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
-                        // Upload all other plugins (zowe-cli-plugins)
+                        // LTS: Upload all other plugins (zowe-cli-plugins)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-plugins-*.zip",
+                            "pattern": "zowe-cli-plugins-(!next)*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
                         }]
                         }"""
@@ -556,10 +556,10 @@ pipeline {
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
-                        // Upload NodeJS SDK packages (zowe-nodejs-sdk)
+                        // LTS: Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-nodejs-sdk-*.zip",
+                            "pattern": "zowe-nodejs-sdk-(!next)*.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/${targetVersion}/"
                         }]
                         }"""
@@ -567,11 +567,44 @@ pipeline {
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
-                        // Upload Python SDK packages (zowe-python-sdk)
+                        // LTS: Upload Python SDK packages (zowe-python-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-python-sdk-*.zip",
+                            "pattern": "zowe-python-sdk-(!next)*.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Next: Upload Core CLI and SCS (zowe-cli-package)
+                        def uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-cli-package-next-*.zip",
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/next/${targetVersion}/"
+                        }]
+                        }"""
+                        def buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Next: Upload all other plugins (zowe-cli-plugins)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-cli-plugins-next-*.zip",
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/next/${targetVersion}/"
+                        }]
+                        }"""
+                        buildInfo = Artifactory.newBuildInfo()
+                        server.upload spec: uploadSpec, buildInfo: buildInfo
+                        server.publishBuildInfo buildInfo
+
+                        // Next: Upload NodeJS SDK packages (zowe-nodejs-sdk)
+                        uploadSpec = """{
+                        "files": [{
+                            "pattern": "zowe-nodejs-sdk-next-*.zip",
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/next/${targetVersion}/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
