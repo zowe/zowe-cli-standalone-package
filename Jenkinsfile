@@ -579,13 +579,13 @@ pipeline {
                         server.publishBuildInfo buildInfo
 
                         // Next: Upload Core CLI and SCS (zowe-cli-package)
-                        def uploadSpec = """{
+                        uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-package-next-*.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/next/${targetVersion}/"
                         }]
                         }"""
-                        def buildInfo = Artifactory.newBuildInfo()
+                        buildInfo = Artifactory.newBuildInfo()
                         server.upload spec: uploadSpec, buildInfo: buildInfo
                         server.publishBuildInfo buildInfo
 
