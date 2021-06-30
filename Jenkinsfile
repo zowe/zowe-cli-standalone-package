@@ -90,12 +90,12 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 /**
 * Master branch
 */
-def MASTER_BRANCH = "publish-next"
+def MASTER_BRANCH = "master"
 
 /**
-* If true, no artifacts will be published even when branch is MASTER_BRANCH
+* If true, the pipeline will run on any branch without publishing artifacts
 */
-def DRY_RUN = true
+def DRY_RUN = env.CHANGE_ID != null
 
 /**
 * Variables defined later in pipeline
@@ -149,7 +149,7 @@ pipeline {
             when {
                 allOf {
                     expression {
-                        return BRANCH_NAME.equals(MASTER_BRANCH)
+                        return BRANCH_NAME.equals(MASTER_BRANCH) || DRY_RUN
                     }
                 }
             }
