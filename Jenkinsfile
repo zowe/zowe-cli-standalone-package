@@ -93,7 +93,8 @@ def ZOWE_LICENSE_ZIP_URL = "https://zowe.jfrog.io/zowe/$ARTIFACTORY_RELEASE_REPO
 def MASTER_BRANCH = "master"
 
 /**
-* If true, the pipeline will run on any branch without publishing artifacts
+* If true, the pipeline will run on any branch without publishing artifacts.
+* The default value is true for PR builds, and false otherwise.
 */
 def DRY_RUN = env.CHANGE_ID != null
 
@@ -375,8 +376,7 @@ pipeline {
                                     dir("next") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        script { zoweCliVersion = "next" }
-                                        sh "npm pack @zowe/cli@${zoweCliVersion}"
+                                        sh "npm pack @zowe/cli@next"
                                         // SCS plug-in deprecated in @next
                                         // sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
                                         sh "../scripts/repackage_bundle.sh *.tgz"
@@ -467,8 +467,7 @@ pipeline {
                                     dir("next") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        script { imperativeVersion = "next" }
-                                        sh "npm pack @zowe/imperative@${imperativeVersion}"
+                                        sh "npm pack @zowe/imperative@next"
                                         sh "npm pack @zowe/core-for-zowe-sdk@next"
                                         sh "npm pack @zowe/provisioning-for-zowe-sdk@next"
                                         sh "npm pack @zowe/zos-console-for-zowe-sdk@next"
