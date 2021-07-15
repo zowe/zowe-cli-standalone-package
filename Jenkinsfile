@@ -335,7 +335,7 @@ pipeline {
                                         sh "zip -r zowe-sdk.zip *"
 
                                         // Archive the zowe Python SDK
-                                        sh "mv zowe-sdk.zip ../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                        sh "mv zowe-sdk.zip ../../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
                                         deleteDir()
                                     }
@@ -584,7 +584,7 @@ pipeline {
                         uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-package-next-*.zip",
-                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/next/${targetVersion}/"
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/next/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
@@ -595,7 +595,7 @@ pipeline {
                         uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-cli-plugins-next-*.zip",
-                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/next/${targetVersion}/"
+                            "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/next/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
@@ -606,7 +606,7 @@ pipeline {
                         uploadSpec = """{
                         "files": [{
                             "pattern": "zowe-nodejs-sdk-next-*.zip",
-                            "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/next/${targetVersion}/"
+                            "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/next/"
                         }]
                         }"""
                         buildInfo = Artifactory.newBuildInfo()
