@@ -326,16 +326,18 @@ pipeline {
                         stage('Python SDK (LTS)') {
                             steps {
                                 timeout(time: 10, unit: 'MINUTES') {
-                                    dir("lts") {
+                                    dir("lts/temp") {
                                         // Download all zowe wheels into a temp folder
-                                        sh "mkdir -p temp && cd temp && pip3 download zowe"
-                                        sh "cd temp && mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
+                                        sh "pip3 download zowe"
+                                        sh "mkdir -p licenses && cd licenses && curl -fs -o zowe_licenses_full.zip $ZOWE_LICENSE_ZIP_URL"
 
                                         // Zip all zowe wheels into a zowe-sdk.zip
-                                        sh "cd temp && zip -r zowe-sdk.zip * && mv zowe-sdk.zip ../ && rm -rf temp"
+                                        sh "zip -r zowe-sdk.zip *"
 
                                         // Archive the zowe Python SDK
                                         sh "mv zowe-sdk.zip ../zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+
+                                        deleteDir()
                                     }
 
                                     archiveArtifacts artifacts: "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
