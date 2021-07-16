@@ -23,7 +23,7 @@ do
     node "$(dirname $0)/configure-to-bundle.js"
 
     cd temp/package
-    cp ../../.npmrc .
+    cp ../../.npmrc . || true
     npm install --legacy-peer-deps
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
