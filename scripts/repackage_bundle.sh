@@ -24,7 +24,7 @@ do
 
     cd temp/package
     cp ../../.npmrc . || true
-    npm install --legacy-peer-deps
+    npm install --legacy-peer-deps --ignore-scripts
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
     # The plugin does not support reinstall, and deletes required files during a normal install.
