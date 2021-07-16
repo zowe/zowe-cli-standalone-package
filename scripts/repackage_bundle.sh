@@ -9,6 +9,7 @@
 # Copyright Contributors to the Zowe Project.
 #
 ###
+set -e
 
 mkdir -p packed
 
@@ -23,7 +24,7 @@ do
 
     cd temp/package
     cp ../../.npmrc .
-    npm install
+    npm install --legacy-peer-deps
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
     # The plugin does not support reinstall, and deletes required files during a normal install.
