@@ -9,6 +9,7 @@
 # Copyright Contributors to the Zowe Project.
 #
 ###
+set -ex
 
 mkdir -p packed
 
@@ -22,8 +23,17 @@ do
     node "$(dirname $0)/configure-to-bundle.js"
 
     cd temp/package
-    cp ../../.npmrc .
-    npm install
+    cp ../../.npmrc . || true
+
+    ## Extra work required to delete imperative prepare script
+    ## This prevents Husky from erroring out - and it isn't needed if we aren't developing Imperative
+    if [[ $tar = *"imperative"* ]]; then
+        node -e "package = require('./package.json');
+                 delete package.scripts.prepare;
+                 require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2), 'utf8')"
+    fi
+
+    npm install --legacy-peer-deps --ignore-scripts
 
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
     # The plugin does not support reinstall, and deletes required files during a normal install.
