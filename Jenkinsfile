@@ -297,7 +297,7 @@ pipeline {
                                         sh "rm -f *.tgz"
                                     }
 
-                                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -489,7 +489,7 @@ pipeline {
                                         sh "rm -f *.tgz"
                                     }
 
-                                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
                                 }
                             }
                         }
@@ -560,7 +560,7 @@ pipeline {
                         // LTS: Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip",
+                            "pattern": "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/${targetVersion}/"
                         }]
                         }"""
@@ -604,7 +604,7 @@ pipeline {
                         // Next: Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip",
+                            "pattern": "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/next/"
                         }]
                         }"""
