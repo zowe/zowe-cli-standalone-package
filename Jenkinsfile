@@ -186,7 +186,7 @@ pipeline {
                                     dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        script { zoweCliVersion = "6.32.0" }
+                                        script { zoweCliVersion = "6.32.1" }
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
                                         sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
                                         sh "../scripts/repackage_bundle.sh *.tgz"
@@ -277,15 +277,15 @@ pipeline {
 
                                         script { imperativeVersion = "4.13.4" }
                                         sh "npm pack @zowe/imperative@${imperativeVersion}"
-                                        sh "npm pack @zowe/core-for-zowe-sdk@6.31.1"
-                                        sh "npm pack @zowe/provisioning-for-zowe-sdk@6.31.1"
-                                        sh "npm pack @zowe/zos-console-for-zowe-sdk@6.31.1"
-                                        sh "npm pack @zowe/zos-files-for-zowe-sdk@6.32.0"
-                                        sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.32.0"
-                                        sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.31.1"
-                                        sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.31.1"
-                                        sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.32.0"
-                                        sh "npm pack @zowe/zosmf-for-zowe-sdk@6.31.1"
+                                        sh "npm pack @zowe/core-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/provisioning-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-console-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-files-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/zosmf-for-zowe-sdk@6.32.1"
 
                                         sh "../scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                                         sh "mv zowe-cli-package.zip ../zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
@@ -297,7 +297,7 @@ pipeline {
                                         sh "rm -f *.tgz"
                                     }
 
-                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_VERSION}.zip"
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
                                 }
                             }
                         }
@@ -489,7 +489,7 @@ pipeline {
                                         sh "rm -f *.tgz"
                                     }
 
-                                    archiveArtifacts artifacts: "zowe-nodejs-sdk*-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
+                                    archiveArtifacts artifacts: "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip"
                                 }
                             }
                         }
@@ -538,7 +538,7 @@ pipeline {
                         // LTS: Upload Core CLI and SCS (zowe-cli-package)
                         def uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-package-(!next)*.zip",
+                            "pattern": "zowe-cli-package-${ZOWE_CLI_BUNDLE_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/${targetVersion}/"
                         }]
                         }"""
@@ -549,7 +549,7 @@ pipeline {
                         // LTS: Upload all other plugins (zowe-cli-plugins)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-plugins-(!next)*.zip",
+                            "pattern": "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/${targetVersion}/"
                         }]
                         }"""
@@ -560,7 +560,7 @@ pipeline {
                         // LTS: Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-nodejs-sdk-(!next)*.zip",
+                            "pattern": "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/${targetVersion}/"
                         }]
                         }"""
@@ -571,7 +571,7 @@ pipeline {
                         // LTS: Upload Python SDK packages (zowe-python-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-python-sdk-(!next)*.zip",
+                            "pattern": "zowe-python-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-python-sdk/${targetVersion}/"
                         }]
                         }"""
@@ -582,7 +582,7 @@ pipeline {
                         // Next: Upload Core CLI and SCS (zowe-cli-package)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-package-next-*.zip",
+                            "pattern": "zowe-cli-package-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-package/next/"
                         }]
                         }"""
@@ -593,7 +593,7 @@ pipeline {
                         // Next: Upload all other plugins (zowe-cli-plugins)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-cli-plugins-next-*.zip",
+                            "pattern": "zowe-cli-plugins-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/cli/zowe-cli-plugins/next/"
                         }]
                         }"""
@@ -604,7 +604,7 @@ pipeline {
                         // Next: Upload NodeJS SDK packages (zowe-nodejs-sdk)
                         uploadSpec = """{
                         "files": [{
-                            "pattern": "zowe-nodejs-sdk-next-*.zip",
+                            "pattern": "zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_NEXT_VERSION}.zip",
                             "target": "${targetRepository}/org/zowe/sdk/zowe-nodejs-sdk/next/"
                         }]
                         }"""
