@@ -382,10 +382,12 @@ pipeline {
                                         // sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
 
                                         // Download zowex TGZs into packed folder since they don't need repackaging
-                                        script { def zoweDaemonVersion = "0.2.1" }
-                                        dir("packed") {
-                                            for (platform in ["linux", "macos", "windows"]) {
-                                                sh "curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${zoweDaemonVersion}/zowex-${platform}.tgz"
+                                        script {
+                                            def zoweDaemonVersion = "0.2.1"
+                                            dir("packed") {
+                                                for (platform in ["linux", "macos", "windows"]) {
+                                                    sh "curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${zoweDaemonVersion}/zowex-${platform}.tgz"
+                                                }
                                             }
                                         }
 
