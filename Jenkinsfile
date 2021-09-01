@@ -57,7 +57,7 @@ def ZOWE_ARTIFACTORY_URL = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release
 /**
 * The Zowe CLI Bundle Version to deploy to Artifactory
 */
-def ZOWE_CLI_BUNDLE_VERSION = "1.23.0-SNAPSHOT"
+def ZOWE_CLI_BUNDLE_VERSION = "1.24.0-SNAPSHOT"
 def ZOWE_CLI_BUNDLE_NEXT_VERSION = "next-${new Date().format("yyyyMMdd")}-SNAPSHOT"
 
 /**
@@ -78,7 +78,7 @@ def ARTIFACTORY_RELEASE_REPO = "libs-release-local"
 /**
 * Zowe 1.0.0 licenses
 */
-def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.22.0/zowe_licenses_full.zip"
+def ZOWE_LICENSE_ZIP_PATH = "/org/zowe/licenses/1.24.0/zowe_licenses_full.zip"
 
 /**
 * The locations where the pipeline will look for the License Zip
@@ -186,7 +186,7 @@ pipeline {
                                     dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        script { zoweCliVersion = "6.32.1" }
+                                        script { zoweCliVersion = "6.33.1" }
                                         sh "npm pack @zowe/cli@${zoweCliVersion}"
                                         sh "npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5"
                                         sh "../scripts/repackage_bundle.sh *.tgz"
@@ -230,11 +230,11 @@ pipeline {
                                     dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        sh "npm pack @zowe/db2-for-zowe-cli@4.1.0"
+                                        sh "npm pack @zowe/db2-for-zowe-cli@4.1.1"
                                         sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
                                         sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
                                         sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
-                                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.6.0"
+                                        sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.8.0"
                                         sh "../scripts/repackage_bundle.sh *.tgz"
                                         sh "mv zowe-cli-package.zip ../zowe-cli-plugins-${ZOWE_CLI_BUNDLE_VERSION}.zip"
 
@@ -275,17 +275,17 @@ pipeline {
                                     dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        script { imperativeVersion = "4.13.4" }
+                                        script { imperativeVersion = "4.15.0" }
                                         sh "npm pack @zowe/imperative@${imperativeVersion}"
-                                        sh "npm pack @zowe/core-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/provisioning-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-console-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-files-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.32.1"
-                                        sh "npm pack @zowe/zosmf-for-zowe-sdk@6.32.1"
+                                        sh "npm pack @zowe/core-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/provisioning-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-console-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-files-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-jobs-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-tso-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-uss-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zos-workflows-for-zowe-sdk@6.33.1"
+                                        sh "npm pack @zowe/zosmf-for-zowe-sdk@6.33.1"
 
                                         sh "../scripts/repackage_bundle.sh *.tgz" // Outputs a zowe-cli-package.zip
                                         sh "mv zowe-cli-package.zip ../zowe-nodejs-sdk-${ZOWE_CLI_BUNDLE_VERSION}.zip"
