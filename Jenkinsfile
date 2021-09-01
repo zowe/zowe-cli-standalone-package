@@ -230,8 +230,8 @@ pipeline {
                                     dir("lts") {
                                         sh "mkdir -p licenses && cd licenses && cp ../../zowe_licenses_full.zip zowe_licenses_full.zip"
 
-                                        sh "npm pack @zowe/db2-for-zowe-cli@4.1.1"
                                         sh "npm pack @zowe/cics-for-zowe-cli@4.0.2"
+                                        sh "npm pack @zowe/db2-for-zowe-cli@4.1.1"
                                         sh "npm pack @zowe/ims-for-zowe-cli@2.0.1"
                                         sh "npm pack @zowe/mq-for-zowe-cli@2.0.1"
                                         sh "npm pack @zowe/zos-ftp-for-zowe-cli@1.8.0"
