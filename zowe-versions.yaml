@@ -8,11 +8,11 @@ zowe-sdk:
   core: 6.33.2
   provisioning: 6.33.2
   zos-console: 6.33.2
-  zos-files: 6.33.2
-  zos-jobs: 6.33.2
+  zos-files: 6.33.3
+  zos-jobs: 6.33.3
   zos-tso: 6.33.2
   zos-uss: 6.33.3
-  zos-workflows: 6.33.2
+  zos-workflows: 6.33.3
   zosmf: 6.33.2
 zowe-plugins:
   cics: 4.0.2
