@@ -24,7 +24,7 @@ jobs:
         echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')" >> $GITHUB_ENV
     
     - name: Set Snapshot Versions
-      if: ${{ github.event.name == 'schedule' }}
+      if: ${{ github.event.name != 'workflow_dispatch' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_VERSION=${{ env.ZOWE_CLI_BUNDLE_VERSION }}-SNAPSHOT" >> $GITHUB_ENV
@@ -108,7 +108,7 @@ jobs:
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
         npm pack @zowe/cli@next
         mkdir -p packed && cd packed
-        for platform in "linux macos windows"; do
+        for platform in linux macos windows; do
           curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${{ env.ZOWE_DAEMON_VERSION }}/zowex-$platform.tgz
         done && cd ..
         bash ../scripts/repackage_bundle.sh *.tgz
