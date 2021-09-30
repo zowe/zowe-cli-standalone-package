@@ -11,7 +11,7 @@ for (const [k, v] of Object.entries(zoweVersions["zowe-sdk"])) {
     outputs[`zowe-${k}-sdk`] = v;
 }
 for (const [k, v] of Object.entries(zoweVersions["zowe-plugins"])) {
-    outputs[`zowe-${key}-plugin`] = v;
+    outputs[`zowe-${k}-plugin`] = v;
 }
 for (const [k, v] of Object.entries(outputs)) {
     childProcess.execSync("echo", ["::set-output", `name=${k}::${v}`]);
