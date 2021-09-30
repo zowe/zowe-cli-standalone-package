@@ -3,7 +3,7 @@ name: Zowe CLI Bundle
 on:
   pull_request:
   schedule:
-  - '0 0 * * *'
+  - cron: '0 0 * * *'
   workflow_dispatch:
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
 
     env:
       ARTIFACTORY_REPO: 'libs-release-local'
-      ZOWE_CLI_BUNDLE_VERSION: '1.24.0'
+      ZOWE_CLI_BUNDLE_VERSION: '1.25.0'
       ZOWE_LICENSE_ZIP_PATH: '/org/zowe/licenses/1.24.0/zowe_licenses_full.zip'
       IMPERATIVE_VERSION: '4.15.1'
       ZOWE_CLI_VERSION: '6.33.2'
