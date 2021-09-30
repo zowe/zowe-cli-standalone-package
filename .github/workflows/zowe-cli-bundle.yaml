@@ -160,23 +160,16 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       run: |
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
         jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
         jfrog rt u "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/"
         jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/" \
-          --build-name=zowe-cli-bundle --build-number=${{ github.run_number }}
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/"
