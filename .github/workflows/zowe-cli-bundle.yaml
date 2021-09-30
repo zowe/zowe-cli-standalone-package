@@ -42,8 +42,8 @@ jobs:
       run: |
         npm set registry https://registry.npmjs.org/
         npm set @zowe:registry https://zowe.jfrog.io/zowe/api/npm/npm-local-release/
-        curl -fs -o zowe_licenses_full.zip https://zowe.jfrog.io/zowe/libs-release-local${ZOWE_LICENSE_ZIP_PATH}
         npm install jsonfile
+        cd /tmp && curl -fs -o zowe_licenses_full.zip https://zowe.jfrog.io/zowe/libs-release-local${ZOWE_LICENSE_ZIP_PATH}
 
     - name: Setup JFrog CLI
       uses: jfrog/setup-jfrog-cli@v2
