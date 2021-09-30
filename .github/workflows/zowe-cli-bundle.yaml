@@ -1,0 +1,180 @@
+name: Zowe CLI Bundle
+
+on:
+  pull_request:
+  schedule:
+  - '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      ARTIFACTORY_REPO: 'libs-release-local'
+      ZOWE_CLI_BUNDLE_VERSION: '1.24.0'
+      ZOWE_LICENSE_ZIP_PATH: '/org/zowe/licenses/1.24.0/zowe_licenses_full.zip'
+      IMPERATIVE_VERSION: '4.15.1'
+      ZOWE_CLI_VERSION: '6.33.2'
+      ZOWE_DAEMON_VERSION: '0.2.1'
+
+    steps:
+    - name: Get Next Bundle Timestamp
+      run: |
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')" >> $GITHUB_ENV
+    
+    - name: Set Snapshot Versions
+      if: ${{ github.event.name == 'schedule' }}
+      run: |
+        echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ env.ZOWE_CLI_BUNDLE_VERSION }}-SNAPSHOT" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}-SNAPSHOT" >> $GITHUB_ENV
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js LTS
+      uses: actions/setup-node@v2
+      with:
+        node-version: 'lts'
+
+    - name: Setup
+      run: |
+        npm set registry https://registry.npmjs.org/
+        npm set @zowe:registry https://zowe.jfrog.io/zowe/api/npm/npm-local-release/
+        curl -fs -o zowe_licenses_full.zip https://zowe.jfrog.io/zowe/libs-release-local${ZOWE_LICENSE_ZIP_PATH}
+        npm install jsonfile
+
+    - name: Setup JFrog CLI
+      uses: jfrog/setup-jfrog-cli@v2
+      env:
+        JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
+
+    - name: Create CLI Core LTS Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/cli@${{ env.ZOWE_CLI_VERSION }}
+        npm pack @zowe/secure-credential-store-for-zowe-cli@4.1.5
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        rm -rf *
+    
+    - name: Create CLI Plugins LTS Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/cics-for-zowe-cli@4.0.2
+        npm pack @zowe/db2-for-zowe-cli@4.1.1
+        npm pack @zowe/ims-for-zowe-cli@2.0.1
+        npm pack @zowe/mq-for-zowe-cli@2.0.1
+        npm pack @zowe/zos-ftp-for-zowe-cli@1.8.0
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        rm -rf *
+    
+    - name: Create Node.js SDK LTS Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/imperative@${{ env.IMPERATIVE_VERSION }}
+        npm pack @zowe/core-for-zowe-sdk@6.33.1
+        npm pack @zowe/provisioning-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-console-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-files-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-jobs-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-tso-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-uss-for-zowe-sdk@6.33.1
+        npm pack @zowe/zos-workflows-for-zowe-sdk@6.33.1
+        npm pack @zowe/zosmf-for-zowe-sdk@6.33.1
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        bash ../scripts/generate_typedoc.sh ${{ env.ZOWE_CLI_BUNDLE_VERSION }} ${{ env.IMPERATIVE_VERSION }} ${{ env.ZOWE_CLI_VERSION }}
+        mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        rm -rf *
+    
+    - name: Create Python SDK LTS Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        pip3 download zowe
+        zip -r zowe-sdk.zip *
+        mv zowe-sdk.zip ../zowe-python-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        rm -rf *
+
+    - name: Create CLI Core Next Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/cli@next
+        mkdir -p packed && cd packed
+        for platform in "linux macos windows"; do
+          curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${{ env.ZOWE_DAEMON_VERSION }}/zowex-$platform.tgz
+        done && cd ..
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
+        rm -rf *
+    
+    - name: Create CLI Plugins Next Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/cics-for-zowe-cli@next
+        npm pack @zowe/db2-for-zowe-cli@next
+        npm pack @zowe/ims-for-zowe-cli@next
+        npm pack @zowe/mq-for-zowe-cli@next
+        npm pack @zowe/zos-ftp-for-zowe-cli
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
+        rm -rf *
+    
+    - name: Create Node.js SDK Next Bundle
+      run: |
+        mkdir -p temp && cd temp
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        npm pack @zowe/imperative@next
+        npm pack @zowe/core-for-zowe-sdk@next
+        npm pack @zowe/provisioning-for-zowe-sdk@next
+        npm pack @zowe/zos-console-for-zowe-sdk@next
+        npm pack @zowe/zos-files-for-zowe-sdk@next
+        npm pack @zowe/zos-jobs-for-zowe-sdk@next
+        npm pack @zowe/zos-tso-for-zowe-sdk@next
+        npm pack @zowe/zos-uss-for-zowe-sdk@next
+        npm pack @zowe/zos-workflows-for-zowe-sdk@next
+        npm pack @zowe/zosmf-for-zowe-sdk@next
+        bash ../scripts/repackage_bundle.sh *.tgz
+        mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
+        bash ../scripts/generate_typedoc.sh next
+        mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
+        rm -rf *
+    
+    - name: Archive Build Artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: 'zowe-cli-bundle'
+        path: '*.zip'
+
+    - name: Publish Bundles to Artifactory
+      if: ${{ github.event.name != 'pull_request' }}
+      run: |
+        jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
+        jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/" \
+          --build-name=zowe-cli-bundle --build-number=${{ env.BUILD_NUMBER }}
