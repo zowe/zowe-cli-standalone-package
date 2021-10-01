@@ -31,14 +31,14 @@ jobs:
       run: node scripts/load-zowe-versions.js
 
     - name: Set Release Variables
-      if: ${{ github.event_name != "schedule" }}
+      if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
-      if: ${{ github.event_name == "schedule" }}
+      if: ${{ github.event_name == 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
         echo "NPM_PACKAGE_TAG=zowe-v1-lts" >> $GITHUB_ENV
