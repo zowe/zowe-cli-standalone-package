@@ -1,0 +1,25 @@
+{
+  "name": "zowe-cli-standalone-package",
+  "private": true,
+  "description": "This repository pulls the latest Zowe CLI and Zowe CLI Plugin Artifacts from Artifactory, and generates a standalone ZIP file containing the contents.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zowe/zowe-cli-standalone-package.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zowe/zowe-cli-standalone-package/issues"
+  },
+  "homepage": "https://github.com/zowe/zowe-cli-standalone-package#readme",
+  "devDependencies": {
+    "@actions/core": "^1.6.0",
+    "js-yaml": "^4.1.0",
+    "jsonfile": "^6.1.0"
+  }
+}
