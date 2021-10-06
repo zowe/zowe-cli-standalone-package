@@ -35,6 +35,11 @@ do
 
     npm install --legacy-peer-deps --ignore-scripts
 
+    if [[ $tar = "zowe-cli"* || $tar = *"zos-uss-for-zowe-sdk"* ]]; then
+        # Remove CPU Features Optional Dependency before packing
+        rm -rf "./node_modules/cpu-features"
+    fi
+
     # Extra work required for the db2 plugin with respect to packing the ibm_db plugin
     # The plugin does not support reinstall, and deletes required files during a normal install.
     # This block restores the plugin structure to a 'clean' state
