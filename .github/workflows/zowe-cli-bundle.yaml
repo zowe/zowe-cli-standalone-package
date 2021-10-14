@@ -52,12 +52,12 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_full.zip /tmp/ --flat=true
+        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/ --flat=true
 
     - name: Create CLI Core LTS Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-cli }}
         npm pack @zowe/secure-credential-store-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-secure-credential-store-plugin }}
         bash ../scripts/repackage_bundle.sh *.tgz
@@ -67,7 +67,7 @@ jobs:
     - name: Create CLI Plugins LTS Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cics-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-cics-plugin }}
         npm pack @zowe/db2-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-db2-plugin }}
         npm pack @zowe/ims-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-ims-plugin }}
@@ -80,7 +80,7 @@ jobs:
     - name: Create Node.js SDK LTS Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/imperative@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-imperative }}
         npm pack @zowe/core-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-core-sdk }}
         npm pack @zowe/provisioning-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-provisioning-sdk }}
@@ -101,7 +101,7 @@ jobs:
     - name: Create Python SDK LTS Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         pip3 download zowe
         zip -r zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
@@ -110,7 +110,7 @@ jobs:
     - name: Create CLI Core Next Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@next
         mkdir -p packed && cd packed
         for platform in linux macos windows; do
@@ -123,7 +123,7 @@ jobs:
     - name: Create CLI Plugins Next Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cics-for-zowe-cli@next
         npm pack @zowe/db2-for-zowe-cli@next
         npm pack @zowe/ims-for-zowe-cli@next
@@ -136,7 +136,7 @@ jobs:
     - name: Create Node.js SDK Next Bundle
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/imperative@next
         npm pack @zowe/core-for-zowe-sdk@next
         npm pack @zowe/provisioning-for-zowe-sdk@next
