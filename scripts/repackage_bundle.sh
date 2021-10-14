@@ -23,8 +23,8 @@ do
     node "$(dirname $0)/configure-to-bundle.js"
 
     cd temp/package
-    cp ../../.npmrc . || true
-    npm view @zowe/cli
+    cp ../../../.npmrc .
+    echo Bravo && npm view @zowe/cli
 
     ## Extra work required to delete imperative prepare script
     ## This prevents Husky from erroring out - and it isn't needed if we aren't developing Imperative

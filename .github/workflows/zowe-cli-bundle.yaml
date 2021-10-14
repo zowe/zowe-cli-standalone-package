@@ -58,6 +58,7 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_full.zip zowe_licenses_full.zip && cd ..
+        echo Alpha && npm view @zowe/cli
         npm pack @zowe/cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-cli }}
         npm pack @zowe/secure-credential-store-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-secure-credential-store-plugin }}
         bash ../scripts/repackage_bundle.sh *.tgz
