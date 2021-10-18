@@ -9,6 +9,10 @@ on:
       license-version:
         description: "Override the version of Zowe Licenses ZIP"
         required: false
+      rc-number:
+        description: "Specify the number of Release Candidate build"
+        default: "1"
+        required: true
 
 jobs:
   build:
@@ -34,8 +38,8 @@ jobs:
       if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}-RC${{ github.events.inputs.rc-number || '1' }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ github.events.inputs.rc-number || '1' }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}
