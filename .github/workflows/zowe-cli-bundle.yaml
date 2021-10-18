@@ -6,13 +6,13 @@ on:
   - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
-      license-version:
-        description: "Override the version of Zowe Licenses ZIP"
-        required: false
       rc-number:
-        description: "Specify the number of Release Candidate build"
+        description: "Specify number of Release Candidate build"
         default: "1"
         required: true
+      license-version:
+        description: "Override version of Zowe Licenses ZIP"
+        required: false
 
 jobs:
   build:
