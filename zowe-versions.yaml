@@ -1,19 +1,20 @@
-zowe: 1.25.0
+zowe: 1.26.0
 zowe-cli:
-  imperative: 4.16.2
+  imperative: 4.17.1
   perf-timing: 1.0.7
-  cli: 6.35.0
-  daemon: 0.2.1
+  cli: 6.37.0
+  daemon: 0.4.0
 zowe-sdk:
-  core: 6.34.1
-  provisioning: 6.34.1
-  zos-console: 6.34.1
-  zos-files: 6.34.1
-  zos-jobs: 6.35.0
-  zos-tso: 6.34.1
-  zos-uss: 6.34.1
-  zos-workflows: 6.35.0
-  zosmf: 6.34.1
+  core: 6.36.1
+  provisioning: 6.36.1
+  zos-console: 6.36.1
+  zos-files: 6.36.1
+  zos-logs: 6.37.0
+  zos-jobs: 6.36.1
+  zos-tso: 6.36.1
+  zos-uss: 6.36.1
+  zos-workflows: 6.36.1
+  zosmf: 6.36.1
 zowe-plugins:
   cics: 4.0.2
   db2: 4.1.1
