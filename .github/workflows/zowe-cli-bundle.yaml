@@ -56,7 +56,7 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/ --flat=true
+        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/ --flat=true --fail-no-op=true
 
     - name: Create CLI Core LTS Bundle
       run: |
@@ -91,6 +91,7 @@ jobs:
         npm pack @zowe/zos-console-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-console-sdk }}
         npm pack @zowe/zos-files-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-files-sdk }}
         npm pack @zowe/zos-jobs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-jobs-sdk }}
+        npm pack @zowe/zos-logs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-logs-sdk }}
         npm pack @zowe/zos-tso-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-tso-sdk }}
         npm pack @zowe/zos-uss-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-uss-sdk }}
         npm pack @zowe/zos-workflows-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-workflows-sdk }}
@@ -118,7 +119,7 @@ jobs:
         npm pack @zowe/cli@next
         mkdir -p packed && cd packed
         for platform in linux macos windows; do
-          curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${{ steps.versions.outputs.zowe-daemon }}/zowex-$platform.tgz
+          curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${{ steps.versions.outputs.zowe-daemon }}/zowe-$platform.tgz
         done && cd ..
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
@@ -147,6 +148,7 @@ jobs:
         npm pack @zowe/zos-console-for-zowe-sdk@next
         npm pack @zowe/zos-files-for-zowe-sdk@next
         npm pack @zowe/zos-jobs-for-zowe-sdk@next
+        npm pack @zowe/zos-logs-for-zowe-sdk@next
         npm pack @zowe/zos-tso-for-zowe-sdk@next
         npm pack @zowe/zos-uss-for-zowe-sdk@next
         npm pack @zowe/zos-workflows-for-zowe-sdk@next
