@@ -168,14 +168,15 @@ jobs:
     - name: Publish Bundles to Artifactory
       if: ${{ github.event_name != 'pull_request' }}
       run: |
+        export ARTIFACTORY_VERSION_DIR=$(echo "${{ env.ZOWE_CLI_BUNDLE_VERSION }}" | sed 's/-RC.*//')
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
