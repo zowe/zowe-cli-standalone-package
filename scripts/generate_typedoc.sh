@@ -11,7 +11,7 @@
 ###
 
 if [ $1 != "next" ]; then
-  zoweVersion=v$1
+  zoweVersion=v$(echo "$1" | sed 's/-RC.*//')
   imperativeVersion=v$2
   cliVersion=v$3
 else
