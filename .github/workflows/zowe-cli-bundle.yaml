@@ -6,6 +6,16 @@ on:
   - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
+      build-lts:
+        description: "Build and deploy LTS bundle"
+        default: true
+        required: true
+        type: boolean
+      build-next:
+        description: "Build and deploy vNext bundle"
+        default: true
+        required: true
+        type: boolean
       rc-number:
         description: "Specify number of Release Candidate build"
         default: "1"
@@ -56,9 +66,12 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
+        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}-next/zowe_licenses_cli.zip /tmp/ --flat=true --fail-no-op=true
+        mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
         jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/ --flat=true --fail-no-op=true
 
     - name: Create CLI Core LTS Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-lts }}
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
@@ -69,6 +82,7 @@ jobs:
         rm -rf *
     
     - name: Create CLI Plugins LTS Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-lts }}
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
@@ -82,6 +96,7 @@ jobs:
         rm -rf *
     
     - name: Create Node.js SDK LTS Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-lts }}
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
@@ -104,6 +119,7 @@ jobs:
         rm -rf *
     
     - name: Create Python SDK LTS Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-lts }}
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
@@ -113,9 +129,10 @@ jobs:
         rm -rf *
 
     - name: Create CLI Core Next Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-next }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@next
         mkdir -p packed && cd packed
         for platform in linux macos windows; do
@@ -126,9 +143,10 @@ jobs:
         rm -rf *
     
     - name: Create CLI Plugins Next Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-next }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cics-for-zowe-cli@next
         npm pack @zowe/db2-for-zowe-cli@next
         npm pack @zowe/ims-for-zowe-cli@next
@@ -139,9 +157,10 @@ jobs:
         rm -rf *
     
     - name: Create Node.js SDK Next Bundle
+      if: ${{ github.event_name != 'workflow' || github.events.inputs.build-next }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/imperative@next
         npm pack @zowe/core-for-zowe-sdk@next
         npm pack @zowe/provisioning-for-zowe-sdk@next
@@ -165,17 +184,22 @@ jobs:
         name: 'zowe-cli-bundle'
         path: '*.zip'
 
-    - name: Publish Bundles to Artifactory
-      if: ${{ github.event_name != 'pull_request' }}
+    - name: Publish LTS Bundles to Artifactory
+      if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow' || github.events.inputs.build-lts) }}
       run: |
+        export ARTIFACTORY_VERSION_DIR=$(echo "${{ env.ZOWE_CLI_BUNDLE_VERSION }}" | sed 's/-RC.*//')
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${ARTIFACTORY_VERSION_DIR}/"
         jfrog rt u "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${{ env.ZOWE_CLI_BUNDLE_VERSION }}/"
+          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${ARTIFACTORY_VERSION_DIR}/"
+
+    - name: Publish vNext Bundles to Artifactory
+      if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow' || github.events.inputs.build-next) }}
+      run: |
         jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
         jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \

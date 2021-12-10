@@ -3,7 +3,7 @@ zowe-cli:
   imperative: 4.17.1
   perf-timing: 1.0.7
   cli: 6.37.0
-  daemon: 0.4.0
+  daemon: 0.4.1
 zowe-sdk:
   core: 6.36.1
   provisioning: 6.36.1
