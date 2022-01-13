@@ -188,23 +188,23 @@ jobs:
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
       run: |
         export ARTIFACTORY_VERSION_DIR=$(echo "${{ env.ZOWE_CLI_BUNDLE_VERSION }}" | sed 's/-RC.*//')
-        node add-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${ARTIFACTORY_VERSION_DIR}/"
-        node add-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${ARTIFACTORY_VERSION_DIR}/"
-        node add-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${ARTIFACTORY_VERSION_DIR}/"
-        node add-upload.js "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${ARTIFACTORY_VERSION_DIR}/"
 
     - name: Add vNext Bundles to Spec
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
       run: |
-        node add-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
-        node add-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/"
-        node add-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/add-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/"
 
     - name: Publish to Artifactory
