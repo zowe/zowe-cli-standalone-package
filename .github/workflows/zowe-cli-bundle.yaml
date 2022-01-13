@@ -134,10 +134,6 @@ jobs:
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@next
-        mkdir -p packed && cd packed
-        for platform in linux macos windows; do
-          curl -fLOJ https://github.com/zowe/zowe-cli/releases/download/native-v${{ steps.versions.outputs.zowe-daemon }}/zowe-$platform.tgz
-        done && cd ..
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
         rm -rf *
