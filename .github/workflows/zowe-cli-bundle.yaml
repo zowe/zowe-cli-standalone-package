@@ -16,10 +16,6 @@ on:
         default: true
         required: true
         type: boolean
-      rc-number:
-        description: "Specify number of Release Candidate build"
-        default: "1"
-        required: true
       license-version:
         description: "Override version of Zowe Licenses ZIP"
         required: false
@@ -48,15 +44,15 @@ jobs:
       if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}-RC${{ github.event.inputs.rc-number || '1' }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ github.event.inputs.rc-number || '1' }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
         echo "NPM_PACKAGE_TAG=zowe-v1-lts" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}-SNAPSHOT" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-SNAPSHOT" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-SNAPSHOT" >> $GITHUB_ENV
 
     - name: Setup JFrog CLI
@@ -66,9 +62,9 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}-next/zowe_licenses_cli.zip /tmp/
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}-next/zowe_licenses_cli.zip /tmp/
         mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}/zowe_licenses_cli.zip /tmp/
 
     - name: Create CLI Core LTS Bundle
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
