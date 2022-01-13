@@ -213,10 +213,6 @@ jobs:
 
     - name: Comment on PR
       if: ${{ github.event_name == 'pull_request' }}
-      uses: actions/github-script@0.3.0
+      uses: marocchino/sticky-pull-request-comment@v2
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const { issue: { number: issue_number }, repo: { owner, repo } } = context;
-          const body = require("fs").readFileSync("summary.md", "utf-8");
-          github.issues.createComment({ issue_number, owner, repo, body });
+        path: summary.md
