@@ -4,7 +4,7 @@ const jsYaml = require("js-yaml");
 
 const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
 const outputs = {
-    "zowe-semver": zoweVersions.zowe.semver,
+    "zowe-version": zoweVersions.zowe.version,
     "zowe-rc": zoweVersions.zowe.rc
 };
 for (const [k, v] of Object.entries(zoweVersions["zowe-cli"])) {
