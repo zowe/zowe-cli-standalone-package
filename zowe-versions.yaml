@@ -1,4 +1,6 @@
-zowe: 1.27.0
+zowe:
+  version: 1.27.0
+  rc: 1
 zowe-cli:
   imperative: 4.17.3
   perf-timing: 1.0.7

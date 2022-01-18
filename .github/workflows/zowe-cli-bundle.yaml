@@ -16,10 +16,6 @@ on:
         default: true
         required: true
         type: boolean
-      rc-number:
-        description: "Specify number of Release Candidate build"
-        default: "1"
-        required: true
       license-version:
         description: "Override version of Zowe Licenses ZIP"
         required: false
@@ -48,15 +44,15 @@ jobs:
       if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}-RC${{ github.event.inputs.rc-number || '1' }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ github.event.inputs.rc-number || '1' }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
         echo "NPM_PACKAGE_TAG=zowe-v1-lts" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe }}-SNAPSHOT" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-SNAPSHOT" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-SNAPSHOT" >> $GITHUB_ENV
 
     - name: Setup JFrog CLI
@@ -66,9 +62,9 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}-next/zowe_licenses_cli.zip /tmp/ --flat=true --fail-no-op=true
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}-next/zowe_licenses_cli.zip /tmp/
         mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
-        jfrog rt dl libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe }}/zowe_licenses_cli.zip /tmp/ --flat=true --fail-no-op=true
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}/zowe_licenses_cli.zip /tmp/
 
     - name: Create CLI Core LTS Bundle
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
@@ -180,25 +176,35 @@ jobs:
         name: 'zowe-cli-bundle'
         path: '*.zip'
 
-    - name: Publish LTS Bundles to Artifactory
-      if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true') }}
+    - name: Add LTS Bundles to Spec
+      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
       run: |
         export ARTIFACTORY_VERSION_DIR=$(echo "${{ env.ZOWE_CLI_BUNDLE_VERSION }}" | sed 's/-RC.*//')
-        jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${ARTIFACTORY_VERSION_DIR}/"
-        jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${ARTIFACTORY_VERSION_DIR}/"
-        jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${ARTIFACTORY_VERSION_DIR}/"
-        jfrog rt u "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${ARTIFACTORY_VERSION_DIR}/"
 
-    - name: Publish vNext Bundles to Artifactory
-      if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true') }}
+    - name: Add vNext Bundles to Spec
+      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
       run: |
-        jfrog rt u "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
-        jfrog rt u "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/"
-        jfrog rt u "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
+        node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
           "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/"
+
+    - name: Publish to Artifactory
+      if: ${{ github.event_name != 'pull_request' }}
+      run: jfrog rt u --spec upload-spec.json
+
+    - name: Comment on PR
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: summary.md
