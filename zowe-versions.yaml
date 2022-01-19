@@ -23,5 +23,5 @@ zowe-v1-lts:
       mq: 2.0.1
       secure-credential-store: 4.1.6
       zos-ftp: 1.8.3
-zowe-vnext:
+next:
   snapshot: 2022-01-12
