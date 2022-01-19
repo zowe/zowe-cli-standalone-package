@@ -1,25 +1,27 @@
-zowe:
+zowe-v1-lts:
   version: 1.27.0
   rc: 1
-zowe-cli:
-  imperative: 4.17.3
-  perf-timing: 1.0.7
-  cli: 6.37.2
-zowe-sdk:
-  core: 6.37.2
-  provisioning: 6.37.2
-  zos-console: 6.37.2
-  zos-files: 6.37.2
-  zos-logs: 6.37.2
-  zos-jobs: 6.37.2
-  zos-tso: 6.37.2
-  zos-uss: 6.37.2
-  zos-workflows: 6.37.2
-  zosmf: 6.37.2
-zowe-plugins:
-  cics: 4.0.3
-  db2: 4.1.1
-  ims: 2.0.1
-  mq: 2.0.1
-  secure-credential-store: 4.1.6
-  zos-ftp: 1.8.3
+  packages:
+    imperative: 4.17.3
+    perf-timing: 1.0.7
+    cli: 6.37.2
+    sdks:
+      core: 6.37.2
+      provisioning: 6.37.2
+      zos-console: 6.37.2
+      zos-files: 6.37.2
+      zos-logs: 6.37.2
+      zos-jobs: 6.37.2
+      zos-tso: 6.37.2
+      zos-uss: 6.37.2
+      zos-workflows: 6.37.2
+      zosmf: 6.37.2
+    plugins:
+      cics: 4.0.3
+      db2: 4.1.1
+      ims: 2.0.1
+      mq: 2.0.1
+      secure-credential-store: 4.1.6
+      zos-ftp: 1.8.3
+zowe-vnext:
+  snapshot: 2022-01-12

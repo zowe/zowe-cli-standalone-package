@@ -44,15 +44,15 @@ jobs:
       if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ steps.versions.outputs.zowe-rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-v1-lts.version }}-RC${{ steps.versions.outputs.zowe-v1-lts.rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ steps.versions.outputs.zowe-v1-lts.rc }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
         echo "NPM_PACKAGE_TAG=zowe-v1-lts" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-version }}-SNAPSHOT" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-v1-lts.version }}-SNAPSHOT" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-SNAPSHOT" >> $GITHUB_ENV
 
     - name: Setup JFrog CLI
@@ -62,17 +62,17 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}-next/zowe_licenses_cli.zip /tmp/
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-v1-lts.version }}-next/zowe_licenses_cli.zip /tmp/
         mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-version }}/zowe_licenses_cli.zip /tmp/
+        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.zowe-v1-lts.version }}/zowe_licenses_cli.zip /tmp/
 
     - name: Create CLI Core LTS Bundle
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-cli }}
-        npm pack @zowe/secure-credential-store-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-secure-credential-store-plugin }}
+        npm pack @zowe/cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.cli }}
+        npm pack @zowe/secure-credential-store-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.secure-credential-store }}
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
         rm -rf *
@@ -82,11 +82,11 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cics-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-cics-plugin }}
-        npm pack @zowe/db2-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-db2-plugin }}
-        npm pack @zowe/ims-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-ims-plugin }}
-        npm pack @zowe/mq-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-mq-plugin }}
-        npm pack @zowe/zos-ftp-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-ftp-plugin }}
+        npm pack @zowe/cics-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.cics }}
+        npm pack @zowe/db2-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.db2 }}
+        npm pack @zowe/ims-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.ims }}
+        npm pack @zowe/mq-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.mq }}
+        npm pack @zowe/zos-ftp-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.plugins.zos-ftp }}
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
         rm -rf *
@@ -96,21 +96,21 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/imperative@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-imperative }}
-        npm pack @zowe/core-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-core-sdk }}
-        npm pack @zowe/provisioning-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-provisioning-sdk }}
-        npm pack @zowe/zos-console-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-console-sdk }}
-        npm pack @zowe/zos-files-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-files-sdk }}
-        npm pack @zowe/zos-jobs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-jobs-sdk }}
-        npm pack @zowe/zos-logs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-logs-sdk }}
-        npm pack @zowe/zos-tso-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-tso-sdk }}
-        npm pack @zowe/zos-uss-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-uss-sdk }}
-        npm pack @zowe/zos-workflows-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zos-workflows-sdk }}
-        npm pack @zowe/zosmf-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-zosmf-sdk }}
+        npm pack @zowe/imperative@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.imperative }}
+        npm pack @zowe/core-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.core }}
+        npm pack @zowe/provisioning-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.provisioning }}
+        npm pack @zowe/zos-console-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-console }}
+        npm pack @zowe/zos-files-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-files }}
+        npm pack @zowe/zos-jobs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-jobs }}
+        npm pack @zowe/zos-logs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-logs }}
+        npm pack @zowe/zos-tso-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-tso }}
+        npm pack @zowe/zos-uss-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-uss }}
+        npm pack @zowe/zos-workflows-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zos-workflows }}
+        npm pack @zowe/zosmf-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.zowe-v1-lts.packages.sdks.zosmf }}
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
         bash ../scripts/generate_typedoc.sh ${{ env.ZOWE_CLI_BUNDLE_VERSION }} \
-          ${{ steps.versions.outputs.zowe-imperative }} ${{ steps.versions.outputs.zowe-cli }}
+          ${{ steps.versions.outputs.zowe-v1-lts.packages.imperative }} ${{ steps.versions.outputs.zowe-v1-lts.packages.cli }}
         mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
         rm -rf *
     
