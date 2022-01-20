@@ -20,6 +20,7 @@ async function getPackageInfo(pkg, opts="", prop="version") {
 }
 
 function npmLogin() {
+    throw new Error("Not yet implemented");
     const lines = [
         `//${targetRegistry.replace(/^http(s):\/\//, "")}:_authToken=${process.env.NPM_TOKEN}`,
         `registry=${targetRegistry}`
@@ -88,6 +89,7 @@ function npmLogin() {
         throw installError;
     }
 })().catch((err) => {
+    core.setOutput("error", err.stack);
     core.setFailed(err);
     process.exit(1);
 });

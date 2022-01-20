@@ -1,0 +1,46 @@
+name: Zowe CLI Deploy Component
+
+on:
+  workflow_dispatch:
+    inputs:
+      pkg-name:
+        description: "Name of the package to be deployed (the @zowe scope will be prepended)"
+        default: "cli"
+        required: true
+      pkg-tag:
+        description: "Tag to be distributed from Artifactory"
+        default: "daily"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Deploy Package
+      id: deploy
+      run: node scripts/deploy-component.js ${{ github.event.inputs.pkg-name }} ${{ github.event.inputs.pkg-tag }}
+      env:
+        NPM_TOKEN: XXX
+
+    - name: Create Issue
+      if: ${{ failure() }}
+      uses: JasonEtco/create-an-issue@v2
+      env:
+        ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
+        PKG_SPEC: ${{ github.event.inputs.pkg-name }}@${{ github.event.inputs.pkg-tag }}
+      with:
+        filename: issue-template.md
+        update_existing: true
