@@ -44,8 +44,9 @@ jobs:
       if: ${{ github.event_name != 'schedule' }}
       run: |
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
+        echo "NEXT_SNAPSHOT_DATE=$(${{ steps.versions.outputs.next_snapshot }}/-///)" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-v1-lts_version }}-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(${{ steps.versions.outputs.next_snapshot }}/-///)-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}
@@ -129,7 +130,7 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cli@next
+        npm pack $(node ../scripts/get-next-version.js @zowe/cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
         rm -rf *
@@ -139,11 +140,11 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cics-for-zowe-cli@next
-        npm pack @zowe/db2-for-zowe-cli@next
-        npm pack @zowe/ims-for-zowe-cli@next
-        npm pack @zowe/mq-for-zowe-cli@next
-        npm pack @zowe/zos-ftp-for-zowe-cli
+        npm pack $(node ../scripts/get-next-version.js @zowe/cics-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/db2-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/ims-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/mq-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-ftp-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'latest' }})
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
         rm -rf *
@@ -153,17 +154,17 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/imperative@next
-        npm pack @zowe/core-for-zowe-sdk@next
-        npm pack @zowe/provisioning-for-zowe-sdk@next
-        npm pack @zowe/zos-console-for-zowe-sdk@next
-        npm pack @zowe/zos-files-for-zowe-sdk@next
-        npm pack @zowe/zos-jobs-for-zowe-sdk@next
-        npm pack @zowe/zos-logs-for-zowe-sdk@next
-        npm pack @zowe/zos-tso-for-zowe-sdk@next
-        npm pack @zowe/zos-uss-for-zowe-sdk@next
-        npm pack @zowe/zos-workflows-for-zowe-sdk@next
-        npm pack @zowe/zosmf-for-zowe-sdk@next
+        npm pack $(node ../scripts/get-next-version.js @zowe/imperative ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/core-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/provisioning-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-console-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-files-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-jobs-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-logs-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-tso-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-uss-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zos-workflows-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
+        npm pack $(node ../scripts/get-next-version.js @zowe/zosmf-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
         bash ../scripts/generate_typedoc.sh next
