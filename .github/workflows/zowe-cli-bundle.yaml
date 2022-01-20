@@ -43,10 +43,11 @@ jobs:
     - name: Set Release Variables
       if: ${{ github.event_name != 'schedule' }}
       run: |
+        export NEXT_SNAPSHOT_DATE=$(echo "${{ steps.versions.outputs.next_snapshot }}" | sed 's/-//g')
         echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "NEXT_SNAPSHOT_DATE=$(${{ steps.versions.outputs.next_snapshot }}/-///)" >> $GITHUB_ENV
+        echo "NEXT_SNAPSHOT_DATE=${NEXT_SNAPSHOT_DATE}" >> $GITHUB_ENV
         echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.zowe-v1-lts_version }}-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(${{ steps.versions.outputs.next_snapshot }}/-///)-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
+        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-${NEXT_SNAPSHOT_DATE}-RC${{ steps.versions.outputs.zowe-v1-lts_rc }}" >> $GITHUB_ENV
 
     - name: Set Snapshot Variables
       if: ${{ github.event_name == 'schedule' }}

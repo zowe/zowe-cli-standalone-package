@@ -24,4 +24,4 @@ zowe-v1-lts:
       secure-credential-store: 4.1.6
       zos-ftp: 1.8.3
 next:
-  snapshot: 2022-01-12
+  snapshot: '2022-01-12'
