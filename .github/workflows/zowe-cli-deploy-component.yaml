@@ -41,6 +41,7 @@ jobs:
       uses: JasonEtco/create-an-issue@v2
       env:
         ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PKG_SPEC: ${{ github.event.inputs.pkg-name }}@${{ github.event.inputs.pkg-tag }}
       with:
         filename: issue-template.md
