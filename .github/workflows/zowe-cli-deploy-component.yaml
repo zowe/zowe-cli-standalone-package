@@ -1,0 +1,21 @@
+name: Zowe CLI Deploy Component
+
+on:
+  workflow_dispatch:
+    inputs:
+      pkg-name:
+        description: "Name of the package to be deployed (the @zowe scope will be prepended)"
+        default: "cli"
+        required: true
+      pkg-tag:
+        description: "Tag to be distributed from Artifactory"
+        default: "daily"
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
