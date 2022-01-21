@@ -46,7 +46,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     } else {
         const dateString = pkgVersion.split(".").pop();
         const pkgDate = moment(`${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`);
-        return pkgDate.isSameOrAfter(moment().startOf("day"));
+        return pkgDate.isAfter(moment().startOf("day"));
     }
 }
 
