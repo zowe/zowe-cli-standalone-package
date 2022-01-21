@@ -16,14 +16,17 @@ async function getPackageInfo(pkg, opts="", prop="version") {
     core.info(`Getting '${prop}' for package: ${pkg}`);
     const rc = await exec.exec("npm", ["view", pkg, opts], { ignoreReturnCode: true });
     if (rc === 0) {
-        return (await exec.getExecOutput("npm", ["view", pkg, prop, opts])).stdout.trim();
+        const viewOpts = ["view", pkg, prop];
+        if (opts) {
+            viewOpts.push(opts);
+        }
+        return (await exec.getExecOutput("npm", viewOpts)).stdout.trim();
     } else {
         throw new Error(`Package not found: ${pkg}`);
     }
 }
 
 function npmLogin() {
-    throw new Error("Not yet implemented");
     const lines = [
         `//${targetRegistry.replace(/^http(s):\/\//, "")}:_authToken=${process.env.NPM_TOKEN}`,
         `registry=${targetRegistry}`
@@ -34,7 +37,7 @@ function npmLogin() {
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
     const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
-        headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+        headers: process.env.CI ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
     });
     if (!response.ok) {
         throw new Error(response.statusText);
@@ -44,8 +47,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     if (!isStaging) {
         return false;
     } else if (pkgTag !== "next") {
-        const stagedVersion = zoweVersions.packages[pkgName];
-        return pkgVersion > stagedVersion;
+        return pkgVersion > zoweVersions.packages[pkgName]["zowe-v1-lts"];
     } else {
         const dateString = pkgVersion.split(".").pop();
         const pkgDate = moment(`${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`);
