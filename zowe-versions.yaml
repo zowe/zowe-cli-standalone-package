@@ -1,27 +1,53 @@
-zowe-v1-lts:
-  version: 1.27.0
-  rc: 1
-  packages:
-    imperative: 4.17.3
-    perf-timing: 1.0.7
-    cli: 6.37.2
-    sdks:
-      core: 6.37.2
-      provisioning: 6.37.2
-      zos-console: 6.37.2
-      zos-files: 6.37.2
-      zos-logs: 6.37.2
-      zos-jobs: 6.37.2
-      zos-tso: 6.37.2
-      zos-uss: 6.37.2
-      zos-workflows: 6.37.2
-      zosmf: 6.37.2
-    plugins:
-      cics: 4.0.3
-      db2: 4.1.1
-      ims: 2.0.1
-      mq: 2.0.1
-      secure-credential-store: 4.1.6
-      zos-ftp: 1.8.3
-next:
-  snapshot: '2022-01-12'
+packages:
+  # Core packages
+  imperative:
+    zowe-v1-lts: 4.17.3
+  perf-timing:
+    zowe-v1-lts: 1.0.7
+  cli:
+    zowe-v1-lts: &cliV1Lts 6.37.2
+  # SDK packages
+  core-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  provisioning-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-console-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-files-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-logs-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-jobs-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-tso-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-uss-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zos-workflows-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  zosmf-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+  # CLI plug-ins
+  cics-for-zowe-cli:
+    zowe-v1-lts: 4.0.3
+  db2-for-zowe-cli:
+    zowe-v1-lts: 4.1.1
+  ims-for-zowe-cli:
+    zowe-v1-lts: 2.0.1
+  mq-for-zowe-cli:
+    zowe-v1-lts: 2.0.1
+  secure-credential-store-for-zowe-cli:
+    zowe-v1-lts: 4.1.6
+  zos-ftp-for-zowe-cli:
+    zowe-v1-lts: 1.8.3
+tags:
+  zowe-v1-lts:
+    version: 1.27.0
+    rc: 1
+  latest:
+    alias: zowe-v1-lts
+  next:
+    snapshot: '2022-01-12'
+    exclude:
+    - secure-credential-store-for-zowe-cli
+    - zos-ftp-for-zowe-cli

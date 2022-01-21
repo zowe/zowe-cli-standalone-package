@@ -33,7 +33,8 @@ jobs:
       id: deploy
       run: node scripts/deploy-component.js ${{ github.event.inputs.pkg-name }} ${{ github.event.inputs.pkg-tag }}
       env:
-        NPM_TOKEN: XXX
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
 
     - name: Create Issue
       if: ${{ failure() }}
