@@ -1,16 +1,6 @@
 name: Zowe CLI Deploy Component
 
 on:
-  workflow_call:
-    inputs:
-      pkg-name:
-        description: "Name of the package to be deployed (the @zowe scope will be prepended)"
-        required: true
-        type: "string"
-      pkg-tag:
-        description: "Tag to be distributed from Artifactory"
-        required: true
-        type: "string"
   workflow_dispatch:
     inputs:
       pkg-name:

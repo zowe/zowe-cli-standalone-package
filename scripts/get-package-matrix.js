@@ -7,4 +7,4 @@ const matrix = [];
 for (const [k, v] of Object.entries(zoweVersions.packages)) {
     matrix.push(...["latest", ...Object.keys(v).filter(x => v[x])].map(tag => `${k}:${tag}`));
 }
-core.setOutput("deploy-matrix", JSON.stringify(matrix));
+core.setOutput("deploy-matrix", JSON.stringify(matrix.slice(0, 4)));

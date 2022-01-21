@@ -35,6 +35,12 @@ jobs:
         package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
 
     steps:
+    - name: Set Environment Variables
+      run: |
+        IFS=":" | read -r PKG_NAME PKG_TAG <<< "${{ matrix.package }}"
+        echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
+        echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
+
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -43,15 +49,24 @@ jobs:
       with:
         node-version: '16'
         cache: 'npm'
-    
-    - name: Set Environment Variables
-      run: |
-        IFS=":" | read -r PKG_NAME PKG_TAG <<< "${{ matrix.package }}"
-        echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
-        echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
 
-    - name: Deploy Component
-      uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Deploy Package
+      id: deploy
+      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAG }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+    - name: Create Issue
+      if: ${{ failure() }}
+      uses: JasonEtco/create-an-issue@v2
+      env:
+        ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
-        pkg-name: ${{ env.PKG_NAME }}
-        pkg-tag: ${{ env.PKG_TAG }}
+        filename: issue-template.md
+        update_existing: true
