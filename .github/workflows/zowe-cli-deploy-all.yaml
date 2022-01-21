@@ -30,6 +30,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
 
@@ -50,7 +51,7 @@ jobs:
         echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
 
     - name: Deploy Component
-      uses: ./.github/workflows/zowe-cli-deploy-component.yaml@master
+      uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
       with:
         pkg-name: ${{ env.PKG_NAME }}
         pkg-tag: ${{ env.PKG_TAG }}
