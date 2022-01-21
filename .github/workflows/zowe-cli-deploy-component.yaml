@@ -1,8 +1,16 @@
 name: Zowe CLI Deploy Component
 
 on:
-  repository_dispatch:
-    types: [deploy]
+  workflow_call:
+    inputs:
+      pkg-name:
+        description: "Name of the package to be deployed (the @zowe scope will be prepended)"
+        required: true
+        type: "string"
+      pkg-tag:
+        description: "Tag to be distributed from Artifactory"
+        required: true
+        type: "string"
   workflow_dispatch:
     inputs:
       pkg-name:
@@ -19,8 +27,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PKG_NAME: ${{ github.event.client_payload.pkgName || github.event.inputs.pkg-name }}
-      PKG_TAG: ${{ github.event.client_payload.pkgTag || github.event.inputs.pkg-tag }}
+      PKG_NAME: ${{ github.event.inputs.pkg-name }}
+      PKG_TAG: ${{ github.event.inputs.pkg-tag }}
 
     steps:
     - name: Checkout

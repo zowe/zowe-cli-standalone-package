@@ -49,14 +49,8 @@ jobs:
         echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
         echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
 
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v1
-      env:
-        ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    - name: Deploy Component
+      uses: ${{ github.repo }}/.github/workflows/zowe-cli-deploy-component.yaml@master
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        repository: ${{ github.repo }}
-        event-type: deploy
-        client-payload: '{"pkgName": "${{ env.PKG_NAME }}", "pkgTag": "${{ env.PKG_TAG }}"}'
+        pkg-name: ${{ env.PKG_NAME }}
+        pkg-tag: ${{ env.PKG_TAG }}
