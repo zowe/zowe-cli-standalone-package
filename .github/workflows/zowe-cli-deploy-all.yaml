@@ -1,0 +1,66 @@
+name: Zowe CLI Deploy Component
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy-matrix: ${{ steps.matrix.outputs.deploy-matrix }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+
+    - name: Get Package Matrix
+      id: matrix
+      run: node scripts/get-package-matrix.js
+
+  dispatch:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: ${{ needs.build.outputs.deploy-matrix }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Use Node.js 16
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+    
+    - name: Set Environment Variables
+      run: |
+        IFS=":" | read -r PKG_NAME PKG_TAG <<< "${{ matrix.package }}"
+        echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
+        echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
+
+    - name: Deploy Package
+      id: deploy
+      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAG }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+    - name: Repository Dispatch
+      uses: peter-evans@repository-dispatch@v1
+      env:
+        ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        repository: ${{ github.repo }}
+        event-type: deploy
+        client-payload: '{"pkgName": "${{ env.PKG_NAME }}", "pkgTag": "${{ env.PKG_TAG }}"}'

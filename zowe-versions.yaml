@@ -1,54 +1,68 @@
 packages:
-  # Core packages
-  imperative:
-    zowe-v1-lts: 4.17.3
+  # Core CLI and SDKs
   perf-timing:
     zowe-v1-lts: 1.0.7
-  cli:
-    zowe-v1-lts: &cliV1Lts 6.37.2
-  # SDK packages
+    next: false
+  imperative:
+    zowe-v1-lts: 4.17.3
+    next: true
+  cli-test-utils:
+    next: true
   core-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  provisioning-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  zos-console-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  zos-files-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  zos-logs-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  zos-jobs-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
-  zos-tso-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: &cliV1Lts 6.37.2
+    next: true
   zos-uss-for-zowe-sdk:
     zowe-v1-lts: *cliV1Lts
-  zos-workflows-for-zowe-sdk:
+    next: true
+  provisioning-for-zowe-sdk:
     zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-console-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-files-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-logs-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
   zosmf-for-zowe-sdk:
     zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-workflows-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-jobs-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
+  zos-tso-for-zowe-sdk:
+    zowe-v1-lts: *cliV1Lts
+    next: true
+  cli:
+    zowe-v1-lts: *cliV1Lts
+    next: true
   # CLI plug-ins
   cics-for-zowe-cli:
     zowe-v1-lts: 4.0.3
+    next: true
   db2-for-zowe-cli:
     zowe-v1-lts: 4.1.1
+    next: true
   ims-for-zowe-cli:
     zowe-v1-lts: 2.0.1
+    next: true
   mq-for-zowe-cli:
     zowe-v1-lts: 2.0.1
+    next: true
   secure-credential-store-for-zowe-cli:
     zowe-v1-lts: 4.1.6
+    next: false
   zos-ftp-for-zowe-cli:
     zowe-v1-lts: 1.8.3
+    next: false
 tags:
   zowe-v1-lts:
     version: 1.27.0
     rc: 1
-  latest:
-    alias: zowe-v1-lts
   next:
     snapshot: '2022-01-12'
-    exclude:
-    - perf-timing
-    - secure-credential-store-for-zowe-cli
-    - zos-ftp-for-zowe-cli

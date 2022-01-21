@@ -35,7 +35,6 @@ function npmLogin() {
 }
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
-    const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
     const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
         headers: process.env.CI ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
     });
@@ -43,10 +42,18 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
         throw new Error(response.statusText);
     }
     const releasesData = jsYaml.load(await response.text());
+
+    const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
     const isStaging = zoweVersions.tags["zowe-v1-lts"].version > releasesData[0].version;
     if (!isStaging) {
         return false;
-    } else if (pkgTag !== "next") {
+    }
+
+    if (pkgTag === "latest") {
+        pkgTag = Object.keys(zoweVersions.packages[pkgName])[0];
+    }
+
+    if (pkgTag !== "next") {
         return pkgVersion > zoweVersions.packages[pkgName]["zowe-v1-lts"];
     } else {
         const dateString = pkgVersion.split(".").pop();
@@ -58,6 +65,8 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 (async () => {
     const pkgName = process.argv[2];
     const pkgTag = process.argv[3];
+    core.info(`${pkgName}:${pkgTag}`);
+    process.exit();
     fs.rmSync(__dirname + "/../.npmrc", { force: true });
 
     const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "version");
@@ -79,7 +88,6 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
         core.warning(err);  // Do not error out
     }
 
-    let versionsMatch = true;
     if (oldPkgVersion === pkgVersion) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists`);
         process.exit();
@@ -90,7 +98,6 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
         await exec.exec("npm", ["dist-tag", "add", `${pkgScope}/${pkgName}@${pkgVersion}`, pkgTag]);
     } catch (err) {
-        versionsMatch = false;
         await exec.exec("bash", ["scripts/repackage_tar.sh", fullPkgName, targetRegistry, pkgVersion]);
         const publishOpts = ["publish", fullPkgName, "--access", "public"];
         if (pkgTag !== pkgVersion) {

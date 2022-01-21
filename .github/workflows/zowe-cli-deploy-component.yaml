@@ -1,6 +1,8 @@
 name: Zowe CLI Deploy Component
 
 on:
+  repository_dispatch:
+    types: [deploy]
   workflow_dispatch:
     inputs:
       pkg-name:
@@ -15,6 +17,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      PKG_NAME: ${{ github.event.client_payload.pkgName || github.event.inputs.pkg-name }}
+      PKG_TAG: ${{ github.event.client_payload.pkgTag || github.event.inputs.pkg-tag }}
 
     steps:
     - name: Checkout
@@ -31,7 +37,7 @@ jobs:
 
     - name: Deploy Package
       id: deploy
-      run: node scripts/deploy-component.js ${{ github.event.inputs.pkg-name }} ${{ github.event.inputs.pkg-tag }}
+      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAG }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
@@ -42,7 +48,6 @@ jobs:
       env:
         ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PKG_SPEC: "@zowe/${{ github.event.inputs.pkg-name }}@${{ github.event.inputs.pkg-tag }}"
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
         filename: issue-template.md
