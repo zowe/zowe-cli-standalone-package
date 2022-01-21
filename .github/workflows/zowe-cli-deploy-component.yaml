@@ -42,7 +42,8 @@ jobs:
       env:
         ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PKG_SPEC: ${{ github.event.inputs.pkg-name }}@${{ github.event.inputs.pkg-tag }}
+        PKG_SPEC: "@zowe/${{ github.event.inputs.pkg-name }}@${{ github.event.inputs.pkg-tag }}"
+        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
         filename: issue-template.md
         update_existing: true
