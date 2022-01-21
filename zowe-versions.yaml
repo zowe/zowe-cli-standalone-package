@@ -49,5 +49,6 @@ tags:
   next:
     snapshot: '2022-01-12'
     exclude:
+    - perf-timing
     - secure-credential-store-for-zowe-cli
     - zos-ftp-for-zowe-cli

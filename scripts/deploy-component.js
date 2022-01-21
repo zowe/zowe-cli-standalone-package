@@ -55,21 +55,21 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const pkgTag = process.argv[3];
     fs.rmSync(__dirname + "/../.npmrc", { force: true });
 
-    const pkgVersion = getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "version");
+    const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "version");
     if (shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
             `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
         process.exit();
     }
 
-    const tgzUrl = getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "dist.tarball");
+    const tgzUrl = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "dist.tarball");
     const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
     await exec.exec("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
 
     npmLogin();
     let oldPkgVersion;
     try {
-        oldPkgVersion = getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`);
+        oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`);
     } catch (err) {
         core.warning(err);  // Do not error out
     }
@@ -81,7 +81,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     }
 
     try {
-        oldPkgVersion = getPackageInfo(`${pkgScope}/${pkgName}@${pkgVersion}`);
+        oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgVersion}`);
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
         await exec.exec("npm", ["dist-tag", "add", `${pkgScope}/${pkgName}@${pkgVersion}`, pkgTag]);
     } catch (err) {
