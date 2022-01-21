@@ -33,11 +33,14 @@ function npmLogin() {
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
-    const releasesYaml = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
+    const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
         headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
     });
-    const releasesData = jsYaml.load(releasesYaml.body);
-    const isStaging = zoweVersions["zowe-v1-lts"].version > releasesData[0].version;
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    const releasesData = jsYaml.load(await response.text());
+    const isStaging = zoweVersions.tags["zowe-v1-lts"].version > releasesData[0].version;
     if (!isStaging) {
         return false;
     } else if (pkgTag !== "next") {
@@ -46,7 +49,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     } else {
         const dateString = pkgVersion.split(".").pop();
         const pkgDate = moment(`${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`);
-        return pkgDate.isAfter(moment().startOf("day"));
+        return pkgDate.isAfter(moment(zoweVersions.tags.next.snapshot));
     }
 }
 
@@ -56,7 +59,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     fs.rmSync(__dirname + "/../.npmrc", { force: true });
 
     const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "version");
-    if (shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
+    if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
             `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
         process.exit();
