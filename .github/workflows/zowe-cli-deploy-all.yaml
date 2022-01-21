@@ -1,4 +1,4 @@
-name: Zowe CLI Deploy Component
+name: Zowe CLI Deploy All
 
 on:
   workflow_dispatch:
