@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        package: ${{ needs.build.outputs.deploy-matrix }}
+        package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
 
     steps:
     - name: Checkout
