@@ -19,6 +19,9 @@ jobs:
         node-version: '16'
         cache: 'npm'
 
+    - name: Install Dependencies
+      run: npm ci
+
     - name: Get Package Matrix
       id: matrix
       run: node scripts/get-package-matrix.js
