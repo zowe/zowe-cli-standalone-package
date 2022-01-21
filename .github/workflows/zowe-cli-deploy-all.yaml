@@ -46,15 +46,8 @@ jobs:
         echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
         echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
 
-    - name: Deploy Package
-      id: deploy
-      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAG }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
-
     - name: Repository Dispatch
-      uses: peter-evans@repository-dispatch@v1
+      uses: peter-evans/repository-dispatch@v1
       env:
         ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
