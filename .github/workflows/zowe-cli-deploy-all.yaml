@@ -50,7 +50,7 @@ jobs:
         echo "PKG_TAG=${PKG_TAG}" >> $GITHUB_ENV
 
     - name: Deploy Component
-      uses: ${{ github.repository }}/.github/workflows/zowe-cli-deploy-component.yaml@master
+      uses: ./.github/workflows/zowe-cli-deploy-component.yaml@master
       with:
         pkg-name: ${{ env.PKG_NAME }}
         pkg-tag: ${{ env.PKG_TAG }}
