@@ -35,6 +35,8 @@ do
 
     npm install --legacy-peer-deps --ignore-scripts
 
+    rm npm-shrinkwrap.json || true
+
     if [[ $tar = "zowe-cli"* || $tar = *"zos-uss-for-zowe-sdk"* ]]; then
         # Remove CPU Features Optional Dependency before packing
         rm -rf "./node_modules/cpu-features"
