@@ -1,11 +1,11 @@
 const fs = require("fs");
-const os = require("os");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
 const jsYaml = require("js-yaml");
 const moment = require("moment");
 const fetch = require("node-fetch");
+const { serializeError } = require("serialize-error");
 
 const pkgScope = "@zowe";
 const sourceRegistry = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
@@ -26,14 +26,6 @@ async function getPackageInfo(pkg, opts="", prop="version") {
     }
 }
 
-function npmLogin() {
-    const lines = [
-        `//${targetRegistry.replace(/^http(s):\/\//, "")}:_authToken=${process.env.NPM_TOKEN}`,
-        `registry=${targetRegistry}`
-    ];
-    fs.appendFileSync(os.homedir() + "/.npmrc", lines.join("\n"));
-}
-
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
         headers: process.env.CI ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
@@ -45,11 +37,12 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
     const isStaging = zoweVersions.tags["zowe-v1-lts"].version > releasesData[0].version;
-    if (!isStaging) {
+    if (!isStaging || zoweVersions.packages[pkgName] == null) {
         return false;
     }
 
     if (pkgTag === "latest") {
+        // For latest tag, we assume it is aliased with the first tag defined for the package
         pkgTag = Object.keys(zoweVersions.packages[pkgName])[0];
     }
 
@@ -62,25 +55,9 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     }
 }
 
-(async () => {
-    const pkgName = process.argv[2];
-    const pkgTag = process.argv[3];
-    core.info(`${pkgName}:${pkgTag}`);
-    process.exit();
-    fs.rmSync(__dirname + "/../.npmrc", { force: true });
-
-    const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "version");
-    if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
-        core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
-            `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
-        process.exit();
-    }
-
-    const tgzUrl = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "dist.tarball");
-    const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
-    await exec.exec("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
-
-    npmLogin();
+async function deploy(pkgName, pkgTag) {
+    core.info(`📦 Deploying package ${pkgScope}/${pkgName}@${pkgTag}`);
+    const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts);
     let oldPkgVersion;
     try {
         oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`);
@@ -93,11 +70,20 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
         process.exit();
     }
 
+    if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
+        core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
+            `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
+        process.exit();
+    }
+
     try {
         oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgVersion}`);
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
         await exec.exec("npm", ["dist-tag", "add", `${pkgScope}/${pkgName}@${pkgVersion}`, pkgTag]);
     } catch (err) {
+        const tgzUrl = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "dist.tarball");
+        const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
+        await exec.exec("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
         await exec.exec("bash", ["scripts/repackage_tar.sh", fullPkgName, targetRegistry, pkgVersion]);
         const publishOpts = ["publish", fullPkgName, "--access", "public"];
         if (pkgTag !== pkgVersion) {
@@ -128,8 +114,28 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
         }
         throw installError;
     }
-})().catch((err) => {
-    core.setOutput("error", err.stack);
-    core.setFailed(err);
-    process.exit(1);
-});
+}
+
+(async () => {
+    const pkgName = process.argv[2];
+    const pkgTags = process.argv.slice(3);
+    const deployErrors = {};
+
+    for (const pkgTag of pkgTags) {
+        try {
+            await deploy(pkgName, pkgTag);
+        } catch (err) {
+            deployErrors[pkgTag] = err;
+        }
+    }
+
+    if (Object.keys(deployErrors).length > 0) {
+        const errorReport = {};
+        for (const pkgTag of deployErrors) {
+            errorReport[pkgTag] = serializeError(deployErrors[pkgTag]);
+        }
+        core.setOutput("errors", JSON.stringify(errorReport, null, 2));
+        core.setFailed(new AggregateError(Object.values(deployErrors)));
+        process.exit(1);
+    }
+})();

@@ -26,6 +26,7 @@
     "js-yaml": "^4.1.0",
     "jsonfile": "^6.1.0",
     "moment": "^2.29.1",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "serialize-error": "^8.1.0"
   }
 }

@@ -7,18 +7,18 @@ on:
         description: "Name of the package to be deployed (the @zowe scope will be prepended)"
         default: "cli"
         required: true
-      pkg-tag:
-        description: "Tag to be distributed from Artifactory"
-        default: "daily"
+      pkg-tags:
+        description: "Tags to be distributed from Artifactory (separate multiple by spaces)"
+        default: "latest"
         required: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     env:
       PKG_NAME: ${{ github.event.inputs.pkg-name }}
-      PKG_TAG: ${{ github.event.inputs.pkg-tag }}
+      PKG_TAGS: ${{ github.event.inputs.pkg-tags }}
 
     steps:
     - name: Checkout
@@ -33,18 +33,22 @@ jobs:
     - name: Install Dependencies
       run: npm ci
 
+    - name: NPM Login
+      run: scripts/npm_login.sh https://registry.npmjs.org/
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
     - name: Deploy Package
       id: deploy
-      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAG }}
+      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
 
     - name: Create Issue
       if: ${{ failure() }}
       uses: JasonEtco/create-an-issue@v2
       env:
-        ERROR_DETAILS: ${{ steps.deploy.outputs.error }}
+        ERROR_REPORT: ${{ steps.deploy.outputs.error }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
