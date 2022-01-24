@@ -28,13 +28,13 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '16'
-        cache: 'npm'
+        cache: ${{ (!env.ACT && 'npm') || '' }}
 
     - name: Install Dependencies
       run: npm ci
 
     - name: NPM Login
-      run: scripts/npm_login.sh https://registry.npmjs.org/
+      run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
       env:
         NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
 

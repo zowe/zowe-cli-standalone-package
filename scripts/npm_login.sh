@@ -10,7 +10,8 @@
 #
 ###
 
+set -e
 registry=$1
-rm -f .npmrc
-echo "//$(echo ${registry} | s/'http[s]\?:\/\/'//):_authToken=${NPM_TOKEN}" >> ~/.npmrc
+echo "//$(echo ${registry} | sed s/'http[s]\?:\/\/'//):_authToken=${NPM_TOKEN}" >> ~/.npmrc
 echo "registry=${registry}" >> ~/.npmrc
+npm whoami --registry=${registry}

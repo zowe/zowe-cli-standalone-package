@@ -1,0 +1,6 @@
+{
+  "inputs": {
+    "pkg-name": "sample-plugin-for-zowe-cli",
+    "pkg-tags": "latest zowe-v1-lts next"
+  }
+}

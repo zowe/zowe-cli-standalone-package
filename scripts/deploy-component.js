@@ -9,7 +9,7 @@ const { serializeError } = require("serialize-error");
 
 const pkgScope = "@zowe";
 const sourceRegistry = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
-const targetRegistry = "https://registry.npmjs.org/";
+const targetRegistry = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
 const viewOpts = `--${pkgScope}:registry=${sourceRegistry}`;
 
 async function getPackageInfo(pkg, opts="", prop="version") {
@@ -28,7 +28,7 @@ async function getPackageInfo(pkg, opts="", prop="version") {
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
-        headers: process.env.CI ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
+        headers: (process.env.CI && !process.env.ACT) ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
     });
     if (!response.ok) {
         throw new Error(response.statusText);
@@ -57,6 +57,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 
 async function deploy(pkgName, pkgTag) {
     core.info(`📦 Deploying package ${pkgScope}/${pkgName}@${pkgTag}`);
+    fs.rmSync(__dirname + "/../.npmrc", { force: true });
     const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts);
     let oldPkgVersion;
     try {
@@ -69,7 +70,7 @@ async function deploy(pkgName, pkgTag) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists`);
         return;
     } else if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
-        core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
+        core.warning(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
             `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
         return;
     }
@@ -129,8 +130,8 @@ async function deploy(pkgName, pkgTag) {
 
     if (Object.keys(deployErrors).length > 0) {
         const errorReport = {};
-        for (const pkgTag of deployErrors) {
-            errorReport[pkgTag] = serializeError(deployErrors[pkgTag]);
+        for (const [k, v] of Object.entries(deployErrors)) {
+            errorReport[k] = serializeError(v);
         }
         core.setOutput("errors", JSON.stringify(errorReport, null, 2));
         core.setFailed(new AggregateError(Object.values(deployErrors)));
