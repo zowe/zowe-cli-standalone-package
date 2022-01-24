@@ -2,7 +2,18 @@
 # These packages will be mirrored from Artifactory to npmjs.org nightly, unless
 # there is a new Zowe release staged but not yet GA. If there is, we are in
 # staging mode and package versions will be locked down (see README.md).
-# Note: The 1st tag listed for each package must be aliased with the @latest tag
+#
+# The @latest tag is assumed for all packages and does not need to be listed
+# here. If there are other tags listed, the 1st one must be an alias of the
+# @latest tag. For example:
+#   sample-plugin-for-zowe-cli:
+#     zowe-v1-lts: 2.0.0  # Same version for @latest and @zowe-v1-lts
+#     next: true  # Specify whether package has a @next prerelease tag
+#
+# The bundle pipeline will use the versions listed here for LTS tags, and the
+# latest version for @next that is before the tags.next.snapshot date defined
+# below. The nightly deployment pipeline will not use these versions at all,
+# except in staging mode to determine whether it should skip publishing.
 packages:
   # Core CLI and SDKs
   perf-timing:
