@@ -67,13 +67,11 @@ async function deploy(pkgName, pkgTag) {
 
     if (oldPkgVersion === pkgVersion) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists`);
-        process.exit();
-    }
-
-    if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
+        return;
+    } else if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
         core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
             `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
-        process.exit();
+        return;
     }
 
     try {

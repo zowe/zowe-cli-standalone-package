@@ -1,7 +1,8 @@
-# Note: For packages that get bundled on Zowe.org, it is important that the
-# first tag listed below matches the version of the @latest tag. This will be
-# used to control version boundaries for the @latest tag when in staging mode.
-
+# Define @zowe-scoped packages that are included in CLI bundles on zowe.org.
+# These packages will be mirrored from Artifactory to npmjs.org nightly, unless
+# there is a new Zowe release staged but not yet GA. If there is, we are in
+# staging mode and package versions will be locked down (see README.md).
+# Note: The 1st tag listed for each package must be aliased with the @latest tag
 packages:
   # Core CLI and SDKs
   perf-timing:
@@ -64,11 +65,16 @@ packages:
   zos-ftp-for-zowe-cli:
     zowe-v1-lts: 1.8.3
     next: false
+
+# Define extra @zowe-scoped packages that are not included in the Zowe bundle.
+# These packages will be mirrored from Artifactory to npmjs.org nightly.
 extras:
   tasks-for-zowe-cli:
     next: true
   zos-make-for-zowe-cli:
     next: true
+
+# Define version info for the latest staged Zowe release.
 tags:
   zowe-v1-lts:
     version: 1.27.0
