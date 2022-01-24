@@ -133,7 +133,7 @@ async function deploy(pkgName, pkgTag) {
         for (const [k, v] of Object.entries(deployErrors)) {
             errorReport[k] = serializeError(v);
         }
-        core.setOutput("errors", JSON.stringify(errorReport, null, 2));
+        core.setOutput("errors", jsYaml.dump(errorReport));
         core.setFailed(new AggregateError(Object.values(deployErrors)));
         process.exit(1);
     }
