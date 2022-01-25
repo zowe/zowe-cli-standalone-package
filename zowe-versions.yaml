@@ -25,37 +25,37 @@ packages:
   cli-test-utils:
     next: true
   core-for-zowe-sdk:
-    zowe-v1-lts: &cliV1Lts 6.37.2
+    zowe-v1-lts: 6.37.2
     next: true
   zos-uss-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   provisioning-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-console-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-files-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-logs-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zosmf-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-workflows-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-jobs-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   zos-tso-for-zowe-sdk:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   cli:
-    zowe-v1-lts: *cliV1Lts
+    zowe-v1-lts: 6.37.2
     next: true
   # CLI plug-ins
   cics-for-zowe-cli:
