@@ -4,7 +4,7 @@
   "description": "This repository pulls the latest Zowe CLI and Zowe CLI Plugin Artifacts from Artifactory, and generates a standalone ZIP file containing the contents.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:deploy": "act workflow_dispatch -r -e .github/act-event.json --secret-file .env -W .github/workflows/zowe-cli-deploy-component.yaml"
   },
   "repository": {
     "type": "git",
@@ -19,8 +19,14 @@
   "homepage": "https://github.com/zowe/zowe-cli-standalone-package#readme",
   "devDependencies": {
     "@actions/core": "^1.6.0",
+    "@actions/exec": "^1.1.0",
+    "delay": "^5.0.0",
+    "flat": "^5.0.2",
     "glob": "^7.2.0",
     "js-yaml": "^4.1.0",
-    "jsonfile": "^6.1.0"
+    "jsonfile": "^6.1.0",
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.7",
+    "serialize-error": "^8.1.0"
   }
 }
