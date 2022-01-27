@@ -4,6 +4,6 @@ assignees: awharn, gejohnston, t1m0thyj, zFernand0
 labels: deploy-failed
 ---
 {{ env.WORKFLOW_URL }}
-```json
+```yaml
 {{ env.ERROR_REPORT }}
 ```

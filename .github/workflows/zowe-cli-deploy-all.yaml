@@ -32,6 +32,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       max-parallel: 1
       matrix:
         package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
