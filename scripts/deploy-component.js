@@ -100,7 +100,7 @@ async function deploy(pkgName, pkgTag) {
     let taggedVersion;
     while (taggedVersion !== pkgVersion) {
         await delay(1000);
-        taggedVersion = (await exec.getExecOutput("npm", ["view", `${pkgScope}/${pkgName}@${pkgTag}`, "version"])).stdout.trim();
+        taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, "version"])).stdout.trim();
     }
 
     core.info("Verifying that deployed package can be installed");
@@ -130,6 +130,7 @@ async function deploy(pkgName, pkgTag) {
             await deploy(pkgName, pkgTag);
         } catch (err) {
             deployErrors[pkgTag] = err;
+            core.error(err);
         }
     }
 
