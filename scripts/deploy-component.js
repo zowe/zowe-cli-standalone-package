@@ -1,4 +1,5 @@
 const fs = require("fs");
+const os = require("os");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
@@ -7,23 +8,27 @@ const moment = require("moment");
 const fetch = require("node-fetch");
 const { serializeError } = require("serialize-error");
 
-const pkgScope = "@zowe";
-const sourceRegistry = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
-const targetRegistry = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
-const viewOpts = `--${pkgScope}:registry=${sourceRegistry}`;
+const PKG_SCOPE = "@zowe";
+const SOURCE_REGISTRY = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
+const TARGET_REGISTRY = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
+const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
 
 async function getPackageInfo(pkg, opts="", prop="version") {
     core.info(`Getting '${prop}' for package: ${pkg}`);
-    const rc = await exec.exec("npm", ["view", pkg, opts], { ignoreReturnCode: true });
-    if (rc === 0) {
-        const viewOpts = ["view", pkg, prop];
-        if (opts) {
-            viewOpts.push(opts);
-        }
-        return (await exec.getExecOutput("npm", viewOpts)).stdout.trim();
-    } else {
+    const viewArgs = ["view", pkg, prop];
+    if (opts) {
+        viewArgs.push(opts);
+    }
+    let cmdOutput;
+    try {
+        cmdOutput = (await exec.getExecOutput("npm", viewArgs)).stdout.trim();
+    } catch {
         throw new Error(`Package not found: ${pkg}`);
     }
+    if (cmdOutput.length === 0) {
+        throw new Error(`Property not found: ${prop}`);
+    }
+    return cmdOutput;
 }
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
@@ -56,39 +61,39 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 }
 
 async function deploy(pkgName, pkgTag) {
-    core.info(`📦 Deploying package ${pkgScope}/${pkgName}@${pkgTag}`);
+    core.info(`📦 Deploying package ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
     fs.rmSync(__dirname + "/../.npmrc", { force: true });
-    const pkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts);
+    const pkgVersion = await getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS);
     let oldPkgVersion;
     try {
-        oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`);
+        oldPkgVersion = await getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`);
     } catch (err) {
         core.warning(err);  // Do not error out
     }
 
     if (oldPkgVersion === pkgVersion) {
-        core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists`);
+        core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists`);
         return;
     } else if (await shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
-        core.warning(`Package ${pkgScope}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
+        core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
             `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
         return;
     }
 
     try {
-        oldPkgVersion = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgVersion}`);
-        core.info(`Package ${pkgScope}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await exec.exec("npm", ["dist-tag", "add", `${pkgScope}/${pkgName}@${pkgVersion}`, pkgTag]);
+        oldPkgVersion = await getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
+        core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
+        await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
     } catch (err) {
-        const tgzUrl = await getPackageInfo(`${pkgScope}/${pkgName}@${pkgTag}`, viewOpts, "dist.tarball");
+        const tgzUrl = await getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
         await exec.exec("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
-        await exec.exec("bash", ["scripts/repackage_tar.sh", fullPkgName, targetRegistry, pkgVersion]);
-        const publishOpts = ["publish", fullPkgName, "--access", "public"];
+        await exec.exec("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+        const publishArgs = ["publish", fullPkgName, "--access", "public"];
         if (pkgTag !== pkgVersion) {
-            publishOpts.push("--tag", pkgTag);
+            publishArgs.push("--tag", pkgTag);
         }
-        await exec.exec("npm", publishOpts);
+        await exec.exec("npm", publishArgs);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
@@ -101,15 +106,15 @@ async function deploy(pkgName, pkgTag) {
     core.info("Verifying that deployed package can be installed");
     let installError;
     try {
-        await exec.exec("npm", ["install", `${pkgScope}/${pkgName}@${pkgTag}`, `--${pkgScope}:registry=${targetRegistry}`],
-            { cwd: fs.mkdtempSync("zowe") })
+        await exec.exec("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`],
+            { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") })
     } catch (err) {
         installError = err;
     }
     if (installError != null) {
         if (oldPkgVersion != null) {
             core.info(`Install failed, reverting tag ${pkgTag} to v${oldPkgVersion}`);
-            await exec.exec("npm", ["dist-tag", "add", `${pkgScope}/${pkgName}@${oldPkgVersion}`, pkgTag]);
+            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag]);
         }
         throw installError;
     }
