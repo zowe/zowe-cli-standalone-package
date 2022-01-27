@@ -48,7 +48,7 @@ jobs:
       if: ${{ failure() }}
       uses: JasonEtco/create-an-issue@v2
       env:
-        ERROR_REPORT: ${{ steps.deploy.outputs.error }}
+        ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
