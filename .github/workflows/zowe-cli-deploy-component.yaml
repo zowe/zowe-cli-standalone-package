@@ -52,5 +52,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
-        filename: issue-template.md
+        filename: .github/deploy-failed.md
         update_existing: true
