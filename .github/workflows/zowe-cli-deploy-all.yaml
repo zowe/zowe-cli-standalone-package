@@ -32,6 +32,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       max-parallel: 1
       matrix:
         package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
@@ -70,7 +71,7 @@ jobs:
       if: ${{ failure() }}
       uses: JasonEtco/create-an-issue@v2
       env:
-        ERROR_REPORT: ${{ steps.deploy.outputs.error }}
+        ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
