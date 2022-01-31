@@ -9,7 +9,7 @@
  */
 
 const fs = require("fs");
-const getPackageInfo = require(__dirname + "/get-package-info").getPackageInfo;
+const getPackageInfo = require(__dirname + "/utils").getPackageInfo;
 
 const _path = __dirname + "/../temp/package/npm-shrinkwrap.json";
 const data = require(_path);
@@ -45,6 +45,5 @@ const data = require(_path);
   await filterPkgs(data, "packages");
   await filterPkgs(data, "dependencies");
 
-  fs.writeFileSync(_path + ".new.json", JSON.stringify(data, null, 2));
-  // fs.writeFileSync(_path + ".new.json", JSON.stringify(data));
+  fs.writeFileSync(_path + ".new.json", JSON.stringify(data));
 })();
