@@ -45,5 +45,5 @@ const data = require(_path);
   await filterPkgs(data, "packages");
   await filterPkgs(data, "dependencies");
 
-  fs.writeFileSync(_path + ".new.json", JSON.stringify(data));
+  fs.writeFileSync(_path, JSON.stringify(data));
 })();
