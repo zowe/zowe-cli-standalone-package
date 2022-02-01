@@ -31,8 +31,8 @@ const data = require(_path);
 
         // Check (and fail) if the package isn't a scoped package
         if(!pkg.startsWith("@") && pkg[pkgPos] !== "@") {
-          console.error("Problematic pacakge:", pkg);
-          throw "Problematic pacakge:" + pkg;
+          console.error("Problematic package:", pkg);
+          throw "Problematic package:" + pkg;
         }
 
         _obj[pkg].resolved = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.tarball");
@@ -45,5 +45,5 @@ const data = require(_path);
   await filterPkgs(data, "packages");
   await filterPkgs(data, "dependencies");
 
-  fs.writeFileSync(_path, JSON.stringify(data, null, 2));
+  fs.writeFileSync(_path, JSON.stringify(data, null, 2) + "\n" );
 })();

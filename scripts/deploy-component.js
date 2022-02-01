@@ -14,8 +14,6 @@ const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
 const jsYaml = require("js-yaml");
-const moment = require("moment");
-const fetch = require("node-fetch");
 const { serializeError } = require("serialize-error");
 
 const utils = require(__dirname + "/utils");
