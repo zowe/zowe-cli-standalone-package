@@ -34,7 +34,7 @@ node -e "package = require('./package.json');
     delete package.scripts.prepare;
     require('fs').writeFileSync('package_new.json', JSON.stringify(package, null, 2), 'utf8')"
 # Move the old package JSON to build dir so we can publish as a Jenkins artifact?
-mv package.json ../../$tarfile_package.json
+mv package.json ../../$tarfile.json
 # Replace package json with our new one
 mv package_new.json package.json
 
@@ -45,6 +45,15 @@ for pkgSpec in $npmDeps; do
     echo "Validating dependency $pkgSpec..."
     npm view $pkgSpec || exit 1
 done
+
+# Update npm-shrinkwrap.json if necessary
+if [ -e "npm-shrinkwrap.json" ]; then
+    # Create a production environment (taking in consideration the npm-shrinkwrap)
+    npm install --only=prod --ignore-scripts
+
+    # Rewrite the shrinkwrap file with only production dependencies and public npm resolved URLs
+    node "../../scripts/rewrite-shrinkwrap.js"
+fi
 
 npm pack
 
