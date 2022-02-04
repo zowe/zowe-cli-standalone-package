@@ -18,10 +18,10 @@ const data = require(_path);
   const filterPkgs = async (obj, key) => {
     const _obj = {};
     for (const pkg of Object.keys(obj[key])) {
-      if (pkg.startsWith("__tests__")) continue;
-      // if (pkg === "") continue;
-      // if (pkg === "node_modules/@zowe/cli") continue;
       if (obj[key][pkg].dev) continue;
+      if (obj[key][pkg].peer) continue;
+      if (obj[key][pkg].devOptional) continue;
+      if (obj[key][pkg].extraneous) continue;
 
       _obj[pkg] = obj[key][pkg];
 
