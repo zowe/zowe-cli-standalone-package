@@ -56,14 +56,8 @@ do
         rm -rf "./node_modules/ibm_db/installer/clidriver"
     fi
 
-    # Extra work required for the SCS plugin (LTS) or CLI (Next) to support offline install.
-    # We include prebuilt native code bundles for Keytar and clean up unwanted binaries.
+    # Remove native code from Keytar module bundled with the SCS plugin (LTS) or CLI (Next)
     if [[ $tar = *"secure-credential-store"* || $tar = "zowe-cli-7"* ]]; then
-        mkdir -p "./node_modules/keytar/prebuilds"
-        keytar_ver=`node -e "package = require('./package.json');console.log(package.dependencies['keytar'] || package.optionalDependencies['keytar'])"`
-        curl -fOJ https://zowe.jfrog.io/artifactory/libs-snapshot-local/org/zowe/cli/zowe-cli-prebuilds/keytar-${keytar_ver}-prebuilds.tgz
-        tar -xzf keytar-*-prebuilds.tgz --directory "./node_modules/keytar/prebuilds"
-        rm -r keytar-*-prebuilds.tgz
         rm -rf "./node_modules/keytar/build"
     fi
 
