@@ -20,7 +20,6 @@ const data = require(_path);
     for (const pkg of Object.keys(obj[key])) {
       if (obj[key][pkg].dev) continue;
       if (obj[key][pkg].peer) continue;
-      if (obj[key][pkg].devOptional) continue;
       if (obj[key][pkg].extraneous) continue;
 
       _obj[pkg] = obj[key][pkg];
