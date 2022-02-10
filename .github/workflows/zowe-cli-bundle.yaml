@@ -204,7 +204,7 @@ jobs:
 
     - name: Publish to Artifactory
       if: ${{ github.event_name != 'pull_request' }}
-      run: jfrog rt u --spec upload-spec.json
+      run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Comment on PR
       if: ${{ github.event_name == 'pull_request' }}

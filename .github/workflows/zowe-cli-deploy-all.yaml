@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
     outputs:
       deploy-matrix: ${{ steps.matrix.outputs.deploy-matrix }}
@@ -29,13 +29,13 @@ jobs:
       run: node scripts/get-package-matrix.js
 
   deploy:
-    needs: build
+    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
-        package: ${{ fromJson(needs.build.outputs.deploy-matrix) }}
+        package: ${{ fromJson(needs.setup.outputs.deploy-matrix) }}
 
     steps:
     - name: Set Environment Variables
