@@ -66,7 +66,7 @@ jobs:
     - name: Download Zowe License ZIP
       run: |
         jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_next_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
-        mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
+        mv /tmp/zowe_licenses_cli-SNAPSHOT.zip /tmp/zowe_licenses_cli_next.zip
         jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_zowe-v1-lts_version }}/zowe_licenses_cli.zip /tmp/
 
     - name: Create CLI Core LTS Bundle
