@@ -91,4 +91,5 @@ tags:
     version: 1.27.2
     rc: 2
   next:
+    version: 2.0.0
     snapshot: '2022-02-11'
