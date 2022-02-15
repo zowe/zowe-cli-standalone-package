@@ -65,9 +65,8 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_next_version }}-next/zowe_licenses_cli.zip /tmp/
-        mv /tmp/zowe_licenses_cli.zip /tmp/zowe_licenses_cli_next.zip
         jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_zowe-v1-lts_version }}/zowe_licenses_cli.zip /tmp/
+        jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_next_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip
 
     - name: Create CLI Core LTS Bundle
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
@@ -131,7 +130,7 @@ jobs:
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli-SNAPSHOT.zip zowe_licenses_cli.zip && cd ..
         npm pack $(node ../scripts/get-next-version.js @zowe/cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
@@ -141,7 +140,7 @@ jobs:
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli-SNAPSHOT.zip zowe_licenses_cli.zip && cd ..
         npm pack $(node ../scripts/get-next-version.js @zowe/cics-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         npm pack $(node ../scripts/get-next-version.js @zowe/db2-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         npm pack $(node ../scripts/get-next-version.js @zowe/ims-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
@@ -155,7 +154,7 @@ jobs:
       if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
       run: |
         mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
+        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli-SNAPSHOT.zip zowe_licenses_cli.zip && cd ..
         npm pack $(node ../scripts/get-next-version.js @zowe/imperative ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         npm pack $(node ../scripts/get-next-version.js @zowe/core-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
         npm pack $(node ../scripts/get-next-version.js @zowe/provisioning-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
