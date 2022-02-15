@@ -89,6 +89,6 @@ extras:
 tags:
   zowe-v1-lts:
     version: 1.27.2
-    rc: 1
+    rc: 2
   next:
-    snapshot: '2022-02-09'
+    snapshot: '2022-02-11'
