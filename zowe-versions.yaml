@@ -20,61 +20,61 @@ packages:
     zowe-v1-lts: 1.0.7
     next: false
   imperative:
-    zowe-v1-lts: 4.17.3
+    zowe-v1-lts: 4.17.6
     next: true
   cli-test-utils:
     next: true
   core-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-uss-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   provisioning-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-console-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-files-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-logs-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zosmf-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-workflows-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-jobs-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   zos-tso-for-zowe-sdk:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.6
     next: true
   cli:
-    zowe-v1-lts: 6.37.2
+    zowe-v1-lts: 6.37.7
     next: true
   # CLI plug-ins
   cics-for-zowe-cli:
-    zowe-v1-lts: 4.0.3
+    zowe-v1-lts: 4.0.6
     next: true
   db2-for-zowe-cli:
-    zowe-v1-lts: 4.1.1
+    zowe-v1-lts: 4.1.4
     next: true
   ims-for-zowe-cli:
-    zowe-v1-lts: 2.0.1
+    zowe-v1-lts: 2.0.3
     next: true
   mq-for-zowe-cli:
-    zowe-v1-lts: 2.0.1
+    zowe-v1-lts: 2.0.3
     next: true
   secure-credential-store-for-zowe-cli:
-    zowe-v1-lts: 4.1.6
+    zowe-v1-lts: 4.1.9
     next: false
   zos-ftp-for-zowe-cli:
-    zowe-v1-lts: 1.8.3
+    zowe-v1-lts: 1.8.5
     next: false
 
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
@@ -88,7 +88,8 @@ extras:
 # Define version info for the latest staged Zowe release.
 tags:
   zowe-v1-lts:
-    version: 1.27.0
-    rc: 1
+    version: 1.27.2
+    rc: 2
   next:
-    snapshot: '2022-01-12'
+    version: 2.0.0
+    snapshot: '2022-02-11'
