@@ -2,6 +2,9 @@ name: Zowe CLI Bundle
 
 on:
   pull_request:
+    paths-ignore:
+      - '.github/workflows/zowe-cli-deploy-*.yaml'
+      - 'scripts/deploy-*.js'
   schedule:
   - cron: '0 0 * * *'
   workflow_dispatch:
