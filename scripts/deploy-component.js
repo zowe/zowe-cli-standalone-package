@@ -88,7 +88,9 @@ async function deploy(pkgName, pkgTag) {
     const pkgTags = process.argv.slice(3);
     const deployErrors = {};
 
-    for (const pkgTag of pkgTags) {
+    for (let i = 0; i < pkgTags.length; i++) {
+        if (i > 0) await delay(2000);  // Wait for NPM registry metadata to update
+        const pkgTag = pkgTags[i];
         try {
             await deploy(pkgName, pkgTag);
         } catch (err) {
