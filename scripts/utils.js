@@ -15,6 +15,13 @@ const fetch = require("node-fetch");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 
+async function execAndGetStderr(commandLine, args) {
+    const cmdOutput = await exec.getExecOutput(commandLine, args, { ignoreReturnCode: true });
+    if (cmdOutput.exitCode !== 0) {
+        throw new Error(`The command '${commandLine} ${args.join(" ")}' failed with exit code ${cmdOutput.exitCode}\n${cmdOutput.stderr.trim()}`);
+    }
+}
+
 async function getPackageInfo(pkg, opts="", prop="version") {
     core.info(`Getting '${prop}' for package: ${pkg}`);
     const viewArgs = ["view", pkg, prop];
@@ -62,5 +69,6 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     }
 }
 
+exports.execAndGetStderr = execAndGetStderr;
 exports.getPackageInfo = getPackageInfo;
 exports.shouldSkipPublish = shouldSkipPublish;

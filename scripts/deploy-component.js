@@ -46,17 +46,17 @@ async function deploy(pkgName, pkgTag) {
     try {
         oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
+        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
     } catch (err) {
         const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
-        await exec.exec("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
-        await exec.exec("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+        await utils.execAndGetStderr("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
+        await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
         const publishArgs = ["publish", fullPkgName, "--access", "public"];
         if (pkgTag !== pkgVersion) {
             publishArgs.push("--tag", pkgTag);
         }
-        await exec.exec("npm", publishArgs);
+        await utils.execAndGetStderr("npm", publishArgs);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
@@ -89,7 +89,7 @@ async function deploy(pkgName, pkgTag) {
     const deployErrors = {};
 
     for (let i = 0; i < pkgTags.length; i++) {
-        if (i > 0) await delay(2000);  // Wait for NPM registry metadata to update
+        if (i > 0) await delay(5000);  // Wait for NPM registry metadata to update
         const pkgTag = pkgTags[i];
         try {
             await deploy(pkgName, pkgTag);
