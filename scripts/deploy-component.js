@@ -36,8 +36,8 @@ async function deploy(pkgName, pkgTag) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists`);
         return;
     } else if (await utils.shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
-        core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published until the next Zowe release.\n` +
-            `To publish it immediately, update the package version in the zowe-versions.yaml file.`);
+        core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published until the next Zowe ` +
+            `release.\nTo publish it immediately, update the package version in the zowe-versions.yaml file.`);
         return;
     }
 
@@ -63,17 +63,19 @@ async function deploy(pkgName, pkgTag) {
     while (!versionExists || taggedVersion !== pkgVersion) {
         await delay(1000);
         if (!versionExists) {
-            versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, "version"])).stdout.trim().length > 0;
+            versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`,
+                "version"], { ignoreReturnCode: true })).stdout.trim().length > 0;
         } else {
-            taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, "version"])).stdout.trim();
+            taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
+                "version"], { ignoreReturnCode: true })).stdout.trim();
         }
     }
 
     core.info("Verifying that deployed package can be installed");
     let installError;
     try {
-        await exec.exec("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`],
-            { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") })
+        await exec.exec("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
+            `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`], { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") })
     } catch (err) {
         installError = err;
     }
