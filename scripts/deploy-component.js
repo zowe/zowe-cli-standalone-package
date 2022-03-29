@@ -13,8 +13,6 @@ const os = require("os");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
-const jsYaml = require("js-yaml");
-const { serializeError } = require("serialize-error");
 
 const utils = require(__dirname + "/utils");
 
@@ -61,9 +59,14 @@ async function deploy(pkgName, pkgTag) {
 
     core.info("Waiting for published version to appear on NPM registry");
     let taggedVersion;
-    while (taggedVersion !== pkgVersion) {
+    let versionExists = false;
+    while (!versionExists || taggedVersion !== pkgVersion) {
         await delay(1000);
-        taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, "version"])).stdout.trim();
+        if (!versionExists) {
+            versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, "version"])).stdout.trim().length > 0;
+        } else {
+            taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, "version"])).stdout.trim();
+        }
     }
 
     core.info("Verifying that deployed package can be installed");
@@ -88,9 +91,7 @@ async function deploy(pkgName, pkgTag) {
     const pkgTags = process.argv.slice(3);
     const deployErrors = {};
 
-    for (let i = 0; i < pkgTags.length; i++) {
-        if (i > 0) await delay(5000);  // Wait for NPM registry metadata to update
-        const pkgTag = pkgTags[i];
+    for (const pkgTag of pkgTags) {
         try {
             await deploy(pkgName, pkgTag);
         } catch (err) {
@@ -100,11 +101,11 @@ async function deploy(pkgName, pkgTag) {
     }
 
     if (Object.keys(deployErrors).length > 0) {
-        const errorReport = {};
+        let errorReport = "";
         for (const [k, v] of Object.entries(deployErrors)) {
-            errorReport[k] = serializeError(v);
+            errorReport += `[${k}] ${v.stack}\n\n`;
         }
-        core.setOutput("errors", jsYaml.dump(errorReport));
+        core.setOutput("errors", errorReport.trim());
         core.setFailed(new AggregateError(Object.values(deployErrors)));
         process.exit(1);
     }
