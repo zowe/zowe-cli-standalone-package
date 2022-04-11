@@ -25,7 +25,7 @@
     "glob": "^7.2.0",
     "js-yaml": "^4.1.0",
     "jsonfile": "^6.1.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "node-fetch": "^2.6.7",
     "shebang-regex": "^2.0.0"
   }
