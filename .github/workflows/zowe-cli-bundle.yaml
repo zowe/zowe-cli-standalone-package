@@ -64,7 +64,8 @@ jobs:
       run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
 
     - name: Setup JFrog CLI
-      uses: jfrog/setup-jfrog-cli@v2
+      # uses: jfrog/setup-jfrog-cli@v2
+      uses: t1m0thyj/setup-jfrog-cli@test
       env:
         JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
 
