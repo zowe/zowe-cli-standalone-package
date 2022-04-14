@@ -1,0 +1,38 @@
+name: Zowe CLI Bundle All
+
+on:
+  pull_request:
+    paths-ignore:
+      - '.github/workflows/zowe-cli-deploy-*.yaml'
+      - 'scripts/deploy-*.js'
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: ./.github/workflows/zowe-cli-bundle
+      with:
+        dry-run: ${{ github.event_name != 'schedule' }}
+        package-tag: zowe-v1-lts
+        release-type: snapshot
+
+    - uses: ./.github/workflows/zowe-cli-bundle
+      with:
+        dry-run: ${{ github.event_name != 'schedule' }}
+        package-tag: zowe-v2-lts
+        release-type: snapshot
+
+    # - uses: ./.github/workflows/zowe-cli-bundle
+    #   with:
+    #     dry-run: ${{ github.event_name != 'schedule' }}
+    #     package-tag: next
+    #     release-type: snapshot
+
+    - name: Comment on PR
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        path: summary.md
