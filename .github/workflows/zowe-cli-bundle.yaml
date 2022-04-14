@@ -43,6 +43,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      artifacts: ${{ steps.upload-spec.outputs.artifacts }}
 
     steps:
     - name: Checkout
@@ -138,6 +140,7 @@ jobs:
         path: '*.zip'
 
     - name: Add Bundles to Spec
+      id: upload-spec
       run: |
         node scripts/prepare-upload.js "zowe-cli-package-${{ env.VERSION }}.zip" \
           "libs-${{ github.event.inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.SHORT_VERSION }}/"
@@ -147,6 +150,7 @@ jobs:
           "libs-${{ github.event.inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.SHORT_VERSION }}/"
         node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.VERSION }}.zip" \
           "libs-${{ github.event.inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.SHORT_VERSION }}/"
+        echo "::set-output name=artifacts::$(tr '\n' ' ' < artifacts.txt)"
 
     - name: Publish to Artifactory
       if: ${{ !github.event.inputs.dry_run }}
