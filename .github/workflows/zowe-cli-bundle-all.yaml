@@ -13,19 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: ./.github/workflows/zowe-cli-bundle
+    - uses: ./.github/workflows/zowe-cli-bundle.yaml
       with:
         dry-run: ${{ github.event_name != 'schedule' }}
         package-tag: zowe-v1-lts
         release-type: snapshot
 
-    - uses: ./.github/workflows/zowe-cli-bundle
+    - uses: ./.github/workflows/zowe-cli-bundle.yaml
       with:
         dry-run: ${{ github.event_name != 'schedule' }}
         package-tag: zowe-v2-lts
         release-type: snapshot
 
-    # - uses: ./.github/workflows/zowe-cli-bundle
+    # - uses: ./.github/workflows/zowe-cli-bundle.yaml
     #   with:
     #     dry-run: ${{ github.event_name != 'schedule' }}
     #     package-tag: next
