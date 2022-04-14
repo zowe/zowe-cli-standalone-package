@@ -69,14 +69,13 @@ jobs:
         JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
 
     - name: Download Zowe License ZIP
-      run: jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
-      # run: |
-      #   if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" != "next" ]]; then
-      #     jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
-      #   else
-      #     jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
-      #     mv /tmp/zowe_licenses_cli-SNAPSHOT.zip /tmp/zowe_licenses_cli.zip
-      #   fi
+      run: |
+        if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" != "next" ]]; then
+          jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
+        else
+          jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
+          mv /tmp/zowe_licenses_cli-SNAPSHOT.zip /tmp/zowe_licenses_cli.zip
+        fi
 
     - name: Create CLI Core Bundle
       run: |
