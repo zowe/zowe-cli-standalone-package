@@ -19,21 +19,21 @@ const packageTag = process.argv[2];
 const releaseType = process.argv[3];
 
 const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
-core.exportVariable("SHORT_VERSION", packageTag !== "next" ? zoweVersions.tags[packageTag].version : "next");
+core.exportVariable("BUNDLE_VERSION_SHORT", packageTag !== "next" ? zoweVersions.tags[packageTag].version : "next");
 
 if (releaseType === "release") {
     if (packageTag !== "next") {
-        core.exportVariable("VERSION", zoweVersions.tags[packageTag].version + "-RC" + zoweVersions.tags[packageTag].rc);
+        core.exportVariable("BUNDLE_VERSION", zoweVersions.tags[packageTag].version + "-RC" + zoweVersions.tags[packageTag].rc);
     } else {
         const nextSnapshotDate = zoweVersions.tags.next.snapshot.replace(/-/g, "");
-        core.exportVariable("VERSION", "next-" + nextSnapshotDate);
+        core.exportVariable("BUNDLE_VERSION", "next-" + nextSnapshotDate);
     }
 } else if (releaseType === "snapshot") {
     if (packageTag !== "next") {
-        core.exportVariable("VERSION", zoweVersions.tags[packageTag].version + "-SNAPSHOT");
+        core.exportVariable("BUNDLE_VERSION", zoweVersions.tags[packageTag].version + "-SNAPSHOT");
     } else {
         const nextSnapshotDate = new Date.toISOString().slice(0, 10).replace(/-/g, "");
-        core.exportVariable("VERSION", "next-" + nextSnapshotDate + "-SNAPSHOT");
+        core.exportVariable("BUNDLE_VERSION", "next-" + nextSnapshotDate + "-SNAPSHOT");
     }
 } else {
     throw new Error("Unknown release type: " + releaseType);
