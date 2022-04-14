@@ -39,7 +39,7 @@ if (releaseType === "release") {
     throw new Error("Unknown release type: " + releaseType);
 }
 
-for (const [k, v] of Object.entries(flat(zoweVersions, { delimiter: "_" }))) {
+for (let [k, v] of Object.entries(flat(zoweVersions, { delimiter: "_" }))) {
     if (k.includes(packageTag)) {
         if (k.startsWith("packages")) {
             if (releaseType === "snapshot") {
