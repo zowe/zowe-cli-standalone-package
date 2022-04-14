@@ -61,7 +61,7 @@ jobs:
 
     - name: Load Zowe Versions
       id: versions
-      run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag }} ${{ github.event.inputs.release-type }}
+      run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
 
     - name: Setup JFrog CLI
       uses: jfrog/setup-jfrog-cli@v2
@@ -70,7 +70,7 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        if [ "${{ github.event.inputs.package-tag }}" != "next" ]; then
+        if [ "${{ github.event.inputs.package-tag || inputs.package-tag }}" != "next" ]; then
           jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
         else
           jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
@@ -82,7 +82,7 @@ jobs:
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@${{ steps.versions.outputs.packages_cli }}
-        if [ "${{ github.event.inputs.package-tag }}" == "zowe-v1-lts" ]; then
+        if [ "${{ github.event.inputs.package-tag || inputs.package-tag }}" == "zowe-v1-lts" ]; then
           npm pack @zowe/secure-credential-store-for-zowe-cli@${{ steps.versions.outputs.packages_secure-credential-store-for-zowe-cli }}
         fi
         bash ../scripts/repackage_bundle.sh *.tgz
@@ -136,22 +136,22 @@ jobs:
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag }}'
+        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
         path: '*.zip'
 
     - name: Add Bundles to Spec
       id: upload-spec
       run: |
         node scripts/prepare-upload.js "zowe-cli-package-${{ env.VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.SHORT_VERSION }}/"
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.SHORT_VERSION }}/"
         node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type }}-local/org/zowe/cli/zowe-cli-plugins/${{ env.SHORT_VERSION }}/"
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-plugins/${{ env.SHORT_VERSION }}/"
         node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.SHORT_VERSION }}/"
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.SHORT_VERSION }}/"
         node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.SHORT_VERSION }}/"
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.SHORT_VERSION }}/"
         echo "::set-output name=artifacts::$(tr '\n' ' ' < artifacts.txt)"
 
     - name: Publish to Artifactory
-      if: ${{ !github.event.inputs.dry_run }}
+      if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
