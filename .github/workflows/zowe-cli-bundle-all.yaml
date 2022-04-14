@@ -11,6 +11,8 @@ on:
 jobs:
   build-v1-lts:
     uses: ./.github/workflows/zowe-cli-bundle.yaml
+    secrets:
+      JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
     with:
       dry-run: ${{ github.event_name != 'schedule' }}
       package-tag: zowe-v1-lts

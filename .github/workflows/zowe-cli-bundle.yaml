@@ -12,6 +12,9 @@ on:
       release-type:
         required: true
         type: string
+    secrets:
+      JF_ARTIFACTORY_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       package-tag:
