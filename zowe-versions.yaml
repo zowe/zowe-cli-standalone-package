@@ -75,7 +75,7 @@ packages:
     next: false
   zos-ftp-for-zowe-cli:
     zowe-v1-lts: 1.8.5
-    next: false
+    next: true
 
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
 # These packages will be mirrored from Artifactory to npmjs.org nightly.
@@ -92,4 +92,4 @@ tags:
     rc: 1
   next:
     version: 2.0.0
-    snapshot: '2022-03-25'
+    snapshot: '2022-04-15'
