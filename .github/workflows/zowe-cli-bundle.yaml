@@ -153,7 +153,6 @@ jobs:
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
         node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.BUNDLE_VERSION }}.zip" \
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
-        echo "::set-output name=artifacts::$(tr '\n' ' ' < artifacts.txt)"
 
     - name: Publish to Artifactory
       if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
