@@ -46,8 +46,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      artifacts: ${{ steps.upload-spec.outputs.artifacts }}
 
     steps:
     - name: Checkout
@@ -143,7 +141,6 @@ jobs:
         path: '*.zip'
 
     - name: Add Bundles to Spec
-      id: upload-spec
       run: |
         node scripts/prepare-upload.js "zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip" \
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.BUNDLE_VERSION_SHORT }}/"
