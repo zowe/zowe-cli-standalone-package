@@ -161,7 +161,7 @@ jobs:
 
     - name: Find Current PR
       id: find-pr
-      if: ${{ github.event.inputs.release-type === 'release' || inputs.release-type === 'release' }}
+      if: ${{ github.event.inputs.release-type == 'release' || inputs.release-type == 'release' }}
       uses: jwalton/gh-find-current-pr@v1
       with:
         state: all
