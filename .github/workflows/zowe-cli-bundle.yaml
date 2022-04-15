@@ -67,8 +67,7 @@ jobs:
       run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
 
     - name: Setup JFrog CLI
-      # uses: jfrog/setup-jfrog-cli@v2
-      uses: t1m0thyj/setup-jfrog-cli@test
+      uses: jfrog/setup-jfrog-cli@v2
       env:
         JF_ARTIFACTORY_1: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
 
@@ -159,3 +158,17 @@ jobs:
     - name: Publish to Artifactory
       if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
+
+    - name: Find Current PR
+      id: find-pr
+      if: ${{ github.event.inputs.release-type === 'release' || inputs.release-type === 'release' }}
+      uses: jwalton/gh-find-current-pr@v1
+      with:
+        state: all
+    
+    - name: Comment on PR
+      if: ${{ steps.find-pr.outputs.number }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        number: ${{ steps.find-pr.outputs.pr }}
+        path: summary.md
