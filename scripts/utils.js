@@ -39,7 +39,7 @@ function getNextVersion(packageName, snapshotDate) {
             latestTime = versionTime;
         }
     }
-    return latestVersion;
+    return latestVersion || "latest";  // Fall back to "latest" if there is no "next" tag
 }
 
 async function getPackageInfo(pkg, opts="", prop="version") {
