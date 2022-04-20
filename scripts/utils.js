@@ -24,17 +24,17 @@ async function execAndGetStderr(commandLine, args) {
 }
 
 function getNextVersion(packageName, snapshotDate) {
-    snapshotDate = moment(snapshotDate);
+    snapshotDate = moment.utc(snapshotDate);
     const packageVersions = JSON.parse(childProcess.execSync(`npm view ${packageName} time --json`));
     let latestVersion;
-    let latestTime = moment(0);
+    let latestTime = moment.utc(0);
     for (const [version, time] of Object.entries(packageVersions)) {
         // We give priority to versions that:
         // (1) Include "next" in their name
         // (2) Have a publish date older than or the same as the snapshot date
         // (3) Have the newest publish date that meets the above constraints
-        const versionTime = moment(time);
-        if (version.includes("next") && versionTime.startOf("day").isSameOrBefore(snapshotDate) && versionTime.isAfter(latestTime)) {
+        const versionTime = moment.utc(time);
+        if (version.includes("next") && versionTime.clone().startOf("day").isSameOrBefore(snapshotDate) && versionTime.isAfter(latestTime)) {
             latestVersion = version;
             latestTime = versionTime;
         }
