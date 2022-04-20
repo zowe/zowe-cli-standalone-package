@@ -8,6 +8,7 @@
  * Copyright Contributors to the Zowe Project.
  */
 
+const childProcess = require("child_process");
 const fs = require("fs");
 const jsYaml = require("js-yaml");
 const moment = require("moment");
@@ -20,6 +21,25 @@ async function execAndGetStderr(commandLine, args) {
     if (cmdOutput.exitCode !== 0) {
         throw new Error(`The command '${commandLine} ${args.join(" ")}' failed with exit code ${cmdOutput.exitCode}\n${cmdOutput.stderr.trim()}`);
     }
+}
+
+function getNextVersion(packageName, snapshotDate) {
+    snapshotDate = moment.utc(snapshotDate);
+    const packageVersions = JSON.parse(childProcess.execSync(`npm view ${packageName} time --json`));
+    let latestVersion;
+    let latestTime = moment.utc(0);
+    for (const [version, time] of Object.entries(packageVersions)) {
+        // We give priority to versions that:
+        // (1) Include "next" in their name
+        // (2) Have a publish date older than or the same as the snapshot date
+        // (3) Have the newest publish date that meets the above constraints
+        const versionTime = moment.utc(time);
+        if (version.includes("next") && versionTime.clone().startOf("day").isSameOrBefore(snapshotDate) && versionTime.isAfter(latestTime)) {
+            latestVersion = version;
+            latestTime = versionTime;
+        }
+    }
+    return latestVersion || "latest";  // Fall back to "latest" if there is no "next" tag
 }
 
 async function getPackageInfo(pkg, opts="", prop="version") {
@@ -70,5 +90,6 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 }
 
 exports.execAndGetStderr = execAndGetStderr;
+exports.getNextVersion = getNextVersion;
 exports.getPackageInfo = getPackageInfo;
 exports.shouldSkipPublish = shouldSkipPublish;
