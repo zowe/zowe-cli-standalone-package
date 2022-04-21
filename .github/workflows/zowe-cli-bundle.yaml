@@ -1,23 +1,43 @@
 name: Zowe CLI Bundle
 
 on:
-  pull_request:
-    paths-ignore:
-      - '.github/workflows/zowe-cli-deploy-*.yaml'
-      - 'scripts/deploy-*.js'
-  schedule:
-  - cron: '0 0 * * *'
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      build-lts:
-        description: "Build and deploy LTS bundle"
-        default: true
+      dry-run:
         required: true
         type: boolean
-      build-next:
-        description: "Build and deploy vNext bundle"
-        default: true
+      package-tag:
         required: true
+        type: string
+      release-type:
+        required: true
+        type: string
+    secrets:
+      JF_ARTIFACTORY_TOKEN:
+        required: true
+  workflow_dispatch:
+    inputs:
+      package-tag:
+        description: "Specify package tag to bundle"
+        default: zowe-v2-lts
+        required: true
+        type: choice
+        options:
+        - zowe-v1-lts
+        - zowe-v2-lts
+        # - next
+      release-type:
+        description: "Specify type of deployment"
+        default: snapshot
+        required: true
+        type: choice
+        options:
+        - release
+        - snapshot
+      dry-run:
+        description: "Check to skip publishing to Artifactory"
+        default: false
+        required: false
         type: boolean
       license-version:
         description: "Override version of Zowe Licenses ZIP"
@@ -42,24 +62,7 @@ jobs:
 
     - name: Load Zowe Versions
       id: versions
-      run: node scripts/load-zowe-versions.js
-
-    - name: Set Release Variables
-      if: ${{ github.event_name != 'schedule' }}
-      run: |
-        export NEXT_SNAPSHOT_DATE=$(echo "${{ steps.versions.outputs.tags_next_snapshot }}" | sed 's/-//g')
-        echo "ARTIFACTORY_REPO=libs-release-local" >> $GITHUB_ENV
-        echo "NEXT_SNAPSHOT_DATE=${NEXT_SNAPSHOT_DATE}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.tags_zowe-v1-lts_version }}-RC${{ steps.versions.outputs.tags_zowe-v1-lts_rc }}" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-${NEXT_SNAPSHOT_DATE}-RC${{ steps.versions.outputs.tags_zowe-v1-lts_rc }}" >> $GITHUB_ENV
-
-    - name: Set Snapshot Variables
-      if: ${{ github.event_name == 'schedule' }}
-      run: |
-        echo "ARTIFACTORY_REPO=libs-snapshot-local" >> $GITHUB_ENV
-        echo "NPM_PACKAGE_TAG=zowe-v1-lts" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_VERSION=${{ steps.versions.outputs.tags_zowe-v1-lts_version }}-SNAPSHOT" >> $GITHUB_ENV
-        echo "ZOWE_CLI_BUNDLE_NEXT_VERSION=next-$(date +'%Y%m%d')-SNAPSHOT" >> $GITHUB_ENV
+      run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
 
     - name: Setup JFrog CLI
       uses: jfrog/setup-jfrog-cli@v2
@@ -68,149 +71,100 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_next_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
-        mv /tmp/zowe_licenses_cli-SNAPSHOT.zip /tmp/zowe_licenses_cli_next.zip
-        jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_zowe-v1-lts_version }}/zowe_licenses_cli.zip /tmp/
+        if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" != "next" ]]; then
+          jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
+        else
+          jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
+          mv /tmp/zowe_licenses_cli-SNAPSHOT.zip /tmp/zowe_licenses_cli.zip
+        fi
 
-    - name: Create CLI Core LTS Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
+    - name: Create CLI Core Bundle
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_cli_zowe-v1-lts }}
-        npm pack @zowe/secure-credential-store-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_secure-credential-store-for-zowe-cli_zowe-v1-lts }}
+        npm pack @zowe/cli@${{ steps.versions.outputs.packages_cli }}
+        if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" == "zowe-v1-lts" ]]; then
+          npm pack @zowe/secure-credential-store-for-zowe-cli@${{ steps.versions.outputs.packages_secure-credential-store-for-zowe-cli }}
+        fi
         bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        mv zowe-cli-package.zip ../zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
     
-    - name: Create CLI Plugins LTS Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
+    - name: Create CLI Plugins Bundle
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/cics-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_cics-for-zowe-cli_zowe-v1-lts }}
-        npm pack @zowe/db2-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_db2-for-zowe-cli_zowe-v1-lts }}
-        npm pack @zowe/ims-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_ims-for-zowe-cli_zowe-v1-lts }}
-        npm pack @zowe/mq-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_mq-for-zowe-cli_zowe-v1-lts }}
-        npm pack @zowe/zos-ftp-for-zowe-cli@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-ftp-for-zowe-cli_zowe-v1-lts }}
+        npm pack @zowe/cics-for-zowe-cli@${{ steps.versions.outputs.packages_cics-for-zowe-cli }}
+        npm pack @zowe/db2-for-zowe-cli@${{ steps.versions.outputs.packages_db2-for-zowe-cli }}
+        npm pack @zowe/ims-for-zowe-cli@${{ steps.versions.outputs.packages_ims-for-zowe-cli }}
+        npm pack @zowe/mq-for-zowe-cli@${{ steps.versions.outputs.packages_mq-for-zowe-cli }}
+        npm pack @zowe/zos-ftp-for-zowe-cli@${{ steps.versions.outputs.packages_zos-ftp-for-zowe-cli }}
         bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
     
-    - name: Create Node.js SDK LTS Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
+    - name: Create Node.js SDK Bundle
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        npm pack @zowe/imperative@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_imperative_zowe-v1-lts }}
-        npm pack @zowe/core-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.package_core-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/provisioning-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_provisioning-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-console-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-console-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-files-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-files-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-jobs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-jobs-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-logs-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-logs-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-tso-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-tso-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-uss-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-uss-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zos-workflows-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zos-workflows-for-zowe-sdk_zowe-v1-lts }}
-        npm pack @zowe/zosmf-for-zowe-sdk@${{ env.NPM_PACKAGE_TAG || steps.versions.outputs.packages_zosmf-for-zowe-sdk_zowe-v1-lts }}
+        npm pack @zowe/imperative@${{ steps.versions.outputs.packages_imperative }}
+        npm pack @zowe/core-for-zowe-sdk@${{ steps.versions.outputs.package_core-for-zowe-sdk }}
+        npm pack @zowe/provisioning-for-zowe-sdk@${{ steps.versions.outputs.packages_provisioning-for-zowe-sdk }}
+        npm pack @zowe/zos-console-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-console-for-zowe-sdk }}
+        npm pack @zowe/zos-files-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-files-for-zowe-sdk }}
+        npm pack @zowe/zos-jobs-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-jobs-for-zowe-sdk }}
+        npm pack @zowe/zos-logs-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-logs-for-zowe-sdk }}
+        npm pack @zowe/zos-tso-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-tso-for-zowe-sdk }}
+        npm pack @zowe/zos-uss-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-uss-for-zowe-sdk }}
+        npm pack @zowe/zos-workflows-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-workflows-for-zowe-sdk }}
+        npm pack @zowe/zosmf-for-zowe-sdk@${{ steps.versions.outputs.packages_zosmf-for-zowe-sdk }}
         bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
-        bash ../scripts/generate_typedoc.sh ${{ env.ZOWE_CLI_BUNDLE_VERSION }} \
-          ${{ steps.versions.outputs.packages_imperative_zowe-v1-lts }} ${{ steps.versions.outputs.packages_cli_zowe-v1-lts }}
-        mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.BUNDLE_VERSION }}.zip
+        bash ../scripts/generate_typedoc.sh ${{ env.BUNDLE_VERSION }} \
+          ${{ steps.versions.outputs.packages_imperative }} ${{ steps.versions.outputs.packages_cli }}
+        mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
     
-    - name: Create Python SDK LTS Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
+    - name: Create Python SDK Bundle
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         pip3 download zowe
         zip -r zowe-sdk.zip *
-        mv zowe-sdk.zip ../zowe-python-sdk-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip
+        mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
 
-    - name: Create CLI Core Next Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
-      run: |
-        mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack $(node ../scripts/get-next-version.js @zowe/cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
-        rm -rf *
-    
-    - name: Create CLI Plugins Next Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
-      run: |
-        mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack $(node ../scripts/get-next-version.js @zowe/cics-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/db2-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/ims-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/mq-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-ftp-for-zowe-cli ${{ env.NEXT_SNAPSHOT_DATE || 'latest' }})
-        bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
-        rm -rf *
-    
-    - name: Create Node.js SDK Next Bundle
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
-      run: |
-        mkdir -p temp && cd temp
-        mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli_next.zip zowe_licenses_cli.zip && cd ..
-        npm pack $(node ../scripts/get-next-version.js @zowe/imperative ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/core-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/provisioning-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-console-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-files-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-jobs-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-logs-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-tso-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-uss-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zos-workflows-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        npm pack $(node ../scripts/get-next-version.js @zowe/zosmf-for-zowe-sdk ${{ env.NEXT_SNAPSHOT_DATE || 'next' }})
-        bash ../scripts/repackage_bundle.sh *.tgz
-        mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
-        bash ../scripts/generate_typedoc.sh next
-        mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip
-        rm -rf *
-    
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: 'zowe-cli-bundle'
+        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
         path: '*.zip'
 
-    - name: Add LTS Bundles to Spec
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-lts == 'true' }}
+    - name: Add Bundles to Spec
       run: |
-        export ARTIFACTORY_VERSION_DIR=$(echo "${{ env.ZOWE_CLI_BUNDLE_VERSION }}" | sed 's/-RC.*//')
-        node scripts/prepare-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-package/${ARTIFACTORY_VERSION_DIR}/"
-        node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/${ARTIFACTORY_VERSION_DIR}/"
-        node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/${ARTIFACTORY_VERSION_DIR}/"
-        node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.ZOWE_CLI_BUNDLE_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-python-sdk/${ARTIFACTORY_VERSION_DIR}/"
-
-    - name: Add vNext Bundles to Spec
-      if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build-next == 'true' }}
-      run: |
-        node scripts/prepare-upload.js "zowe-cli-package-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO}}/org/zowe/cli/zowe-cli-package/next/"
-        node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/cli/zowe-cli-plugins/next/"
-        node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.ZOWE_CLI_BUNDLE_NEXT_VERSION }}.zip" \
-          "${{ env.ARTIFACTORY_REPO }}/org/zowe/sdk/zowe-nodejs-sdk/next/"
+        node scripts/prepare-upload.js "zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip" \
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.BUNDLE_VERSION_SHORT }}/"
+        node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip" \
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-plugins/${{ env.BUNDLE_VERSION_SHORT }}/"
+        node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.BUNDLE_VERSION }}.zip" \
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
+        node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.BUNDLE_VERSION }}.zip" \
+          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
 
     - name: Publish to Artifactory
-      if: ${{ github.event_name != 'pull_request' }}
+      if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
+    - name: Find Current PR
+      id: find-pr
+      if: ${{ github.event.inputs.release-type == 'release' || inputs.release-type == 'release' }}
+      uses: jwalton/gh-find-current-pr@v1
+      with:
+        state: all
+    
     - name: Comment on PR
-      if: ${{ github.event_name == 'pull_request' }}
+      if: ${{ steps.find-pr.outputs.number }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        number: ${{ steps.find-pr.outputs.pr }}
         path: summary.md

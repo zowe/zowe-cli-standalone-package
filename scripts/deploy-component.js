@@ -61,7 +61,6 @@ async function deploy(pkgName, pkgTag) {
     let taggedVersion;
     let versionExists = false;
     while (!versionExists || taggedVersion !== pkgVersion) {
-        await delay(1000);
         if (!versionExists) {
             versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`,
                 "version"], { ignoreReturnCode: true })).stdout.trim().length > 0;
@@ -69,12 +68,13 @@ async function deploy(pkgName, pkgTag) {
             taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
                 "version"], { ignoreReturnCode: true })).stdout.trim();
         }
+        await delay(1000);
     }
 
     core.info("Verifying that deployed package can be installed");
     let installError;
     try {
-        await exec.exec("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
+        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
             `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`], { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") })
     } catch (err) {
         installError = err;
@@ -82,7 +82,8 @@ async function deploy(pkgName, pkgTag) {
     if (installError != null) {
         if (oldPkgVersion != null) {
             core.info(`Install failed, reverting tag ${pkgTag} to v${oldPkgVersion}`);
-            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag]);
+            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag],
+                { ignoreReturnCode: true });
         }
         throw installError;
     }

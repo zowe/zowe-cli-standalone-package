@@ -1,0 +1,37 @@
+name: Zowe CLI Bundle All
+
+on:
+  pull_request:
+    paths-ignore:
+      - '.github/workflows/zowe-cli-deploy-*.yaml'
+      - 'scripts/deploy-*.js'
+  schedule:
+  - cron: '0 0 * * *'
+
+jobs:
+  build-v1-lts:
+    uses: ./.github/workflows/zowe-cli-bundle.yaml
+    secrets:
+      JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
+    with:
+      dry-run: ${{ github.event_name != 'schedule' }}
+      package-tag: zowe-v1-lts
+      release-type: snapshot
+
+  build-v2-lts:
+    uses: ./.github/workflows/zowe-cli-bundle.yaml
+    secrets:
+      JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
+    with:
+      dry-run: ${{ github.event_name != 'schedule' }}
+      package-tag: zowe-v2-lts
+      release-type: snapshot
+
+  # build-next:
+  #   uses: ./.github/workflows/zowe-cli-bundle.yaml
+  #   secrets:
+  #     JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
+  #   with:
+  #     dry-run: ${{ github.event_name != 'schedule' }}
+  #     package-tag: next
+  #     release-type: snapshot
