@@ -11,7 +11,7 @@
 ###
 
 if [ $1 != "next" ]; then
-  zoweVersion=v$(echo "$1" | sed 's/-RC.*//')
+  zoweVersion=v$1
   imperativeVersion=v$2
   cliVersion=v$3
 else
@@ -37,63 +37,25 @@ sed -i "s [(]\(CONTRIBUTING\|LICENSE\) (https://github.com/zowe/imperative/blob/
 sed -i "s \./ https://github.com/zowe/zowe-cli/blob/$cliVersion/ " zowe-cli/README.md
 
 # Create directory structure for Imperative and SDK packages
+# Also generate config for typedoc sourcefile-url plugin
 mkdir -p node_modules/@zowe/imperative
 mv imperative/{packages,README.md} node_modules/@zowe/imperative/
-mv zowe-cli/packages/core node_modules/@zowe/core-for-zowe-sdk
-mv zowe-cli/packages/provisioning node_modules/@zowe/provisioning-for-zowe-sdk
-mv zowe-cli/packages/zosconsole node_modules/@zowe/zos-console-for-zowe-sdk
-mv zowe-cli/packages/zosfiles node_modules/@zowe/zos-files-for-zowe-sdk
-mv zowe-cli/packages/zosjobs node_modules/@zowe/zos-jobs-for-zowe-sdk
-mv zowe-cli/packages/zostso node_modules/@zowe/zos-tso-for-zowe-sdk
-mv zowe-cli/packages/zosuss node_modules/@zowe/zos-uss-for-zowe-sdk
-mv zowe-cli/packages/workflows node_modules/@zowe/zos-workflows-for-zowe-sdk
-mv zowe-cli/packages/zosmf node_modules/@zowe/zosmf-for-zowe-sdk
-
-# Generate config for typedoc sourcefile-url plugin
 cat > sourcefile-map.json << EOF
 [
   {
     "pattern": "^@zowe/imperative",
     "replace": "https://github.com/zowe/imperative/blob/$imperativeVersion"
-  },
-  {
-    "pattern": "^@zowe/core-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/core"
-  },
-  {
-    "pattern": "^@zowe/provisioning-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/provisioning"
-  },
-  {
-    "pattern": "^@zowe/zos-console-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosconsole"
-  },
-  {
-    "pattern": "^@zowe/zos-files-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosfiles"
-  },
-  {
-    "pattern": "^@zowe/zos-jobs-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosjobs"
-  },
-  {
-    "pattern": "^@zowe/zos-tso-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zostso"
-  },
-  {
-    "pattern": "^@zowe/zos-uss-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosuss"
-  },
-  {
-    "pattern": "^@zowe/zos-workflows-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/workflows"
-  },
-  {
-    "pattern": "^@zowe/zosmf-for-zowe-sdk",
-    "replace": "https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/zosmf"
   }
 ]
 EOF
+
+for pkgDir in zowe-cli/packages/*; do
+  if [[ $pkgDir != *"cli" ]]; then
+    pkgName=$(node -p "require('jsonfile').readFileSync('$pkgDir/package.json').name")
+    mv $pkgDir node_modules/$pkgName
+    cat <<< $(jq ". + [{\"pattern\": \"^$pkgName\", \"replace\": \"https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/$(basename $pkgDir)\"}]" sourcefile-map.json) > sourcefile-map.json
+  fi
+done
 
 # Generate config for typedoc and its plugins
 cat > typedoc.json << EOF
