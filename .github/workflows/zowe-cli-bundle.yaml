@@ -152,7 +152,7 @@ jobs:
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
 
     - name: Publish to Artifactory
-      if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
+      if: ${{ github.event.inputs.dry-run != 'true' && inputs.dry-run != 'true' }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Find Current PR
