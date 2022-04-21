@@ -16,8 +16,8 @@ const fetch = require("node-fetch");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 
-async function execAndGetStderr(commandLine, args) {
-    const cmdOutput = await exec.getExecOutput(commandLine, args, { ignoreReturnCode: true });
+async function execAndGetStderr(commandLine, args, opts={}) {
+    const cmdOutput = await exec.getExecOutput(commandLine, args, { ignoreReturnCode: true, ...opts });
     if (cmdOutput.exitCode !== 0) {
         throw new Error(`The command '${commandLine} ${args.join(" ")}' failed with exit code ${cmdOutput.exitCode}\n${cmdOutput.stderr.trim()}`);
     }
