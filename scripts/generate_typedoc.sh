@@ -11,6 +11,10 @@
 ###
 set -e
 
+# Define Zowe bundle version and Git branches/tags for Imperative/CLI
+# $zoweVersion is used in the typedoc page header
+# $imperativeBranch is used to build Imperative doc and link to its Git repo
+# $cliBranch is used to build Zowe SDK doc and link to their Git repo
 if [[ $1 != "next"* ]]; then
   zoweVersion=v$(echo "$1" | sed 's/-RC.*//')
   if [[ $zoweVersion != *"SNAPSHOT" ]]; then
