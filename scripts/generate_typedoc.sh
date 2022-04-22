@@ -9,23 +9,32 @@
 # Copyright Contributors to the Zowe Project.
 #
 ###
+set -e
 
-if [ $1 != "next" ]; then
-  zoweVersion=v$1
-  imperativeVersion=v$2
-  cliVersion=v$3
+if [[ $1 != "next"* ]]; then
+  zoweVersion=v$(echo "$1" | sed 's/-RC.*//')
+  if [[ $zoweVersion != *"SNAPSHOT" ]]; then
+    imperativeTag=v$2
+    cliTag=v$3
+  elif [[ $zoweVersion = "1."* ]]; then
+    imperativeTag=zowe-v1-lts
+    cliTag=zowe-v1-lts
+  else
+    imperativeTag=master
+    cliTag=master
+  fi
 else
   zoweVersion=vNext
-  imperativeVersion=next
-  cliVersion=next
+  imperativeTag=next
+  cliTag=next
 fi
 
 mkdir -p node-sdk
 cd node-sdk
 
 # Clone Imperative and Zowe CLI repos to get the TypeScript source
-git clone -b ${imperativeVersion} --depth 1 https://github.com/zowe/imperative.git
-git clone -b ${cliVersion} --depth 1 https://github.com/zowe/zowe-cli.git
+git clone -b ${imperativeTag} --depth 1 https://github.com/zowe/imperative.git
+git clone -b ${cliTag} --depth 1 https://github.com/zowe/zowe-cli.git
 
 # Install typedoc along with dependencies and plugins
 npm init -y
@@ -33,8 +42,8 @@ npm install -D --legacy-peer-deps @types/node typescript@^3.8.0 typedoc@^0.19.0 
   @strictsoftware/typedoc-plugin-monorepo typedoc-plugin-sourcefile-url
 
 # Transform relative URLs to absolute URLs in Imperative and CLI readmes
-sed -i "s [(]\(CONTRIBUTING\|LICENSE\) (https://github.com/zowe/imperative/blob/$imperativeVersion/\1 " imperative/README.md
-sed -i "s \./ https://github.com/zowe/zowe-cli/blob/$cliVersion/ " zowe-cli/README.md
+sed -i "s [(]\(CONTRIBUTING\|LICENSE\) (https://github.com/zowe/imperative/blob/$imperativeTag/\1 " imperative/README.md
+sed -i "s \./ https://github.com/zowe/zowe-cli/blob/$cliTag/ " zowe-cli/README.md
 
 # Create directory structure for Imperative and SDK packages
 # Also generate config for typedoc sourcefile-url plugin
@@ -44,7 +53,7 @@ cat > sourcefile-map.json << EOF
 [
   {
     "pattern": "^@zowe/imperative",
-    "replace": "https://github.com/zowe/imperative/blob/$imperativeVersion"
+    "replace": "https://github.com/zowe/imperative/blob/$imperativeTag"
   }
 ]
 EOF
@@ -53,7 +62,7 @@ for pkgDir in zowe-cli/packages/*; do
   if [[ $pkgDir != *"cli" ]]; then
     pkgName=$(node -p "require('jsonfile').readFileSync('$pkgDir/package.json').name")
     mv $pkgDir node_modules/$pkgName
-    cat <<< $(jq ". + [{\"pattern\": \"^$pkgName\", \"replace\": \"https://github.com/zowe/zowe-cli/blob/${cliVersion}/packages/$(basename $pkgDir)\"}]" sourcefile-map.json) > sourcefile-map.json
+    cat <<< $(jq ". + [{\"pattern\": \"^$pkgName\", \"replace\": \"https://github.com/zowe/zowe-cli/blob/${cliTag}/packages/$(basename $pkgDir)\"}]" sourcefile-map.json) > sourcefile-map.json
   fi
 done
 

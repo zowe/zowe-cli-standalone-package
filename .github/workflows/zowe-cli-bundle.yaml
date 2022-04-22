@@ -120,7 +120,7 @@ jobs:
         npm pack @zowe/zosmf-for-zowe-sdk@${{ steps.versions.outputs.packages_zosmf-for-zowe-sdk }}
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.BUNDLE_VERSION }}.zip
-        bash ../scripts/generate_typedoc.sh ${{ env.BUNDLE_VERSION_SHORT }} \
+        bash ../scripts/generate_typedoc.sh ${{ env.BUNDLE_VERSION }} \
           ${{ steps.versions.outputs.packages_imperative }} ${{ steps.versions.outputs.packages_cli }}
         mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
@@ -152,7 +152,7 @@ jobs:
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
 
     - name: Publish to Artifactory
-      if: ${{ github.event.inputs.dry-run != 'true' && inputs.dry-run != 'true' }}
+      if: ${{ github.event.inputs.dry-run == 'false' || inputs.dry-run == 'false' }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Find Current PR
