@@ -20,7 +20,11 @@ const packageTag = process.argv[2];
 const releaseType = process.argv[3];
 
 // Short version equals semver for Zowe LTS releases or "next" for vNext
-core.exportVariable("BUNDLE_VERSION_SHORT", packageTag !== "next" ? zoweVersions.tags[packageTag].version : "next");
+let bundleVersionShort = packageTag;
+if (packageTag !== "next") {
+    bundleVersionShort = zoweVersions.tags[packageTag].version + (releaseType === "snapshot" ? "-SNAPSHOT" : "");
+}
+core.exportVariable("BUNDLE_VERSION_SHORT", bundleVersionShort);
 
 if (releaseType === "release") {
     if (packageTag !== "next") {
