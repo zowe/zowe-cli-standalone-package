@@ -152,12 +152,13 @@ jobs:
           "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
 
     - name: Publish to Artifactory
-      if: ${{ !github.event.inputs.dry-run && !inputs.dry-run }}
+      id: publish
+      if: ${{ github.event.inputs.dry-run == 'false' || inputs.dry-run == 'false' }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Find Current PR
       id: find-pr
-      if: ${{ github.event.inputs.release-type == 'release' || inputs.release-type == 'release' }}
+      if: ${{ steps.publish.outcome == 'success' && (github.event.inputs.release-type == 'release' || inputs.release-type == 'release') }}
       uses: jwalton/gh-find-current-pr@v1
       with:
         state: all
