@@ -70,8 +70,9 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const releasesData = jsYaml.load(await response.text());
 
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
-    const isStaging = zoweVersions.tags["zowe-v2-lts"].version > releasesData.v2[0].version;
-    if (!isStaging || zoweVersions.packages[pkgName] == null) {
+    const ourBundleVersion = zoweVersions.tags[pkgTag.endsWith("-lts") ? pkgTag : "zowe-v2-lts"].version;
+    const theirBundleVersion = releasesData[`v${ourBundleVersion[0]}`][0].version;
+    if (ourBundleVersion <= theirBundleVersion || zoweVersions.packages[pkgName] == null) {
         return false;
     }
 
