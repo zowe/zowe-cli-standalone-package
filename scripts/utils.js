@@ -70,8 +70,9 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     const releasesData = jsYaml.load(await response.text());
 
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
-    const isStaging = zoweVersions.tags["zowe-v1-lts"].version > releasesData[0].version;
-    if (!isStaging || zoweVersions.packages[pkgName] == null) {
+    const ourBundleVersion = zoweVersions.tags[pkgTag.endsWith("-lts") ? pkgTag : "zowe-v2-lts"].version;
+    const theirBundleVersion = releasesData[`v${ourBundleVersion[0]}`][0].version;
+    if (ourBundleVersion <= theirBundleVersion || zoweVersions.packages[pkgName] == null) {
         return false;
     }
 
@@ -81,7 +82,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     }
 
     if (pkgTag !== "next") {
-        return pkgVersion > zoweVersions.packages[pkgName]["zowe-v1-lts"];
+        return pkgVersion > zoweVersions.packages[pkgName][pkgTag];
     } else {
         const dateString = pkgVersion.split(".").pop();
         const pkgDate = moment(`${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`);

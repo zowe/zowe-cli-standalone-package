@@ -63,6 +63,8 @@ jobs:
     - name: Load Zowe Versions
       id: versions
       run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
+      env:
+        GIT_BRANCH: ${{ github.ref_name }}
 
     - name: Setup JFrog CLI
       uses: jfrog/setup-jfrog-cli@v2
