@@ -20,7 +20,7 @@ const packageTag = process.argv[2];
 const releaseType = process.argv[3];
 
 // For branches named "vX.Y.Z/master", do not allow publishing LTS versions other than zowe-vX-lts
-if (packageTag !== "next" && process.env.GIT_BRANCH?.test(/^v\d/) &&
+if (packageTag !== "next" && /^v\d/.test(process.env.GIT_BRANCH) &&
     !packageTag.includes(process.env.GIT_BRANCH.slice(0, 2))) {
     throw new Error(`Bundling ${packageTag} is not allowed in the ${process.env.GIT_BRANCH} branch`);
 }
