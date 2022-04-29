@@ -10,6 +10,7 @@ on:
 
 jobs:
   build-v1-lts:
+    if: ${{ github.event_name == 'schedule' || !startsWith(github.ref_name, 'v2') }}
     uses: ./.github/workflows/zowe-cli-bundle.yaml
     secrets:
       JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
@@ -19,6 +20,7 @@ jobs:
       release-type: snapshot
 
   build-v2-lts:
+    if: ${{ github.event_name == 'schedule' || !startsWith(github.ref_name, 'v1') }}
     uses: ./.github/workflows/zowe-cli-bundle.yaml
     secrets:
       JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
