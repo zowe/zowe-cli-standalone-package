@@ -155,7 +155,7 @@ jobs:
 
     - name: Publish to Artifactory
       id: publish
-      if: ${{ github.event.inputs.dry-run == 'false' || inputs.dry-run == 'false' }}
+      if: ${{ github.event.inputs.dry-run == 'false' || inputs.dry-run == false }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Find Current PR
