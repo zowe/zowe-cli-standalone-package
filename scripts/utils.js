@@ -83,6 +83,8 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
 
     if (pkgTag !== "next") {
         return pkgVersion > zoweVersions.packages[pkgName][pkgTag];
+    } else if (zoweVersions.tags.next == null) {
+        return false;  // If there is no prerelease version, then always publish the latest version to @next
     } else {
         const dateString = pkgVersion.split(".").pop();
         const pkgDate = moment(`${dateString.slice(0, 4)}-${dateString.slice(4, 6)}-${dateString.slice(6, 8)}`);
