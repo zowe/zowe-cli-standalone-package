@@ -83,5 +83,5 @@ jobs:
       uses: IndyV/IssueChecker@v1.0
       with:
         issue-close-message: "Closing this issue because the package deployed successfully.\n\nYou can check the result here: https://www.npmjs.com/package/@zowe/${{ env.PKG_NAME }}"
-        issue-pattern: "Failed to deploy @zowe/{{ env.PKG_NAME }}"
+        issue-pattern: "Failed to deploy @zowe/${{ env.PKG_NAME }}"
         repo-token: ${{ secrets.GITHUB_TOKEN }}
