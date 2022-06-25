@@ -77,3 +77,10 @@ jobs:
       with:
         filename: .github/deploy-failed.md
         update_existing: true
+
+    - name: Close Issue
+      if: ${{ success() }}
+      uses: lee-dohm/close-matching-issues@v2
+      with:
+        query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
+        token: ${{ secrets.GITHUB_TOKEN }}

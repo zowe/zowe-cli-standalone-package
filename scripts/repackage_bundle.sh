@@ -27,11 +27,11 @@ do
 
     ## Extra work required to delete imperative prepare script
     ## This prevents Husky from erroring out - and it isn't needed if we aren't developing Imperative
-    if [[ $tar = *"imperative"* || $tar = *"secure-credential-store"* ]]; then
-        node -e "package = require('./package.json');
-                 delete package.scripts.prepare;
-                 require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2), 'utf8')"
-    fi
+    # Also remove prepack script which may require scripts from the project repo
+    node -e "package = require('./package.json');
+        delete package.scripts.prepare;
+        delete package.scripts.prepack;
+        require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2), 'utf8')"
 
     npm install --legacy-peer-deps --ignore-scripts
 
