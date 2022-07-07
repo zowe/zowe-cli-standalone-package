@@ -20,6 +20,7 @@ const PKG_SCOPE = "@zowe";
 const SOURCE_REGISTRY = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
 const TARGET_REGISTRY = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
 const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
+const FAILED_VERSIONS = [];
 
 async function deploy(pkgName, pkgTag) {
     core.info(`📦 Deploying package ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
@@ -32,7 +33,11 @@ async function deploy(pkgName, pkgTag) {
         core.warning(err);  // Do not error out
     }
 
-    if (oldPkgVersion === pkgVersion) {
+    if (FAILED_VERSIONS.includes(pkgVersion)) {
+        core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published because it failed to ` +
+            `install`);
+        return;
+    } else if (oldPkgVersion === pkgVersion) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists`);
         return;
     } else if (await utils.shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
@@ -85,6 +90,7 @@ async function deploy(pkgName, pkgTag) {
             await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag],
                 { ignoreReturnCode: true });
         }
+        FAILED_VERSIONS.push(pkgVersion);
         throw installError;
     }
 }
