@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/zowe/zowe-cli-standalone-package#readme",
   "devDependencies": {
-    "@actions/core": "^1.6.0",
+    "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.0",
     "delay": "^5.0.0",
     "flat": "^5.0.2",
