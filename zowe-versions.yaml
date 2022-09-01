@@ -110,7 +110,7 @@ tags:
     version: 1.28.1
     rc: 2
   zowe-v2-lts:
-    version: 2.2.0
+    version: 2.3.0
     rc: 1
   # next:
   #   version: 2.0.0
