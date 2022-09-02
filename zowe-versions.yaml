@@ -68,7 +68,7 @@ packages:
     zowe-v1-lts: 6.40.6
     next: true
   cli:
-    zowe-v2-lts: 7.4.0
+    zowe-v2-lts: 7.5.1
     zowe-v1-lts: 6.40.6
     next: true
   # CLI plug-ins
