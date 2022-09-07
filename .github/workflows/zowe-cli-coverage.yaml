@@ -19,7 +19,9 @@ jobs:
 
     - run: npm ci
 
-    - run: node scripts/coverage-report.js
+    - run: |
+        node scripts/coverage-report.js
+        npx csv2md coverage-report.csv >> $GITHUB_STEP_SUMMARY
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

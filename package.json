@@ -22,6 +22,7 @@
     "@actions/core": "^1.9.1",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.3",
+    "csv2md": "^1.1.0",
     "delay": "^5.0.0",
     "env-cmd": "^10.1.0",
     "flat": "^5.0.2",
@@ -35,5 +36,8 @@
     "strip-comments": "^2.0.1",
     "unzipper": "^0.10.11",
     "xml-js": "^1.6.11"
+  },
+  "overrides": {
+    "yargs-parser": "~13.1.2"
   }
 }
