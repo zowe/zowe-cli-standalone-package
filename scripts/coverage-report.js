@@ -19,7 +19,8 @@ const splitAndAppend = (str, delim, count) => {
 }
 
 async function artifactDir(repoName, workflowId, artifactName) {
-    let tempDir = artifactCache[`${repoName}/${workflowId}/${artifactName}`];
+    const cacheKey = `${repoName}/${workflowId}/${artifactName}`;
+    let tempDir = artifactCache[cacheKey];
     if (tempDir == null) {
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
         const [owner, repo] = repoName.split("/");
@@ -34,14 +35,23 @@ async function artifactDir(repoName, workflowId, artifactName) {
             owner, repo,
             run_id: lastSuccessfulRunId
         })).data.artifacts.find((a) => a.name === artifactName);
-        const artifactRaw = Buffer.from((await octokit.rest.actions.downloadArtifact({
-            owner, repo,
-            artifact_id: artifactData.id,
-            archive_format: "zip"
-        })).data);
+        let artifactRaw;
+        try {
+            artifactRaw = Buffer.from((await octokit.rest.actions.downloadArtifact({
+                owner, repo,
+                artifact_id: artifactData.id,
+                archive_format: "zip"
+            })).data);
+        } catch (error) {
+            if (error.status === 410) {
+                return;  // Ignore error if artifact has expired
+            } else {
+                throw error;
+            }
+        }
         tempDir = fs.mkdtempSync(owner);
         await promisify(pipeline)(Readable.from(artifactRaw), unzipper.Extract({ path: tempDir }));
-        artifactCache[`${repoName}/${workflowId}/${artifactName}`] = tempDir;
+        artifactCache[cacheKey] = tempDir;
     }
     return tempDir;
 }
@@ -58,6 +68,9 @@ async function gitCloneDir(repoName) {
 
 async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
     const tempDir = await artifactDir(repo, workflow, artifact);
+    if (tempDir == null) {
+        return {};
+    }
     const junitFile = path.join(tempDir, dirname, "junit.xml");
     const junitInfo = xmlJs.xml2js(fs.readFileSync(junitFile, "utf-8"), { compact: true });
     const numTests = parseInt(junitInfo.testsuites._attributes.tests);
@@ -66,6 +79,9 @@ async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
 
 async function checkLcovArtifact(repo, type, workflow, artifact, dirname) {
     const tempDir = await artifactDir(repo, workflow, artifact);
+    if (tempDir == null) {
+        return {};
+    }
     const lcovFile = path.join(tempDir, dirname, "lcov.info");
     const lcovInfo = parseLcov.default(fs.readFileSync(lcovFile, "utf-8"));
     let foundLines = 0;
@@ -123,16 +139,17 @@ async function checkTestCount(repo, type, tools) {
                     `${covData.lineCoverage},${covData.hitLines}/${covData.foundLines},` +
                     `${covData.branchCoverage},${covData.hitBranches}/${covData.foundBranches}`);
             } else {
-                csvLines.push(`${repoName},${testType},${covData.numTests},,,,`);
+                csvLines.push(`${repoName},${testType},${covData.numTests ?? "-"},,,,`);
             }
         }
     }
 
     fs.writeFileSync(__dirname + "/../coverage-report.csv", csvLines.join("\n"));
+})().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+}).finally(() => {
     for (const tempDir of [...Object.values(artifactCache), ...Object.values(gitCloneCache)]) {
         fs.rmdirSync(tempDir, { recursive: true, force: true });
     }
-})().catch((error) => {
-    console.error(error);
-    process.exit(1);
 });
