@@ -101,7 +101,7 @@ async function checkLcovArtifact(repo, type, workflow, artifact, dirname) {
 
 async function checkTestCount(repo, type, tools) {
     const tempDir = await gitCloneDir(repo);
-    await exec.exec("npm", ["install", "--ignore-scripts"], { cwd: tempDir });
+    await exec.exec("npm", ["install", "--ignore-scripts", "--silent"], { cwd: tempDir });
     const output = await exec.getExecOutput("npm", ["run", `test:${type}`, "--", "--listTests"], { cwd: tempDir });
     let numTests = 0;
     for (const testFile of output.stdout.trim().split("\n").filter(line => line.includes(tempDir))) {
@@ -119,6 +119,7 @@ async function checkTestCount(repo, type, tools) {
         for (const [testType, testConfig] of Object.entries(repoConfig)) {
             let covData = {};
             for (const [covType, covConfig] of Object.entries(testConfig)) {
+                console.log(`${repoName} > ${testType} > ${covType}`);
                 switch (covType) {
                     case "junit-artifact":
                         covData = { ...covData, ...await checkJunitArtifact(repoName, testType, ...splitAndAppend(covConfig, "/", 3)) };
