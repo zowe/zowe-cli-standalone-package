@@ -1,0 +1,61 @@
+projects:
+  "zowe/perf-timing":
+    unit:
+      junit-artifact: perf-timing.yml/ubuntu-latest-16.x-results/unit/junit
+      lcov-artifact: perf-timing.yml/ubuntu-latest-16.x-results/unit/coverage
+  "zowe/imperative":
+    unit:
+      junit-artifact: imperative.yml/ubuntu-latest-16.x-results/unit/junit
+      lcov-artifact: imperative.yml/ubuntu-latest-16.x-results/unit/coverage
+    integration:
+      junit-artifact: imperative.yml/ubuntu-latest-16.x-results/integration/junit
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli":
+    unit:
+      junit-artifact: zowe-cli.yml/ubuntu-latest-16.x-results/unit
+      lcov-artifact: zowe-cli.yml/ubuntu-latest-16.x-results/unit/coverage
+    integration:
+      junit-artifact: zowe-cli.yml/ubuntu-latest-16.x-results/integration
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-cics-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-db2-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-ftp-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/coverage
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-ims-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+    integration:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/integration
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-mq-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+    integration:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/integration
+    system:
+      test-count: npm-jest
+  "zowe/zowe-cli-scs-plugin":
+    unit:
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+    system:
+      test-count: npm-jest
