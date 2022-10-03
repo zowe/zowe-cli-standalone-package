@@ -58,7 +58,7 @@ jobs:
         cache: 'npm'
 
     - name: Install NPM 8
-      run: npm install -g npm@8.9.0
+      run: npm install -g npm@8.14.0
 
     - name: Install Dependencies
       run: npm ci
