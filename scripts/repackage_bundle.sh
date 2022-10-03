@@ -34,7 +34,7 @@ do
         delete package.scripts.prepack;
         require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2), 'utf8')"
 
-    npm install --legacy-peer-deps --ignore-scripts --omit=dev
+    npm install -v --legacy-peer-deps --ignore-scripts --omit=dev
 
     rm npm-shrinkwrap.json || true
 
