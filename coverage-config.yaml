@@ -27,14 +27,14 @@ projects:
       test-count: npm-jest
   "zowe/zowe-cli-db2-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit/coverage
     system:
       test-count: npm-jest
   "zowe/zowe-cli-ftp-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit/coverage
     system:
       test-count: npm-jest
   "zowe/zowe-cli-ims-plugin":
@@ -55,7 +55,7 @@ projects:
       test-count: npm-jest
   "zowe/zowe-cli-scs-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/__tests__/__results__/unit/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-16.x-results/unit/coverage
     system:
       test-count: npm-jest
