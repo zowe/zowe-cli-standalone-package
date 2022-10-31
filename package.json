@@ -34,7 +34,7 @@
     "parse-lcov": "^1.0.4",
     "shebang-regex": "^2.0.0",
     "strip-comments": "^2.0.1",
-    "unzipper": "^0.10.11",
+    "unzip-stream": "^0.3.1",
     "xml-js": "^1.6.11"
   },
   "overrides": {
