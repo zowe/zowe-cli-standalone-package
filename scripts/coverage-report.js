@@ -7,7 +7,7 @@ const github = require("@actions/github");
 const jsYaml = require("js-yaml");
 const parseLcov = require("parse-lcov");
 const stripComments = require("strip-comments");
-const unzipper = require("unzipper");
+const unzipStream = require("unzip-stream");
 const xmlJs = require("xml-js");
 
 const artifactCache = {};
@@ -50,7 +50,7 @@ async function artifactDir(repoName, workflowId, artifactName) {
             }
         }
         tempDir = fs.mkdtempSync(owner);
-        await promisify(pipeline)(Readable.from(artifactRaw), unzipper.Extract({ path: tempDir }));
+        await promisify(pipeline)(Readable.from(artifactRaw), unzipStream.Extract({ path: tempDir }));
         artifactCache[cacheKey] = tempDir;
     }
     return tempDir;
