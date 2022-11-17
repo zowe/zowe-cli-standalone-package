@@ -19,15 +19,16 @@ const splitAndAppend = (str, delim, count) => {
 }
 
 async function artifactDir(repoName, workflowId, artifactName) {
+    let [repoName, branchName] = repoName.split("#");
     const cacheKey = `${repoName}/${workflowId}/${artifactName}`;
     let tempDir = artifactCache[cacheKey];
     if (tempDir == null) {
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-        const [owner, repo] = repoName.split("#")[0].split("/");
+        const [owner, repo] = repoName.split("/");
         const lastSuccessfulRunId = (await octokit.rest.actions.listWorkflowRuns({
             owner, repo,
             workflow_id: workflowId,
-            branch: repoName.split("#")[1] ?? "master",
+            branch: branchName ?? "master",
             status: "success",
             per_page: 1
         })).data.workflow_runs[0].id;
@@ -57,10 +58,12 @@ async function artifactDir(repoName, workflowId, artifactName) {
 }
 
 async function gitCloneDir(repoName) {
+    let [repoName, branchName] = repoName.split("#");
     let tempDir = gitCloneCache[repoName];
     if (tempDir == null) {
         tempDir = fs.mkdtempSync(repoName.split("/")[0]);
-        await exec.exec("git", ["clone", "--depth", "1", `https://github.com/${repoName}.git`, "."], { cwd: tempDir });
+        await exec.exec("git", ["clone", "--branch", branchName ?? "master", "--depth", "1",
+            `https://github.com/${repoName}.git`, "."], { cwd: tempDir });
         gitCloneCache[repoName] = tempDir;
     }
     return tempDir;
@@ -136,11 +139,11 @@ async function checkTestCount(repo, type, tools) {
             }
 
             if (covData.lineCoverage && covData.branchCoverage) {
-                csvLines.push(`${repoName},${testType},${covData.numTests},` +
+                csvLines.push(`${repoName.split("#")[0]},${testType},${covData.numTests},` +
                     `${covData.lineCoverage},${covData.hitLines}/${covData.foundLines},` +
                     `${covData.branchCoverage},${covData.hitBranches}/${covData.foundBranches}`);
             } else {
-                csvLines.push(`${repoName},${testType},${covData.numTests ?? "-"},,,,`);
+                csvLines.push(`${repoName.split("#")[0]},${testType},${covData.numTests ?? "-"},,,,`);
             }
         }
     }
