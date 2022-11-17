@@ -59,7 +59,7 @@ projects:
       lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-18.x-results/unit/coverage
     system:
       test-count: npm-jest
-  "zowe/vscode-extension-for-zowe":
+  "zowe/vscode-extension-for-zowe#main":
     unit:
       junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit
       lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit/coverage

@@ -23,11 +23,11 @@ async function artifactDir(repoName, workflowId, artifactName) {
     let tempDir = artifactCache[cacheKey];
     if (tempDir == null) {
         const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-        const [owner, repo] = repoName.split("/");
+        const [owner, repo] = repoName.split("#")[0].split("/");
         const lastSuccessfulRunId = (await octokit.rest.actions.listWorkflowRuns({
             owner, repo,
             workflow_id: workflowId,
-            branch: "master",
+            branch: repoName.split("#")[1] ?? "master",
             status: "success",
             per_page: 1
         })).data.workflow_runs[0].id;
