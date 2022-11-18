@@ -18,8 +18,8 @@ const splitAndAppend = (str, delim, count) => {
     return [...arr.splice(0, count - 1), arr.join(delim)];
 }
 
-async function artifactDir(repoName, workflowId, artifactName) {
-    let [repoName, branchName] = repoName.split("#");
+async function artifactDir(repoSpec, workflowId, artifactName) {
+    const [repoName, branchName] = repoSpec.split("#");
     const cacheKey = `${repoName}/${workflowId}/${artifactName}`;
     let tempDir = artifactCache[cacheKey];
     if (tempDir == null) {
@@ -57,8 +57,8 @@ async function artifactDir(repoName, workflowId, artifactName) {
     return tempDir;
 }
 
-async function gitCloneDir(repoName) {
-    let [repoName, branchName] = repoName.split("#");
+async function gitCloneDir(repoSpec) {
+    const [repoName, branchName] = repoSpec.split("#");
     let tempDir = gitCloneCache[repoName];
     if (tempDir == null) {
         tempDir = fs.mkdtempSync(repoName.split("/")[0]);
