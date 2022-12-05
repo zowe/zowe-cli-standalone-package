@@ -60,7 +60,7 @@ packages:
     zowe-v1-lts: 6.40.10
     next: true
   zos-jobs-for-zowe-sdk:
-    zowe-v2-lts: 7.9.0
+    zowe-v2-lts: 7.9.1
     zowe-v1-lts: 6.40.10
     next: true
   zos-tso-for-zowe-sdk:
@@ -68,7 +68,7 @@ packages:
     zowe-v1-lts: 6.40.10
     next: true
   cli:
-    zowe-v2-lts: 7.9.0
+    zowe-v2-lts: 7.9.1
     zowe-v1-lts: 6.40.10
     next: true
   # CLI plug-ins
@@ -111,7 +111,7 @@ tags:
     rc: 2
   zowe-v2-lts:
     version: 2.5.0
-    rc: 1
+    rc: 2
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
