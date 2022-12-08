@@ -21,54 +21,54 @@ packages:
     zowe-v1-lts: 1.0.7
     next: false
   imperative:
-    zowe-v2-lts: 5.5.4
+    zowe-v2-lts: 5.7.2
     zowe-v1-lts: 4.18.11
     next: true
   cli-test-utils:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     next: true
   core-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-uss-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   provisioning-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-console-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-files-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-logs-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zosmf-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-workflows-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   zos-jobs-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.1
     zowe-v1-lts: 6.40.10
     next: true
   zos-tso-for-zowe-sdk:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.0
     zowe-v1-lts: 6.40.10
     next: true
   cli:
-    zowe-v2-lts: 7.6.2
+    zowe-v2-lts: 7.9.1
     zowe-v1-lts: 6.40.10
     next: true
   # CLI plug-ins
@@ -78,7 +78,7 @@ packages:
     next: true
   db2-for-zowe-cli:
     zowe-v2-lts: 5.0.1
-    zowe-v1-lts: 4.1.7
+    zowe-v1-lts: 4.1.8
     next: true
   ims-for-zowe-cli:
     zowe-v2-lts: 3.0.0
@@ -108,10 +108,10 @@ extras:
 tags:
   zowe-v1-lts:
     version: 1.28.2
-    rc: 1
+    rc: 2
   zowe-v2-lts:
-    version: 2.4.0
-    rc: 1
+    version: 2.5.0
+    rc: 2
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
