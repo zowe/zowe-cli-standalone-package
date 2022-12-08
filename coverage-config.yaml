@@ -59,3 +59,12 @@ projects:
       lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-18.x-results/unit/coverage
     system:
       test-count: npm-jest
+  "zowe/vscode-extension-for-zowe#main":
+    unit:
+      junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit
+      lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit/coverage
+    unit-ftp:
+      junit-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit
+      lcov-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit/coverage
+    integration:
+      junit-artifact: theia-zowe-explorer-ci.yml/theia-zowe-explorer-results/integration
