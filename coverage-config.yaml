@@ -64,5 +64,7 @@ projects:
       junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit
       lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit/coverage
     unit-ftp:
-      # junit-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit
+      junit-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit
       lcov-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit/coverage
+    integration:
+      junit-artifact: theia-zowe-explorer-ci.yml/theia-zowe-explorer-results/integration
