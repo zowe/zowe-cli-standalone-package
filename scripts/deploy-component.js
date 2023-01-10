@@ -19,6 +19,7 @@ const utils = require(__dirname + "/utils");
 const PKG_SCOPE = "@zowe";
 const SOURCE_REGISTRY = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
 const TARGET_REGISTRY = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
+const TEMP_NPM_TAG = "untagged";
 const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
 const FAILED_VERSIONS = [];
 
@@ -40,7 +41,7 @@ async function deploy(pkgName, pkgTag) {
     } else if (oldPkgVersion === pkgVersion) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists`);
         return;
-    } else if (await utils.shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
+    } else if (pkgTag !== pkgVersion && await utils.shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
         core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published until the next Zowe ` +
             `release.\nTo publish it immediately, update the package version in the zowe-versions.yaml file.`);
         return;
@@ -55,11 +56,8 @@ async function deploy(pkgName, pkgTag) {
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
         await utils.execAndGetStderr("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
         await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
-        const publishArgs = ["publish", fullPkgName, "--access", "public"];
-        if (pkgTag !== pkgVersion) {
-            publishArgs.push("--tag", pkgTag);
-        }
-        await utils.execAndGetStderr("npm", publishArgs);
+        pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
+        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
@@ -74,6 +72,9 @@ async function deploy(pkgName, pkgTag) {
                 "version"], { ignoreReturnCode: true })).stdout.trim();
         }
         await delay(1000);
+    }
+    if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag
+        await utils.execAndGetStderr("npm", ["dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG]);
     }
 
     core.info("Verifying that deployed package can be installed");

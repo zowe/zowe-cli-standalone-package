@@ -42,7 +42,8 @@ mv package_new.json package.json
 
 # Check that all dependencies are valid
 npmDeps=`node -e "package = require('./package.json');
-    Object.entries(package.dependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));"`
+    Object.entries(package.dependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));
+    Object.entries(package.peerDependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));"`
 for pkgSpec in $npmDeps; do
     echo "Validating dependency $pkgSpec..."
     npm view $pkgSpec || exit 1
