@@ -88,4 +88,4 @@ EOF
 
 # Build typedoc and zip it up
 npx typedoc ./node_modules/@zowe
-zip -r ../zowe-node-sdk-typedoc.zip typedoc
+zip -rX ../zowe-node-sdk-typedoc.zip typedoc
