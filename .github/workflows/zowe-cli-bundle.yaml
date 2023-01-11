@@ -141,6 +141,9 @@ jobs:
         TZ=UTC touch -t 197001010000.00 ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
 
+    - name: Update Timestamps
+      run: TZ=UTC find . -maxdepth 1 -name "*.zip" -type f -exec touch -t 197001010000.00 {} +
+
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v3
       with:
