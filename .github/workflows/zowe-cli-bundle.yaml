@@ -135,8 +135,10 @@ jobs:
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         pip3 download --no-binary=pyyaml zowe
-        zip -rX zowe-sdk.zip *
+        TZ=UTC find . -exec touch -t 197001010000.00 {} +
+        TZ=UTC zip -roX zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
+        TZ=UTC touch -t 197001010000.00 ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
 
     - name: Archive Build Artifacts
