@@ -84,6 +84,7 @@ cd packed
 # rename 's/brightside\-core*/zowe\-cli/' *
 # rename 's/brightside\-cics*/zowe\-cics/' *
 # rename 's/brightside\-db2*/zowe\-db2/' *
-zip -rX zowe-cli-package.zip *
-mv zowe-cli-package.zip ../zowe-cli-package.zip
+# Set all timestamps for files and directories to Jan 1 1970 00:00:00 UTC
+TZ=UTC find . -exec touch -t 197001010000.00 {} +
+TZ=UTC zip -roX ../zowe-cli-package.zip *
 rm -rf *.tgz
