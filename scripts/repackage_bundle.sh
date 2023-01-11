@@ -87,6 +87,4 @@ cd packed
 # Set all timestamps for files and directories to Jan 1 1970 00:00:00 UTC
 TZ=UTC find . -exec touch -t 197001010000.00 {} +
 TZ=UTC zip -roX ../zowe-cli-package.zip *
-TZ=UTC touch -t 197001010000.00 ../zowe-cli-package.zip
-# mv zowe-cli-package.zip ../zowe-cli-package.zip
 rm -rf *.tgz

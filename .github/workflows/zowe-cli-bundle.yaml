@@ -138,7 +138,6 @@ jobs:
         TZ=UTC find . -exec touch -t 197001010000.00 {} +
         TZ=UTC zip -roX zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
-        TZ=UTC touch -t 197001010000.00 ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
 
     - name: Update Timestamps
