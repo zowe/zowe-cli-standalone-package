@@ -73,20 +73,22 @@ async function deploy(pkgName, pkgTag) {
         }
         await delay(1000);
     }
+    let isUntagged = false;
     if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag
+        isUntagged = true;
         await utils.execAndGetStderr("npm", ["dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG]);
     }
 
     core.info("Verifying that deployed package can be installed");
     let installError;
     try {
-        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
+        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${isUntagged ? pkgVersion : pkgTag}`,
             `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`], { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") })
     } catch (err) {
         installError = err;
     }
     if (installError != null) {
-        if (oldPkgVersion != null) {
+        if (oldPkgVersion != null && !isUntagged) {
             core.info(`Install failed, reverting tag ${pkgTag} to v${oldPkgVersion}`);
             await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag],
                 { ignoreReturnCode: true });
