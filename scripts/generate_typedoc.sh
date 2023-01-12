@@ -88,4 +88,6 @@ EOF
 
 # Build typedoc and zip it up
 npx typedoc ./node_modules/@zowe
-zip -r ../zowe-node-sdk-typedoc.zip typedoc
+TZ=UTC find typedoc/ -exec touch -t 197001010000.00 {} +
+TZ=UTC touch -t 197001010000.00 typedoc
+TZ=UTC zip -roX ../zowe-node-sdk-typedoc.zip typedoc
