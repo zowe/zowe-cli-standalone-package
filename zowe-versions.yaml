@@ -92,7 +92,7 @@ packages:
     zowe-v1-lts: 4.1.10
     next: false
   zos-ftp-for-zowe-cli:
-    zowe-v2-lts: 2.1.1
+    zowe-v2-lts: 2.1.2
     zowe-v1-lts: 1.8.7
     next: true
 
@@ -111,7 +111,7 @@ tags:
     rc: 2
   zowe-v2-lts:
     version: 2.6.0
-    rc: 1
+    rc: 2
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
