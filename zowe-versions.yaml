@@ -77,7 +77,7 @@ packages:
     zowe-v1-lts: 4.0.7
     next: true
   db2-for-zowe-cli:
-    zowe-v2-lts: 5.0.1
+    zowe-v2-lts: 5.0.2
     zowe-v1-lts: 4.1.8
     next: true
   ims-for-zowe-cli:
