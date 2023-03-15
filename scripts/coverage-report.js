@@ -1,13 +1,11 @@
 const fs = require("fs");
 const path = require("path");
-const { pipeline, Readable } = require("stream");
-const { promisify } = require("util");
 const exec = require("@actions/exec");
 const github = require("@actions/github");
+const AdmZip = require("adm-zip");
 const jsYaml = require("js-yaml");
 const parseLcov = require("parse-lcov");
 const stripComments = require("strip-comments");
-const unzipStream = require("unzip-stream");
 const xmlJs = require("xml-js");
 
 const artifactCache = {};
@@ -38,12 +36,15 @@ async function artifactDir(repoSpec, workflowId, artifactName) {
         })).data.artifacts.find((a) => a.name === artifactName);
         let artifactRaw;
         try {
+            process.stdout.write(`Downloading ${artifactName}... `);
             artifactRaw = Buffer.from((await octokit.rest.actions.downloadArtifact({
                 owner, repo,
                 artifact_id: artifactData.id,
                 archive_format: "zip"
             })).data);
+            console.log(`${artifactRaw.byteLength.toLocaleString()} bytes received`);
         } catch (error) {
+            console.log(error.message);
             if (error.status === 410) {
                 return;  // Ignore error if artifact has expired
             } else {
@@ -51,7 +52,7 @@ async function artifactDir(repoSpec, workflowId, artifactName) {
             }
         }
         tempDir = fs.mkdtempSync(owner);
-        await promisify(pipeline)(Readable.from(artifactRaw), unzipStream.Extract({ path: tempDir }));
+        new AdmZip(artifactRaw).extractAllTo(tempDir);
         artifactCache[cacheKey] = tempDir;
     }
     return tempDir;
