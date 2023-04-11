@@ -21,59 +21,59 @@ packages:
     zowe-v1-lts: 1.0.7
     next: false
   imperative:
-    zowe-v2-lts: 5.9.0
+    zowe-v2-lts: 5.12.0
     zowe-v1-lts: 4.18.14
     next: true
   cli-test-utils:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     next: true
   core-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-uss-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   provisioning-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-console-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-files-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-logs-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zosmf-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-workflows-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-jobs-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   zos-tso-for-zowe-sdk:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   cli:
-    zowe-v2-lts: 7.11.0
+    zowe-v2-lts: 7.13.0
     zowe-v1-lts: 6.40.15
     next: true
   # CLI plug-ins
   cics-for-zowe-cli:
-    zowe-v2-lts: 5.0.0
+    zowe-v2-lts: 5.0.1
     zowe-v1-lts: 4.0.7
     next: true
   db2-for-zowe-cli:
@@ -85,14 +85,14 @@ packages:
     zowe-v1-lts: 2.0.4
     next: true
   mq-for-zowe-cli:
-    zowe-v2-lts: 3.0.0
+    zowe-v2-lts: 3.0.1
     zowe-v1-lts: 2.0.3
     next: true
   secure-credential-store-for-zowe-cli:
     zowe-v1-lts: 4.1.10
     next: false
   zos-ftp-for-zowe-cli:
-    zowe-v2-lts: 2.1.2
+    zowe-v2-lts: 2.1.3
     zowe-v1-lts: 1.8.8
     next: true
 
@@ -110,7 +110,7 @@ tags:
     version: 1.28.3
     rc: 1
   zowe-v2-lts:
-    version: 2.7.0
+    version: 2.8.0
     rc: 1
   # next:
   #   version: 2.0.0
