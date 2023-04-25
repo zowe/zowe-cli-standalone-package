@@ -192,10 +192,11 @@ jobs:
     - name: Use Node.js LTS
       uses: actions/setup-node@v3
       with:
+        check-latest: true
         node-version: 'lts/*'
 
     - name: Download Bundle Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/download-artifact@v3
       with:
         name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
         path: 'zowe-cli-bundle'
