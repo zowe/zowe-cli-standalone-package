@@ -186,20 +186,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        node-version: [14.x, 16.x, 18.x]
         os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-    - name: Use Node.js LTS
-      uses: actions/setup-node@v3
-      with:
-        check-latest: true
-        node-version: 'lts/*'
-
     - name: Download Bundle Artifact
       uses: actions/download-artifact@v3
       with:
         name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
         path: 'zowe-cli-bundle'
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        check-latest: true
 
     - name: Install CLI
       shell: bash
@@ -209,4 +210,4 @@ jobs:
     - name: Install Plugins
       shell: bash
       working-directory: zowe-cli-bundle
-      run: unzip -o zowe-cli-plugins-*.zip && zowe plugins install *-for-zowe-cli.tgz
+      run: unzip -o zowe-cli-plugins-*.zip && zowe plugins install *-for-zowe-cli.tgz && zowe plugins validate --fail-on-error
