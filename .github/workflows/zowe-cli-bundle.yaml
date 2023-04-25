@@ -178,3 +178,34 @@ jobs:
       with:
         number: ${{ steps.find-pr.outputs.pr }}
         path: summary.md
+
+  test:
+    needs: build
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+    - name: Use Node.js LTS
+      uses: actions/setup-node@v3
+      with:
+        node-version: 'lts/*'
+
+    - name: Download Bundle Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
+        path: 'zowe-cli-bundle'
+
+    - name: Install CLI
+      shell: bash
+      working-directory: zowe-cli-bundle
+      run: unzip -o zowe-cli-package-*.zip && npm install -g zowe-cli.tgz
+
+    - name: Install Plugins
+      shell: bash
+      working-directory: zowe-cli-bundle
+      run: unzip -o zowe-cli-plugins-*.zip && zowe plugins install *-for-zowe-cli.tgz
