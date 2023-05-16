@@ -13,6 +13,7 @@ const os = require("os");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
+const jsYaml = require("js-yaml");
 
 const utils = require(__dirname + "/utils");
 
@@ -24,6 +25,12 @@ const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
 const FAILED_VERSIONS = [];
 
 async function deploy(pkgName, pkgTag) {
+    const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
+    if (!Object.keys({ ...zoweVersions.packages, ...zoweVersions.extras }).includes(pkgName)) {
+        core.error(`❌ Cannot deploy package ${PKG_SCOPE}/${pkgName} because it is missing from zowe-versions.yaml`);
+        return;
+    }
+
     core.info(`📦 Deploying package ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
     fs.rmSync(__dirname + "/../.npmrc", { force: true });
     const pkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS);
