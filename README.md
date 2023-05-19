@@ -37,3 +37,46 @@ When a Zowe release has been staged but is not yet GA, it is expected that the Z
   * For the "latest" tag, it is assumed that the 1st tag listed for a package in zowe-versions.yaml is aliased with @latest
 
 Packages defined in the "extras" section of zowe-versions.yaml will always be published and are unaffected by staging mode since they are not included in Zowe CLI bundles.
+
+## External Packages
+
+If you develop a Zowe CLI plug-in that meets the following criteria:
+* External - not included in the Zowe CLI bundle
+* Sourced in a repository under the Zowe GitHub organization
+* Already deploys and tags new releases on Zowe Artifactory
+* Authorized to publish to npmjs.org under the `@zowe` scope
+
+Then you can follow these steps to automate publishing your plug-in to NPM:
+1. In this repository, open a pull request that adds your package to the `extras` section of [zowe-versions.yaml](./zowe-versions.yaml). For example, to publish `@zowe/sample-plugin-for-zowe-cli`:
+    ```yaml
+    extras:
+      sample-plugin-for-zowe-cli:
+        zowe-v1-lts: true
+        zowe-v2-lts: true
+    ```
+    This enables nightly automation to publish the "latest" (included by default), "zowe-v1-lts", and "zowe-v2-lts" tags for your plug-in.
+2. (optional) In your plug-in's repository, add the following GitHub workflow:
+    ```yaml
+    name: Publish to NPM
+
+    on:
+      workflow_dispatch:
+        inputs:
+          pkg-tags:
+            description: "Tags to be distributed from Artifactory (separate multiple by spaces)"
+            default: "latest"
+            required: true
+
+    jobs:
+      publish:
+        uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml
+        secrets:
+          NPM_PUBLIC_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+        with:
+          pkg-name: 'sample-plugin-for-zowe-cli'
+          pkg-tags: ${{ github.event.inputs.pkg-tags }}
+    ```
+    > **Note**
+    > Replace "sample-plugin-for-zowe-cli" with the package name of your plug-in (without the `@zowe` prefix).
+
+    This workflow can be run on demand to immediately publish your plug-in to NPM if the nightly automation is not adequate.

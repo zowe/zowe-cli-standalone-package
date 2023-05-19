@@ -1,6 +1,17 @@
 name: Zowe CLI Deploy Component
 
 on:
+  workflow_call:
+    inputs:
+      pkg-name:
+        required: true
+        type: string
+      pkg-tags:
+        required: true
+        type: string
+    secrets:
+      NPM_PUBLIC_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       pkg-name:
@@ -17,12 +28,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PKG_NAME: ${{ github.event.inputs.pkg-name }}
-      PKG_TAGS: ${{ github.event.inputs.pkg-tags }}
+      PKG_NAME: ${{ github.event.inputs.pkg-name || inputs.pkg-name }}
+      PKG_TAGS: ${{ github.event.inputs.pkg-tags || inputs.pkg-tags }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        repository: 'zowe/zowe-cli-standalone-package'
 
     - name: Use Node.js 16
       uses: actions/setup-node@v3
