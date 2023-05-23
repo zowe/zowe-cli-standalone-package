@@ -103,6 +103,9 @@ extras:
     next: true
   zos-make-for-zowe-cli:
     next: true
+  id-federation-for-zowe-cli:
+    next: true
+    zowe-v2-lts: true
 
 # Define version info for the latest staged Zowe release.
 tags:
