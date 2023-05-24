@@ -69,7 +69,7 @@ Then you can follow these steps to automate publishing your plug-in to NPM:
 
     jobs:
       publish:
-        uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml
+        uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
         secrets:
           NPM_PUBLIC_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
         with:
