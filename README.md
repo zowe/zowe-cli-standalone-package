@@ -47,14 +47,14 @@ If you develop a Zowe CLI plug-in that meets the following criteria:
 * Authorized to publish to npmjs.org under the `@zowe` scope
 
 Then you can follow these steps to automate publishing your plug-in to NPM:
-1. In this repository, open a pull request that adds your package to the `extras` section of [zowe-versions.yaml](./zowe-versions.yaml). For example, to publish `@zowe/sample-plugin-for-zowe-cli`:
+1. Fork this repository and create a pull request that adds your package to the `extras` section of [zowe-versions.yaml](./zowe-versions.yaml). For example, to publish `@zowe/sample-plugin-for-zowe-cli`:
     ```yaml
     extras:
       sample-plugin-for-zowe-cli:
         zowe-v1-lts: true
         zowe-v2-lts: true
     ```
-    This enables nightly automation to publish the "latest" (included by default), "zowe-v1-lts", and "zowe-v2-lts" tags for your plug-in.
+    This enables nightly automation to publish the "latest" (included by default), "zowe-v1-lts", and "zowe-v2-lts" tags. The list of tags should match the ones you want to publish for your plug-in.
 2. (optional) In your plug-in's repository, add the following GitHub workflow:
     ```yaml
     name: Publish to NPM
@@ -69,7 +69,7 @@ Then you can follow these steps to automate publishing your plug-in to NPM:
 
     jobs:
       publish:
-        uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml
+        uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
         secrets:
           NPM_PUBLIC_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
         with:
