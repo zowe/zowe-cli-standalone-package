@@ -22,63 +22,63 @@ packages:
     next: false
   imperative:
     zowe-v2-lts: 5.14.1
-    zowe-v1-lts: 4.18.14
+    zowe-v1-lts: 4.18.16
     next: true
   cli-test-utils:
     zowe-v2-lts: 7.16.3
     next: true
   core-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-uss-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   provisioning-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-console-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-files-for-zowe-sdk:
     zowe-v2-lts: 7.16.4
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-logs-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zosmf-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-workflows-for-zowe-sdk:
     zowe-v2-lts: 7.16.4
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-jobs-for-zowe-sdk:
     zowe-v2-lts: 7.16.4
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   zos-tso-for-zowe-sdk:
     zowe-v2-lts: 7.16.3
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   cli:
     zowe-v2-lts: 7.16.4
-    zowe-v1-lts: 6.40.15
+    zowe-v1-lts: 6.40.17
     next: true
   # CLI plug-ins
   cics-for-zowe-cli:
     zowe-v2-lts: 5.0.1
-    zowe-v1-lts: 4.0.7
+    zowe-v1-lts: 4.0.8
     next: true
   db2-for-zowe-cli:
     zowe-v2-lts: 5.0.3
-    zowe-v1-lts: 4.1.8
+    zowe-v1-lts: 4.1.9
     next: true
   ims-for-zowe-cli:
     zowe-v2-lts: 3.0.0
@@ -86,7 +86,7 @@ packages:
     next: true
   mq-for-zowe-cli:
     zowe-v2-lts: 3.0.1
-    zowe-v1-lts: 2.0.3
+    zowe-v1-lts: 2.0.4
     next: true
   secure-credential-store-for-zowe-cli:
     zowe-v1-lts: 4.1.10
@@ -110,7 +110,7 @@ extras:
 # Define version info for the latest staged Zowe release.
 tags:
   zowe-v1-lts:
-    version: 1.28.3
+    version: 1.28.4
     rc: 1
   zowe-v2-lts:
     version: 2.9.0
