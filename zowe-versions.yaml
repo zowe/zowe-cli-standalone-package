@@ -27,6 +27,9 @@ packages:
   cli-test-utils:
     zowe-v2-lts: 7.16.5
     next: true
+  secrets-for-zowe-sdk:
+    zowe-v2-lts: 7.18.0
+    next: true
   core-for-zowe-sdk:
     zowe-v2-lts: 7.16.5
     zowe-v1-lts: 6.40.17
