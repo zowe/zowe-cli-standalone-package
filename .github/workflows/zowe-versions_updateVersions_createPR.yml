@@ -4,11 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release version'
+        description: 'Release Version (x.x.x)'
         required: true
       zowe_version:
-        description: 'Zowe version ("zowe-v1-lts" or "zowe-v2-lts")'
+        description: "Zowe Version Tag"
+        default: zowe-v2-lts
         required: true
+        type: choice
+        options:
+        - zowe-v1-lts
+        - zowe-v2-lts
 
 jobs:
   update_versions_and_create_pr:
@@ -16,20 +21,12 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 14
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update -y
-          sudo apt install gh
-
-      - name: Check gh version
-        run: gh --version
+          node-version: lts/*
 
       - name: Create Branch
         run: |
@@ -40,9 +37,13 @@ jobs:
       - name: Get and Change Component Versions
         id: get_versions
         run: |
-          components=("perf-timing" "imperative" "cli-test-utils" "secrets-for-zowe-sdk" "core-for-zowe-sdk" "zos-uss-for-zowe-sdk" "provisioning-for-zowe-sdk" "zos-console-for-zowe-sdk" "zos-files-for-zowe-sdk" "zos-logs-for-zowe-sdk" "zosmf-for-zowe-sdk" "zos-workflows-for-zowe-sdk" "zos-jobs-for-zowe-sdk" "zos-tso-for-zowe-sdk" "cli" "cics-for-zowe-cli" "db2-for-zowe-cli" "ims-for-zowe-cli" "mq-for-zowe-cli" "secure-credential-store-for-zowe-cli" "zos-ftp-for-zowe-cli")
+          components=("perf-timing" "imperative" "cli-test-utils" "secrets-for-zowe-sdk" "core-for-zowe-sdk" "zos-uss-for-zowe-sdk" "provisioning-for-zowe-sdk" "zos-console-for-zowe-sdk" "zos-files-for-zowe-sdk" "zos-logs-for-zowe-sdk" "zosmf-for-zowe-sdk" "zos-workflows-for-zowe-sdk" "zos-jobs-for-zowe-sdk" "zos-tso-for-zowe-sdk" "cli" "cics-for-zowe-cli" "db2-for-zowe-cli" "ims-for-zowe-cli" "mq-for-zowe-cli" "zos-ftp-for-zowe-cli")
           zowe_version="${{ github.event.inputs.zowe_version }}"
           version="${{ github.event.inputs.version }}"
+          if [[ "$zowe_version" == "zowe-v1-lts" ]]; then
+            components+=("secure-credential-store-for-zowe-cli")
+          fi
+          # echoing to txt file to later add this file as the PR description
           echo "This PR updates the following package versions in zowe-versions.yaml for \`$zowe_version\`" >> description.txt
           echo "| Updated Package | Old Version | New Version |" >> description.txt
           echo "| --- | --- | --- |" >> description.txt
@@ -51,6 +52,7 @@ jobs:
             new_version=$(npm view @zowe/$component "dist-tags.$zowe_version")
             if [[ "$new_version" != "$current_version" ]]; then
               echo "|$component | $current_version | $new_version|" >> description.txt
+              # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
               sed -i -E "/^  $component:/ { n; s/($zowe_version: ).*/\1$new_version/; t; n; s/($zowe_version: ).*/\1$new_version/ }" zowe-versions.yaml
             fi
           done
@@ -67,15 +69,17 @@ jobs:
           git push origin HEAD
 
       - name: Create Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version_name="${{ github.event.inputs.version }}"
           branch_name="update-versions-${version_name}"
-          pr_title="Update versions for $version_name"
+          pr_title="Update zowe component versions for $version_name"
           body_file=description.txt
-          gh pr create --base master --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
+          gh pr create --base master --head "$branch_name" --title "$pr_title" --body-file "$body_file"
+          gh pr edit --add-reviewer awharn
+          gh pr edit --add-reviewer atorrise
+          gh pr edit --add-reviewer t1m0thyj
+          gh pr edit --add-reviewer traeok
+          gh pr edit --add-reviewer zFernand0
           echo "Pull Request created successfully"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete description.txt
-        run: rm description.txt
