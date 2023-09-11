@@ -1,4 +1,4 @@
-name: Update Versions and Create PR
+name: Update Versions and Create PR (manifest)
 
 on:
   workflow_dispatch:
