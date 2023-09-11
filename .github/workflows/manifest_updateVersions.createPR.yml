@@ -58,6 +58,10 @@ jobs:
 
           zowe_version=${{ github.event.inputs.zowe_version }}
 
+          if [[ "$zowe_version" == "zowe-v1-lts" ]]; then
+            repoAndComponent[secure-credential-store-for-zowe-cli]=zowe-cli-scs-plugin
+          fi
+
           echo "This PR updates the following package versions in manifest.json.template for \`$zowe_version\`" >> description.txt
           echo "| Updated Package | Old Version | New Version |" >> description.txt
           echo "| --- | --- | --- |" >> description.txt
