@@ -1,4 +1,4 @@
-name: Update Versions and Create PR
+name: Update Versions and Create PR (zowe-versions)
 
 on:
   workflow_dispatch:
@@ -37,8 +37,8 @@ jobs:
       - name: Get and Change Component Versions
         id: get_versions
         run: |
-          components=("perf-timing" "imperative" "cli-test-utils" "secrets-for-zowe-sdk" "core-for-zowe-sdk" "zos-uss-for-zowe-sdk" "provisioning-for-zowe-sdk" "zos-console-for-zowe-sdk" "zos-files-for-zowe-sdk" "zos-logs-for-zowe-sdk" "zosmf-for-zowe-sdk" "zos-workflows-for-zowe-sdk" "zos-jobs-for-zowe-sdk" "zos-tso-for-zowe-sdk" "cli" "cics-for-zowe-cli" "db2-for-zowe-cli" "ims-for-zowe-cli" "mq-for-zowe-cli" "zos-ftp-for-zowe-cli")
           zowe_version="${{ github.event.inputs.zowe_version }}"
+          components=$(yq '.packages | with_entries(select(.value."$zowe_version")) | keys | .[]' zowe-versions.yaml)
           version="${{ github.event.inputs.version }}"
           if [[ "$zowe_version" == "zowe-v1-lts" ]]; then
             components+=("secure-credential-store-for-zowe-cli")
