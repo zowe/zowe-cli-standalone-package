@@ -38,16 +38,13 @@ jobs:
         id: get_versions
         run: |
           zowe_version="${{ github.event.inputs.zowe_version }}"
-          components=$(yq '.packages | with_entries(select(.value."$zowe_version")) | keys | .[]' zowe-versions.yaml)
+          components=$(yq -r ".packages | with_entries(select(.value.\"$zowe_version\")) | keys | .[]" zowe-versions.yaml)
           version="${{ github.event.inputs.version }}"
-          if [[ "$zowe_version" == "zowe-v1-lts" ]]; then
-            components+=("secure-credential-store-for-zowe-cli")
-          fi
           # echoing to txt file to later add this file as the PR description
           echo "This PR updates the following package versions in zowe-versions.yaml for \`$zowe_version\`" >> description.txt
           echo "| Updated Package | Old Version | New Version |" >> description.txt
           echo "| --- | --- | --- |" >> description.txt
-          for component in "${components[@]}"; do
+          for component in $components"; do
             current_version=$(grep -A 2 "^  $component:" zowe-versions.yaml | grep "$zowe_version" | awk '{print $2}')
             new_version=$(npm view @zowe/$component "dist-tags.$zowe_version")
             if [[ "$new_version" != "$current_version" ]]; then
@@ -57,8 +54,8 @@ jobs:
             fi
           done
 
-          # Update zowe-versions.yaml tags section
-          sed -i -E "/$zowe_version:/ { n; s/(version: ).*/\1$version/ }" zowe-versions.yaml
+          # Update zowe-versions.yaml tags section (always sets rc = 1)
+          sed -i -E "/$zowe_version:/ { n; s/(version: ).*/\1$version/; s/(rc: )[0-9]+/\11/ }" zowe-versions.yaml
 
 
       - name: Commit and Push Changes

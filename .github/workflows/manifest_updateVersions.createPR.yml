@@ -23,9 +23,9 @@ jobs:
       - name: Set Default Branch Environment Variable
         run: |
           if [[ "${{ github.event.inputs.zowe_version }}" == "zowe-v1-lts" ]]; then
-            echo "defaultBranch=v1.x/staging" >> $GITHUB_ENV
+            echo "defaultBranch=v1.x/rc" >> $GITHUB_ENV
           else
-            echo "defaultBranch=v2.x/staging" >> $GITHUB_ENV
+            echo "defaultBranch=v2.x/rc" >> $GITHUB_ENV
           fi
 
       - name: Checkout zowe-install-packaging
@@ -41,7 +41,7 @@ jobs:
 
       - name: Create Branch
         run: |
-          branch_name="v${{ github.event.inputs.version }}/rc"
+          branch_name="v${{ github.event.inputs.version }}/cli/rc"
           git checkout -b "$branch_name"
 
       - name: Get and Change Component Versions
@@ -87,7 +87,7 @@ jobs:
       - name: Create Pull Request
         run: |
           version="${{ github.event.inputs.version }}"
-          branch_name="v$version/rc"
+          branch_name="v$version/cli/rc"
           pr_title="Update versions for $version"
           body_file=description.txt
           gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
