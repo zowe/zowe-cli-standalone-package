@@ -109,6 +109,8 @@ extras:
   id-federation-for-zowe-cli:
     next: true
     zowe-v2-lts: true
+  secrets-for-kubernetes-for-zowe-cli:
+    next: true
 
 # Define version info for the latest staged Zowe release.
 tags:
