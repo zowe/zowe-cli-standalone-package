@@ -47,7 +47,7 @@ jobs:
           for component in $components; do
             current_version=$(grep -A 2 "^  $component:" zowe-versions.yaml | grep "$zowe_version" | awk '{print $2}')
             new_version=$(npm view @zowe/$component "dist-tags.$zowe_version")
-            if [[ "$new_version" != "$current_version" ]]; then
+            if [[ "$new_version" && "$new_version" > "$current_version" ]]; then
               echo "|$component | $current_version | $new_version|" >> description.txt
               # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
               sed -i -E "/^  $component:/ { n; s/($zowe_version: ).*/\1$new_version/; t; n; s/($zowe_version: ).*/\1$new_version/ }" zowe-versions.yaml
@@ -62,7 +62,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git commit -am "Update component versions"
+          git commit -sm "Update component versions"
           git push origin HEAD
 
       - name: Create Pull Request
@@ -70,13 +70,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           version_name="${{ github.event.inputs.version }}"
-          branch_name="update-versions-${version_name}"
+          branch_name="v$version_name/master"
           pr_title="Update zowe component versions for $version_name"
           body_file=description.txt
-          gh pr create --base master --head "$branch_name" --title "$pr_title" --body-file "$body_file"
-          gh pr edit --add-reviewer awharn
-          gh pr edit --add-reviewer atorrise
-          gh pr edit --add-reviewer t1m0thyj
-          gh pr edit --add-reviewer traeok
-          gh pr edit --add-reviewer zFernand0
+          pr_number=$(gh pr create --base master --head "$branch_name" --title "$pr_title" --body-file "$body_file") | sed 's/.*\/\([0-9]\+\)$/\1/'
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+            https://api.github.com/repos/zowe/zowe-cli-standalone-package/pulls/${{pr_number}}/requested_reviewers \
+            -d '{"reviewers":["awharn","atorrise","t1m0thyj","traeok","zFernand0"]}'
+          
           echo "Pull Request created successfully"
