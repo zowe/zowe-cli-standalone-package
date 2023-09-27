@@ -45,9 +45,9 @@ jobs:
           echo "| Updated Package | Old Version | New Version |" >> description.txt
           echo "| --- | --- | --- |" >> description.txt
           for component in $components; do
-            current_version=$(grep -A 2 "^  $component:" zowe-versions.yaml | grep "$zowe_version" | awk '{print $2}')
+            current_version=$(grep -A 2 "^  $component:" zowe-versions.yaml | grep "$zowe_version" | awk '{print $2}' | tr -d '\n')
             new_version=$(npm view @zowe/$component "dist-tags.$zowe_version")
-            if [[ "$new_version" && "$new_version" > "$current_version" ]]; then
+            if [[ "$new_version" != "$current_version" ]]; then
               echo "|$component | $current_version | $new_version|" >> description.txt
               # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
               sed -i -E "/^  $component:/ { n; s/($zowe_version: ).*/\1$new_version/; t; n; s/($zowe_version: ).*/\1$new_version/ }" zowe-versions.yaml
@@ -74,7 +74,7 @@ jobs:
           pr_title="Update zowe component versions for $version_name"
           body_file=description.txt
           pr_url=$(gh pr create --base master --head "$branch_name" --title "$pr_title" --body-file "$body_file")
-          pr_number=pr_url | sed 's/.*\/\([0-9]\+\)$/\1/'
+          pr_number=$(echo "$pr_url" | sed 's/.*\/\([0-9]\+\)$/\1/')
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
