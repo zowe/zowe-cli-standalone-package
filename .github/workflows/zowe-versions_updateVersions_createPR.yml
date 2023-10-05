@@ -79,6 +79,6 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
             https://api.github.com/repos/zowe/zowe-cli-standalone-package/pulls/${{pr_number}}/requested_reviewers \
-            -d '{"reviewers":["awharn","atorrise","t1m0thyj","traeok","zFernand0"]}'
+            -d '{"team_reviewers":["@zowe/zowe-cli-administrators"]}'
           
           echo "Pull Request created successfully"
