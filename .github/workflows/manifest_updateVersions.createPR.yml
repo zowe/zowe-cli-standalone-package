@@ -93,4 +93,4 @@ jobs:
           gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
           echo "Pull Request created successfully"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ZOWE_ROBOT_TOKEN }}
