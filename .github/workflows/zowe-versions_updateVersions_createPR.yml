@@ -31,7 +31,7 @@ jobs:
       - name: Create Branch
         run: |
           version_name="${{ github.event.inputs.version }}"
-          branch_name="update-versions-${version_name}"
+          branch_name="v$version_name/master"
           git checkout -b "$branch_name"
 
       - name: Get and Change Component Versions
