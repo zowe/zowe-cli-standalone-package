@@ -37,10 +37,10 @@ jobs:
       with:
         repository: 'zowe/zowe-cli-standalone-package'
 
-    - name: Use Node.js 16
+    - name: Use Node.js LTS
       uses: actions/setup-node@v3
       with:
-        node-version: '16'
+        node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
 
     - name: Install Dependencies
