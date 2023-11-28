@@ -68,7 +68,7 @@ jobs:
 
     - name: Load Zowe Versions
       id: versions
-      run: node scripts/load-zowe-versions.js ${{ github.event.inputs.package-tag || inputs.package-tag }} ${{ github.event.inputs.release-type || inputs.release-type }}
+      run: node scripts/load-zowe-versions.js ${{ inputs.package-tag }} ${{ inputs.release-type }}
       env:
         GIT_BRANCH: ${{ github.head_ref || github.ref_name }}
 
@@ -79,7 +79,7 @@ jobs:
 
     - name: Download Zowe License ZIP
       run: |
-        if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" != "next" ]]; then
+        if [[ "${{ inputs.package-tag }}" != "next" ]]; then
           jfrog rt dl --flat --fail-no-op libs-release-local/org/zowe/licenses/${{ github.event.inputs.license-version || steps.versions.outputs.tags_version }}/zowe_licenses_cli.zip /tmp/
         else
           jfrog rt dl --flat --fail-no-op libs-snapshot-local/org/zowe/licenses/${{ steps.versions.outputs.tags_version }}-next-SNAPSHOT/zowe_licenses_cli-SNAPSHOT.zip /tmp/
@@ -91,13 +91,13 @@ jobs:
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@${{ steps.versions.outputs.packages_cli }}
-        if [[ "${{ github.event.inputs.package-tag || inputs.package-tag }}" == "zowe-v1-lts" ]]; then
+        if [[ "${{ inputs.package-tag }}" == "zowe-v1-lts" ]]; then
           npm pack @zowe/secure-credential-store-for-zowe-cli@${{ steps.versions.outputs.packages_secure-credential-store-for-zowe-cli }}
         fi
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
-    
+
     - name: Create CLI Plugins Bundle
       run: |
         mkdir -p temp && cd temp
@@ -110,7 +110,7 @@ jobs:
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
-    
+
     - name: Create Node.js SDK Bundle
       run: |
         mkdir -p temp && cd temp
@@ -132,12 +132,20 @@ jobs:
           ${{ steps.versions.outputs.packages_imperative }} ${{ steps.versions.outputs.packages_cli }}
         mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
-    
+
     - name: Create Python SDK Bundle
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        pip3 download --no-binary=pyyaml zowe
+        if [[ "${{ inputs.package-tag }}" != "zowe-v1-lts" ]]; then
+          pip3 download --no-binary charset-normalizer,pyrsistent,pyyaml --pre zowe
+          # Download Secrets SDK binary wheels for all platforms
+          curl -fs https://pypi.org/project/zowe-secrets-for-zowe-sdk/#files |
+            grep -Eo 'href="[^"]+\.whl"' | cut -d '"' -f 2 |
+            while read -r url; do curl -fLOJ $url; done
+        else
+          pip3 download --no-binary charset-normalizer,pyyaml zowe
+        fi
         TZ=UTC find . -exec touch -t 197001010000.00 {} +
         TZ=UTC zip -roX zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
@@ -149,32 +157,32 @@ jobs:
     - name: Archive Build Artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
+        name: 'zowe-cli-bundle_${{ inputs.package-tag }}'
         path: '*.zip'
 
     - name: Add Bundles to Spec
       run: |
         node scripts/prepare-upload.js "zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.BUNDLE_VERSION_SHORT }}/"
+          "libs-${{ inputs.release-type }}-local/org/zowe/cli/zowe-cli-package/${{ env.BUNDLE_VERSION_SHORT }}/"
         node scripts/prepare-upload.js "zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/cli/zowe-cli-plugins/${{ env.BUNDLE_VERSION_SHORT }}/"
+          "libs-${{ inputs.release-type }}-local/org/zowe/cli/zowe-cli-plugins/${{ env.BUNDLE_VERSION_SHORT }}/"
         node scripts/prepare-upload.js "zowe-nodejs-sdk*-${{ env.BUNDLE_VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
+          "libs-${{ inputs.release-type }}-local/org/zowe/sdk/zowe-nodejs-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
         node scripts/prepare-upload.js "zowe-python-sdk*-${{ env.BUNDLE_VERSION }}.zip" \
-          "libs-${{ github.event.inputs.release-type || inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
+          "libs-${{ inputs.release-type }}-local/org/zowe/sdk/zowe-python-sdk/${{ env.BUNDLE_VERSION_SHORT }}/"
 
     - name: Publish to Artifactory
       id: publish
-      if: ${{ github.event.inputs.dry-run == 'false' || inputs.dry-run == false }}
+      if: ${{ inputs.dry-run == false }}
       run: jfrog rt u --detailed-summary --spec upload-spec.json
 
     - name: Find Current PR
       id: find-pr
-      if: ${{ steps.publish.outcome == 'success' && (github.event.inputs.release-type == 'release' || inputs.release-type == 'release') }}
+      if: ${{ steps.publish.outcome == 'success' && inputs.release-type == 'release' }}
       uses: jwalton/gh-find-current-pr@v1
       with:
         state: all
-    
+
     - name: Comment on PR
       if: ${{ steps.find-pr.outputs.number }}
       uses: marocchino/sticky-pull-request-comment@v2
@@ -196,7 +204,7 @@ jobs:
     - name: Download Bundle Artifact
       uses: actions/download-artifact@v3
       with:
-        name: 'zowe-cli-bundle_${{ github.event.inputs.package-tag || inputs.package-tag }}'
+        name: 'zowe-cli-bundle_${{ inputs.package-tag }}'
         path: 'zowe-cli-bundle'
 
     - name: Use Node.js ${{ matrix.node-version }}
