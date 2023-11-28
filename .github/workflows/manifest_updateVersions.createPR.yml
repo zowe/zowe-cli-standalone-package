@@ -82,14 +82,14 @@ jobs:
           git config --global user.name ${{ secrets.ZOWE_ROBOT_USER }}
           git config --global user.email ${{ secrets.ZOWE_ROBOT_EMAIL }}
           git add "manifest.json.template"
-          git commit -m "Update component versions"
+          git commit -sm "Update component versions"
           git push origin HEAD
 
       - name: Create Pull Request
         run: |
           version="${{ github.event.inputs.version }}"
           branch_name="v$version/cli/rc"
-          pr_title="Update versions for $version"
+          pr_title="Update CLI component versions for $version"
           body_file=description.txt
           gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
           echo "Pull Request created successfully"
