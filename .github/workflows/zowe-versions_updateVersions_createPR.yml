@@ -60,15 +60,15 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name ${{ secrets.ZOWE_ROBOT_USER }}
+          git config --global user.email ${{ secrets.ZOWE_ROBOT_EMAIL }}
           git add zowe-versions.yaml
           git commit -sm "Update component versions"
           git push origin HEAD
 
       - name: Create Pull Request
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.ZOWE_ROBOT_TOKEN }}
         run: |
           version_name="${{ github.event.inputs.version }}"
           branch_name="v$version_name/master"
@@ -78,8 +78,8 @@ jobs:
           pr_number=$(echo "$pr_url" | sed 's/.*\/\([0-9]\+\)$/\1/')
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+            -H "Authorization: Bearer ${{ secrets.ZOWE_ROBOT_TOKEN }}"\
             https://api.github.com/repos/zowe/zowe-cli-standalone-package/pulls/$pr_number/requested_reviewers \
             -d '{"team_reviewers":["zowe-cli-administrators"]}'
-          
+
           echo "Pull Request created successfully"
