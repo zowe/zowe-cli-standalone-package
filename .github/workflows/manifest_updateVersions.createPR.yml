@@ -69,9 +69,9 @@ jobs:
           for component in "${!repoAndComponent[@]}"; do
               repo="${repoAndComponent[$component]}"
               current_version=$(grep -A 2 "\"repository\": \"$repo\"" manifest.json.template | awk -F '"' '/"tag":/ {print $4}')
-              new_version=v$(npm view @zowe/$component "dist-tags.$zowe_version")
+              new_version=v$(npm view @zowe/$component "dist-tags.$zowe_version" --@zowe:registry=https://zowe.jfrog.io/zowe/api/npm/npm-local-release/)
               if [[ "$new_version" != "$current_version" ]]; then
-                  echo "|$component | $current_version | $new_version|" >> description.txt
+                  echo "| $component | $current_version | $new_version |" >> description.txt
                   # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
                   sed -i -E "/\"repository\": \"$repo\"/{n;s/(\"tag\": \").*(\",)/\1$new_version\2/}" manifest.json.template
               fi
