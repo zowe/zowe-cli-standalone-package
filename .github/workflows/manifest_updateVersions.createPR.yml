@@ -49,11 +49,10 @@ jobs:
         id: get_versions
         run: |
           declare -A repoAndComponent
-          repoAndComponent[imperative]=imperative
           repoAndComponent[cli]=zowe-cli
           repoAndComponent[cics-for-zowe-cli]=zowe-cli-cics-plugin
           repoAndComponent[db2-for-zowe-cli]=zowe-cli-db2-plugin
-          repoAndComponent[perf-timing]=perf-timing
+          repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
           repoAndComponent[mq-for-zowe-cli]=zowe-cli-mq-plugin
           repoAndComponent[zos-ftp-for-zowe-cli]=zowe-cli-ftp-plugin
 
@@ -91,7 +90,7 @@ jobs:
           branch_name="v$version/cli/rc"
           pr_title="Update CLI component versions for $version"
           body_file=description.txt
-          gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
+          gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer ojcelis,MarkAckert
           echo "Pull Request created successfully"
         env:
           GH_TOKEN: ${{ secrets.ZOWE_ROBOT_TOKEN }}
