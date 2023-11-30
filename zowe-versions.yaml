@@ -71,7 +71,7 @@ packages:
     zowe-v1-lts: 6.40.19
     next: true
   cli:
-    zowe-v2-lts: 7.20.0
+    zowe-v2-lts: 7.20.1
     zowe-v1-lts: 6.40.19
     next: true
   # CLI plug-ins
@@ -80,7 +80,7 @@ packages:
     zowe-v1-lts: 4.0.8
     next: true
   db2-for-zowe-cli:
-    zowe-v2-lts: 5.0.4
+    zowe-v2-lts: 5.0.5
     zowe-v1-lts: 4.1.9
     next: true
   ims-for-zowe-cli:
@@ -95,7 +95,7 @@ packages:
     zowe-v1-lts: 4.1.12
     next: false
   zos-ftp-for-zowe-cli:
-    zowe-v2-lts: 2.1.5
+    zowe-v2-lts: 2.1.6
     zowe-v1-lts: 1.8.8
     next: true
 
