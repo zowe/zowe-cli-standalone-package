@@ -25,6 +25,7 @@ on:
         options:
         - zowe-v1-lts
         - zowe-v2-lts
+        - zowe-v3-lts
         # - next
       release-type:
         description: "Specify type of deployment"
