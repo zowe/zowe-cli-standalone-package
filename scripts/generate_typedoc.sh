@@ -17,9 +17,9 @@ set -e
 if [[ $1 != "next"* ]]; then
   zoweVersion=v$1
   if [[ $zoweVersion != *"SNAPSHOT" ]]; then
-    cliBranch=v$3
+    cliBranch=v$2
   else
-    cliBranch=$(echo "$3" | sed 's/zowe-v2-lts/master/')
+    cliBranch=$(echo "$2" | sed 's/zowe-v2-lts/master/')
   fi
 else
   zoweVersion=vNext
