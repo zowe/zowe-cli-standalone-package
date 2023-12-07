@@ -39,6 +39,7 @@ npm install -D --legacy-peer-deps @types/node typescript@^3.8.0 typedoc@^0.19.0 
 
 # Transform relative URLs to absolute URLs in CLI readme
 sed -i "s \./ https://github.com/zowe/zowe-cli/blob/$cliBranch/ " zowe-cli/README.md
+echo -e "[\n]" > sourcefile-map.json
 
 # Create directory structure for Imperative and SDK packages
 # Also generate config for typedoc sourcefile-url plugin
