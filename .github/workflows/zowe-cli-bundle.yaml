@@ -129,8 +129,7 @@ jobs:
         npm pack @zowe/zosmf-for-zowe-sdk@${{ steps.versions.outputs.packages_zosmf-for-zowe-sdk }}
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-nodejs-sdk-${{ env.BUNDLE_VERSION }}.zip
-        bash ../scripts/generate_typedoc.sh ${{ env.BUNDLE_VERSION_SHORT }} \
-          ${{ steps.versions.outputs.packages_imperative }} ${{ steps.versions.outputs.packages_cli }}
+        bash ../scripts/generate_typedoc.sh ${{ env.BUNDLE_VERSION_SHORT }} ${{ steps.versions.outputs.packages_cli }}
         mv zowe-node-sdk-typedoc.zip ../zowe-nodejs-sdk-typedoc-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
 
