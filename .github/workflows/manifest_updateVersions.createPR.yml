@@ -33,6 +33,7 @@ jobs:
         with:
           repository: 'zowe/zowe-install-packaging'
           ref: ${{ env.defaultBranch }}
+          token: ${{ secrets.ZOWE_ROBOT_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -48,11 +49,10 @@ jobs:
         id: get_versions
         run: |
           declare -A repoAndComponent
-          repoAndComponent[imperative]=imperative
           repoAndComponent[cli]=zowe-cli
           repoAndComponent[cics-for-zowe-cli]=zowe-cli-cics-plugin
           repoAndComponent[db2-for-zowe-cli]=zowe-cli-db2-plugin
-          repoAndComponent[perf-timing]=perf-timing
+          repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
           repoAndComponent[mq-for-zowe-cli]=zowe-cli-mq-plugin
           repoAndComponent[zos-ftp-for-zowe-cli]=zowe-cli-ftp-plugin
 
@@ -68,9 +68,9 @@ jobs:
           for component in "${!repoAndComponent[@]}"; do
               repo="${repoAndComponent[$component]}"
               current_version=$(grep -A 2 "\"repository\": \"$repo\"" manifest.json.template | awk -F '"' '/"tag":/ {print $4}')
-              new_version=v$(npm view @zowe/$component "dist-tags.$zowe_version")
+              new_version=v$(npm view @zowe/$component "dist-tags.$zowe_version" --@zowe:registry=https://zowe.jfrog.io/zowe/api/npm/npm-local-release/)
               if [[ "$new_version" != "$current_version" ]]; then
-                  echo "|$component | $current_version | $new_version|" >> description.txt
+                  echo "| $component | $current_version | $new_version |" >> description.txt
                   # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
                   sed -i -E "/\"repository\": \"$repo\"/{n;s/(\"tag\": \").*(\",)/\1$new_version\2/}" manifest.json.template
               fi
@@ -78,19 +78,19 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          git config --global user.name ${{ secrets.ZOWE_ROBOT_USER }}
+          git config --global user.email ${{ secrets.ZOWE_ROBOT_EMAIL }}
           git add "manifest.json.template"
-          git commit -m "Update component versions"
+          git commit -sm "Update component versions"
           git push origin HEAD
 
       - name: Create Pull Request
         run: |
           version="${{ github.event.inputs.version }}"
           branch_name="v$version/cli/rc"
-          pr_title="Update versions for $version"
+          pr_title="Update CLI component versions for $version"
           body_file=description.txt
-          gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer atorrise
+          gh pr create --base ${{ env.defaultBranch }} --head "$branch_name" --title "$pr_title" --body-file "$body_file" --reviewer ojcelis,MarkAckert
           echo "Pull Request created successfully"
         env:
           GH_TOKEN: ${{ secrets.ZOWE_ROBOT_TOKEN }}
