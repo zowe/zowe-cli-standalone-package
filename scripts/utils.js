@@ -61,6 +61,10 @@ async function getPackageInfo(pkg, opts="", prop="version") {
 }
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
+    if (process.env.FORCE_PUBLISH === 'true') {
+        return false;
+    }
+
     const response = await fetch("https://raw.githubusercontent.com/zowe/zowe.github.io/master/_data/releases.yml", {
         headers: (process.env.CI && !process.env.ACT) ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}
     });
