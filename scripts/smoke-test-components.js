@@ -2,7 +2,7 @@
 const core = require("@actions/core");
 const utils = require(__dirname + "/utils");
 const fs = require("fs");
-//const os = require("os");
+const os = require("os");
 const path = require("path");
 
 const PKG_SCOPE = "@zowe";
@@ -18,6 +18,7 @@ async function test(pkgName, pkgTag) {
         return true;
     } catch (err) {
         installError = err;
+        core.error(installError);
         errors.push(installError.stack);
         return false;
     }

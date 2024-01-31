@@ -15,10 +15,12 @@ const glob = require("glob");
     }
 
     await core.summary.addHeading('Smoke Test Results').addTable([
+    [
         {data: "CPU Arch", header: true},
         {data: "Platform", header: true},
         {data: "Package", header: true},
         {data: "Tag", header: true},
         {data: "Status", header: true}
-    ], ...list).write();
+    ],
+    ...list]).write();
 })();
