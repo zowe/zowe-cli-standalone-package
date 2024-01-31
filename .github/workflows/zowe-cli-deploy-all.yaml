@@ -49,6 +49,11 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
+
+      - name: Downgrade Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.5'
       
       - name: Run Script
         id: run
