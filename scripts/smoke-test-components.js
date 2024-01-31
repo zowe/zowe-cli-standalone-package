@@ -46,7 +46,7 @@ function getTags(tagArray) {
     // Run tests and collect information
     for (const {name, tag} of tags) {
         let success;
-        if (process.arch == "" && name == "db2-for-zowe-cli") {
+        if (process.arch == "arm64" && name == "db2-for-zowe-cli") {
             // Don't even try, we don't expect this to work
             success = false;
         } else {
