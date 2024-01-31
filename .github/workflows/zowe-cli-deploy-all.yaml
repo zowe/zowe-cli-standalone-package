@@ -28,59 +28,129 @@ jobs:
       id: matrix
       run: node scripts/get-package-matrix.js
 
-  deploy:
+  smoke-test:
+    runs-on: ${{ matrix.os }}
     needs: setup
-    runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
-      fail-fast: false
-      max-parallel: 1
       matrix:
-        package: ${{ fromJson(needs.setup.outputs.deploy-matrix) }}
-
+        os: ["windows-latest", "ubuntu-latest", "macos-latest", "macos-14"]
     steps:
-    - name: Set Environment Variables
-      run: |
-        read -r PKG_NAME PKG_TAGS <<< "${{ matrix.package }}"
-        echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
-        echo "PKG_TAGS=${PKG_TAGS}" >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Use Node.JS LTS
+        uses: actions/setup-node@v3
 
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Run Script
+        id: run
+        env:
+          DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+          RUN_OS: ${{ matrix.os }}
+        run: node scripts/smoke-test-components.js"
+
+      - name: Upload Status Artifact
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ matrix.os }}
+          path: status-${{ matrix.os }}.json
+
+      - name: Upload Error Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: errors-${{ matrix.os }}
+          path: errors-${{ matrix.os }}.log
+
+  smoke-test-status:
+    runs-on: ubuntu-latest
+    needs: smoke-test
+    if: always()
+    steps:
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: Use Node.js LTS
+  
+    - name: Use Node.JS LTS
       uses: actions/setup-node@v3
-      with:
-        node-version: 'lts/*'
-        cache: ${{ (!env.ACT && 'npm') || '' }}
 
     - name: Install Dependencies
       run: npm ci
 
-    - name: NPM Login
-      run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
-
-    - name: Deploy Package
-      id: deploy
-      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: status-*
+  
+    - name: Run Script
+      run: "node scripts/smoke-test-status.js"
+    
     - name: Create Issue
-      if: ${{ failure() }}
       uses: JasonEtco/create-an-issue@v2
+      if: ${{ needs.smoke-test.result != 'success' }}
       env:
-        ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
       with:
-        filename: .github/deploy-failed.md
+        filename: .github/smoke-test-failed.md
         update_existing: true
 
-    - name: Close Issue
-      if: ${{ success() }}
-      uses: lee-dohm/close-matching-issues@v2
-      with:
-        query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
-        token: ${{ secrets.GITHUB_TOKEN }}
+  # deploy:
+  #   needs: setup
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     max-parallel: 1
+  #     matrix:
+  #       package: ${{ fromJson(needs.setup.outputs.deploy-matrix) }}
+
+  #   steps:
+  #   - name: Set Environment Variables
+  #     run: |
+  #       read -r PKG_NAME PKG_TAGS <<< "${{ matrix.package }}"
+  #       echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
+  #       echo "PKG_TAGS=${PKG_TAGS}" >> $GITHUB_ENV
+
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
+
+  #   - name: Use Node.js LTS
+  #     uses: actions/setup-node@v3
+  #     with:
+  #       node-version: 'lts/*'
+  #       cache: ${{ (!env.ACT && 'npm') || '' }}
+
+  #   - name: Install Dependencies
+  #     run: npm ci
+
+  #   - name: NPM Login
+  #     run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
+  #     env:
+  #       NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+  #   - name: Deploy Package
+  #     id: deploy
+  #     run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
+  #     env:
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  #   - name: Create Issue
+  #     if: ${{ failure() }}
+  #     uses: JasonEtco/create-an-issue@v2
+  #     env:
+  #       ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
+  #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+  #     with:
+  #       filename: .github/deploy-failed.md
+  #       update_existing: true
+
+  #   - name: Close Issue
+  #     if: ${{ success() }}
+  #     uses: lee-dohm/close-matching-issues@v2
+  #     with:
+  #       query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
+  #       token: ${{ secrets.GITHUB_TOKEN }}
