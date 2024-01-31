@@ -9,9 +9,14 @@ const glob = require("glob");
     for (const globFile of hostFiles) {
         object.push(JSON.parse(fs.readFileSync(globFile).toString()));
     }
+    object.sort((a, b) => a.compare.localeCompare(b.compare));
 
     for (const entry of object){ 
-        list.push([entry.arch, entry.platform, entry.package, entry.tag, entry.success ? "Succeeded" : "Failed"]);
+        if (entry.arch == "" && entry.package == "") {
+            list.push([entry.arch, entry.platform, entry.package, entry.tag, "Not Supported"]);
+        } else {
+            list.push([entry.arch, entry.platform, entry.package, entry.tag, entry.success ? "Succeeded" : "Failed"]);
+        }
     }
 
     await core.summary.addHeading('Smoke Test Results').addTable([

@@ -45,8 +45,21 @@ function getTags(tagArray) {
     const results = [];
     // Run tests and collect information
     for (const {name, tag} of tags) {
-        const success = await test(name, tag);
-        results.push({arch: process.arch, platform: process.platform, package: name, tag: tag, success: success});
+        let success;
+        if (process.arch == "" && name == "db2-for-zowe-cli") {
+            // Don't even try, we don't expect this to work
+            success = false;
+        } else {
+            success = await test(name, tag);
+        }
+        results.push({
+            arch: process.arch,
+            platform: process.platform,
+            package: name,
+            tag: tag,
+            success: success,
+            compare: `${name}-${tag}-${process.platform}-${process.arch}`
+        });
     }
 
     // Output the artifact
