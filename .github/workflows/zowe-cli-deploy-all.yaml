@@ -50,7 +50,7 @@ jobs:
         env:
           DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
           RUN_OS: ${{ matrix.os }}
-        run: node scripts/smoke-test-components.js"
+        run: node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}
@@ -86,7 +86,7 @@ jobs:
         pattern: status-*
   
     - name: Run Script
-      run: "node scripts/smoke-test-status.js"
+      run: node scripts/smoke-test-status.js
     
     - name: Create Issue
       uses: JasonEtco/create-an-issue@v2
