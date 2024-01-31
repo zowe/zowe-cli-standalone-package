@@ -13,7 +13,7 @@ async function test(pkgName, pkgTag) {
     core.info(`Verifying that package ${pkgName} with tag ${pkgTag} can be installed`);
     let installError;
     try {
-        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
+        await utils.execAndGetStderr("pnpm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
             `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`], { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") });
         return true;
     } catch (err) {

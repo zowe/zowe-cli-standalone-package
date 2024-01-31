@@ -44,6 +44,11 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
+
+      - name: Set up PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
       
       - name: Run Script
         id: run
