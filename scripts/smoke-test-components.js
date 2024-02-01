@@ -49,7 +49,7 @@ function getTags(tagArray) {
     // Run tests and collect information
     for (const {name, tag} of tags) {
         let success;
-        if (process.env.SKIP_SDKS && (name.includes("-for-zowe-sdk") || name.includes("imperative") || name.includes("perf-timing") || extraNames.includes(name))) {
+        if (process.env.SKIP_SDKS && (!name.endsWith("cli") || extraNames.includes(name))) {
             // Just skip it
             continue;
         }
