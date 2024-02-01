@@ -25,7 +25,7 @@ const glob = require("glob");
         }
     }
 
-    fs.writeFileSync(path.join(process.cwd(), "publish-list.json", JSON.stringify(successObj, null, 4)));
+    fs.writeFileSync(path.join(process.cwd(), "publish-list.json"), JSON.stringify(successObj, null, 4));
 
     await core.summary.addHeading('Smoke Test Results').addTable([
     [
