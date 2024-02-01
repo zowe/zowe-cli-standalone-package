@@ -4,6 +4,12 @@ on:
   schedule:
   - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      skip-sdk-smoke-tests:
+        description: "Skips smoke tests on the SDKs, and only smoke-tests the CLI and plug-ins"
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   setup:
@@ -34,6 +40,7 @@ jobs:
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
       RUN_OS: windows-latest
     steps:
       - name: Checkout
@@ -44,11 +51,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
       
       - name: Run Script
         id: run
@@ -76,6 +78,7 @@ jobs:
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
       RUN_OS: ubuntu-latest
     steps:
       - name: Checkout
@@ -86,11 +89,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
       
       - name: Run Script
         id: run
@@ -118,6 +116,7 @@ jobs:
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
       RUN_OS: macos-12
     steps:
       - name: Checkout
@@ -128,11 +127,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       - name: Downgrade Python
         uses: actions/setup-python@v4
@@ -165,6 +159,7 @@ jobs:
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
       RUN_OS: macos-14
     steps:
       - name: Checkout
@@ -175,11 +170,6 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci
-
-      - name: Set up PNPM
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
       
       - name: Run Script
         id: run
@@ -234,7 +224,7 @@ jobs:
         update_existing: true
 
   # deploy:
-  #   needs: setup
+  #   needs: [setup, smoke-test-status]
   #   runs-on: ubuntu-latest
   #   strategy:
   #     fail-fast: false

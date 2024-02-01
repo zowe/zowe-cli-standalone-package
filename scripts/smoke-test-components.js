@@ -4,6 +4,7 @@ const utils = require(__dirname + "/utils");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const yaml = require("js-yaml");
 
 const PKG_SCOPE = "@zowe";
 const errors = [];
@@ -12,7 +13,7 @@ async function test(pkgName, pkgTag) {
     core.info(`Verifying that package ${pkgName} with tag ${pkgTag} can be installed`);
     let installError;
     try {
-        await utils.execAndGetStderr("pnpm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`],
+        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`],
             { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") });
         return true;
     } catch (err) {
@@ -41,10 +42,18 @@ function getTags(tagArray) {
 
 (async () => {
     const tags = getTags(process.env.DEPLOY_MATRIX);
+    const yamlFile = yaml.load(fs.readFileSync(path.join(process.cwd(), "zowe-versions.yaml")));
+    const extraNames = Object.keys(yamlFile.extras);
     const results = [];
+
     // Run tests and collect information
     for (const {name, tag} of tags) {
         let success;
+        if (process.env.SKIP_SDKS && (name.includes("-for-zowe-sdk") || name.includes("imperative") || name.includes("perf-timing") || extraNames.includes(name))) {
+            // Just skip it
+            continue;
+        }
+
         if (process.arch == "arm64" && name == "db2-for-zowe-cli") {
             // Don't even try, we don't expect this to work
             success = false;
