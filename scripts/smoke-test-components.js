@@ -66,7 +66,7 @@ function getTags(tagArray) {
             package: name,
             tag: tag,
             success: success,
-            compare: `${name}-${tag}-${process.platform}-${process.arch}`
+            compare: `${name}_${tag}_${process.platform}_${process.arch}`
         });
     }
 

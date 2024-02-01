@@ -197,7 +197,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [18.x, 20.x]
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest, macos-14]
 
     steps:
     - name: Download Bundle Artifact
@@ -226,4 +226,4 @@ jobs:
     - name: Install Plugins
       shell: bash
       working-directory: zowe-cli-bundle
-      run: unzip -o zowe-cli-plugins-*.zip && zowe plugins install *-for-zowe-cli.tgz && zowe plugins validate --fail-on-error
+      run: unzip -o zowe-cli-plugins-*.zip && node ../scripts/install-check.js && zowe plugins install *-for-zowe-cli.tgz && zowe plugins validate --fail-on-error
