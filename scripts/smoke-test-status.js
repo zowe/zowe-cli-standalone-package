@@ -7,11 +7,11 @@ const glob = require("glob");
     const object = [];
     const list = [];
     for (const globFile of hostFiles) {
-        object.push(JSON.parse(fs.readFileSync(globFile).toString()));
+        object.push(...JSON.parse(fs.readFileSync(globFile).toString()));
     }
     object.sort((a, b) => a.compare.localeCompare(b.compare));
 
-    for (const entry of object){ 
+    for (const entry of object){
         if (entry.arch == "arm64" && entry.package == "db2-for-zowe-cli") {
             list.push([entry.arch, entry.platform, entry.package, entry.tag, "Not Supported"]);
         } else {
