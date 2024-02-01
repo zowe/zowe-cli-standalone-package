@@ -18,9 +18,9 @@ const glob = require("glob");
             list.push([entry.package, entry.tag, entry.platform, entry.arch, "Not Supported 😢"]);
         } else {
             list.push([entry.package, entry.tag, entry.platform, entry.arch, entry.success ? "Succeeded ✅" : "Failed ❌"]);
-            if (successObj[entry.name] == undefined) { successObj[entry.name] = {};}
-            if (successObj[entry.name][entry.tag] == undefined || successObj[entry.name][entry.tag] != false) {
-                successObj[entry.name][entry.tag] = entry.success;
+            if (successObj[entry.package] == undefined) { successObj[entry.package] = {};}
+            if (successObj[entry.package][entry.tag] == undefined || successObj[entry.package][entry.tag] != false) {
+                successObj[entry.package][entry.tag] = entry.success;
             }
         }
     }
