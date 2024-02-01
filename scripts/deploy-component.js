@@ -109,8 +109,21 @@ async function deploy(pkgName, pkgTag) {
     const pkgName = process.argv[2];
     const pkgTags = process.argv.slice(3);
     const deployErrors = {};
+    let deployDecisions = {};
+
+    try {
+        deployDecisions = JSON.parse(fs.readFileSync(path.join(process.cwd(), "publish-list.json")).toString());
+    } catch (err) {
+        // Do nothing
+    }
+
 
     for (const pkgTag of pkgTags) {
+        if (deployDecisions[pkgName] != undefined && deployDecisions[pkgName][pkgTag] == false) {
+            // Don't deploy this package
+            core.error(`Skipping deployment: ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
+            continue;
+        }
         try {
             await deploy(pkgName, pkgTag);
         } catch (err) {

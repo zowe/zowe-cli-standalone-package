@@ -10,6 +10,11 @@ on:
         default: false
         required: false
         type: boolean
+      skip-smoke-tests:
+        description: "Skips smoke tests"
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   setup:
@@ -37,6 +42,7 @@ jobs:
   smoke-test-windows:
     runs-on: windows-latest
     needs: setup
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
@@ -75,6 +81,7 @@ jobs:
   smoke-test-ubuntu:
     runs-on: ubuntu-latest
     needs: setup
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
@@ -113,6 +120,7 @@ jobs:
   smoke-test-macos-x86:
     runs-on: macos-12
     needs: setup
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
@@ -156,6 +164,7 @@ jobs:
   smoke-test-macos-arm:
     runs-on: macos-14
     needs: setup
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
@@ -194,7 +203,7 @@ jobs:
   smoke-test-status:
     runs-on: ubuntu-latest
     needs: [smoke-test-windows, smoke-test-ubuntu, smoke-test-macos-x86, smoke-test-macos-arm]
-    if: always()
+    if: ${{ (github.event.schedule || github.event.inputs.skip-smoke-tests != true) && (always()) }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -212,6 +221,13 @@ jobs:
   
     - name: Run Script
       run: node scripts/smoke-test-status.js
+
+    - name: Upload Publish Artifact
+      if: ${{ success() || failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: publish-list
+        path: publish-list.json
     
     - name: Create Issue
       uses: JasonEtco/create-an-issue@v2
@@ -225,6 +241,7 @@ jobs:
 
   # deploy:
   #   needs: [setup, smoke-test-status]
+  #   if: always()
   #   runs-on: ubuntu-latest
   #   strategy:
   #     fail-fast: false
@@ -255,6 +272,12 @@ jobs:
   #     run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
   #     env:
   #       NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+  #   - name: Download Artifacts
+  #     uses: actions/download-artifact@v4
+  #     if: ${{ github.event.schedule || github.event.inputs.skip-smoke-tests != true }}
+  #     with:
+  #       name: publish-list
 
   #   - name: Deploy Package
   #     id: deploy

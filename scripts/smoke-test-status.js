@@ -1,11 +1,13 @@
 const core = require("@actions/core");
 const fs = require("fs");
+const path = require("path");
 const glob = require("glob");
 
 (async () => {
     const hostFiles = glob.sync("status-*/status-*.json");
     const object = [];
     const list = [];
+    const successObj = {};
     for (const globFile of hostFiles) {
         object.push(...JSON.parse(fs.readFileSync(globFile).toString()));
     }
@@ -13,18 +15,24 @@ const glob = require("glob");
 
     for (const entry of object){
         if (entry.arch == "arm64" && entry.package == "db2-for-zowe-cli") {
-            list.push([entry.arch, entry.platform, entry.package, entry.tag, "Not Supported"]);
+            list.push([entry.package, entry.tag, entry.platform, entry.arch, "Not Supported 😢"]);
         } else {
-            list.push([entry.arch, entry.platform, entry.package, entry.tag, entry.success ? "Succeeded" : "Failed"]);
+            list.push([entry.package, entry.tag, entry.platform, entry.arch, entry.success ? "Succeeded ✅" : "Failed ❌"]);
+            if (successObj[entry.name] == undefined) { successObj[entry.name] = {};}
+            if (successObj[entry.name][entry.tag] == undefined || successObj[entry.name][entry.tag] != false) {
+                successObj[entry.name][entry.tag] = entry.success;
+            }
         }
     }
 
+    fs.writeFileSync(path.join(process.cwd(), "publish-list.json", JSON.stringify(successObj, null, 4)));
+
     await core.summary.addHeading('Smoke Test Results').addTable([
     [
-        {data: "CPU Arch", header: true},
-        {data: "Platform", header: true},
         {data: "Package", header: true},
         {data: "Tag", header: true},
+        {data: "Platform", header: true},
+        {data: "CPU Arch", header: true},
         {data: "Status", header: true}
     ],
     ...list]).write();
