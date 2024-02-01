@@ -11,7 +11,7 @@ on:
         required: false
         type: boolean
       skip-smoke-tests:
-        description: "Skips smoke tests"
+        description: "Skips all smoke tests"
         default: false
         required: false
         type: boolean
@@ -42,11 +42,11 @@ jobs:
   smoke-test-windows:
     runs-on: windows-latest
     needs: setup
-    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != 'true'
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
-      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == 'true' || ''}}
       RUN_OS: windows-latest
     steps:
       - name: Checkout
@@ -81,11 +81,11 @@ jobs:
   smoke-test-ubuntu:
     runs-on: ubuntu-latest
     needs: setup
-    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != 'true'
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
-      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == 'true' || ''}}
       RUN_OS: ubuntu-latest
     steps:
       - name: Checkout
@@ -120,11 +120,11 @@ jobs:
   smoke-test-macos-x86:
     runs-on: macos-12
     needs: setup
-    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != 'true'
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
-      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == 'true' || ''}}
       RUN_OS: macos-12
     steps:
       - name: Checkout
@@ -164,11 +164,11 @@ jobs:
   smoke-test-macos-arm:
     runs-on: macos-14
     needs: setup
-    if: github.event.schedule || github.event.inputs.skip-smoke-tests != true
+    if: github.event.schedule || github.event.inputs.skip-smoke-tests != 'true'
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
-      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == 'true' || ''}}
       RUN_OS: macos-14
     steps:
       - name: Checkout
@@ -203,7 +203,7 @@ jobs:
   smoke-test-status:
     runs-on: ubuntu-latest
     needs: [smoke-test-windows, smoke-test-ubuntu, smoke-test-macos-x86, smoke-test-macos-arm]
-    if: ${{ (github.event.schedule || github.event.inputs.skip-smoke-tests != true) && (always()) }}
+    if: ${{ (github.event.schedule || github.event.inputs.skip-smoke-tests != 'true') && (always()) }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -243,8 +243,8 @@ jobs:
   #   needs: [setup, smoke-test-status]
   #   if: always()
   #   runs-on: ubuntu-latest
-  #   strategy:
-  #     fail-fast: false
+  #   strategy:false
+  #     fail-fast: 
   #     max-parallel: 1
   #     matrix:
   #       package: ${{ fromJson(needs.setup.outputs.deploy-matrix) }}
@@ -275,7 +275,7 @@ jobs:
 
   #   - name: Download Artifacts
   #     uses: actions/download-artifact@v4
-  #     if: ${{ github.event.schedule || github.event.inputs.skip-smoke-tests != true }}
+  #     if: ${{ github.event.schedule || github.event.inputs.skip-smoke-tests != 'true' }}
   #     with:
   #       name: publish-list
 
