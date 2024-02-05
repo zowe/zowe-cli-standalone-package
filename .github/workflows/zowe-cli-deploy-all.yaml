@@ -24,10 +24,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
@@ -50,10 +50,10 @@ jobs:
       RUN_OS: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
@@ -89,10 +89,10 @@ jobs:
       RUN_OS: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
@@ -128,16 +128,16 @@ jobs:
       RUN_OS: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Downgrade Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11.5'
       
@@ -172,10 +172,10 @@ jobs:
       RUN_OS: macos-14
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
@@ -206,10 +206,10 @@ jobs:
     if: ${{ (github.event.schedule || inputs.skip-smoke-tests != true) && (always()) }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
   
     - name: Use Node.JS LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
 
     - name: Install Dependencies
       run: npm ci
@@ -257,10 +257,10 @@ jobs:
         echo "PKG_TAGS=${PKG_TAGS}" >> $GITHUB_ENV
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
