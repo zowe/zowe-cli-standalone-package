@@ -112,9 +112,9 @@ extras:
   secrets-for-kubernetes-for-zowe-cli:
     next: true
   cics-for-zowe-sdk:
-    zowe-v2-lts: 5.0.3
+    zowe-v2-lts: 5.0.4
     zowe-v1-lts: 4.0.10
-    next: true
+    # next: true
 
 # Define version info for the latest staged Zowe release.
 tags:
