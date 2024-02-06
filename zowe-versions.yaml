@@ -113,7 +113,7 @@ extras:
     next: true
   cics-for-zowe-sdk:
     zowe-v2-lts: 5.0.3
-    zowe-v1-lts: 4.0.9
+    zowe-v1-lts: 4.0.10
     next: true
 
 # Define version info for the latest staged Zowe release.
