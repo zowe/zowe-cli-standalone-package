@@ -75,9 +75,13 @@ packages:
     zowe-v1-lts: 6.40.19
     next: true
   # CLI plug-ins
+  cics-for-zowe-sdk:
+    zowe-v2-lts: 5.0.4
+    zowe-v1-lts: 4.0.10
+    next: true
   cics-for-zowe-cli:
-    zowe-v2-lts: 5.0.1
-    zowe-v1-lts: 4.0.8
+    zowe-v2-lts: 5.0.4
+    zowe-v1-lts: 4.0.10
     next: true
   db2-for-zowe-cli:
     zowe-v2-lts: 5.0.6
