@@ -17,7 +17,7 @@ projects:
     unit-vsce:
       junit-artifact: main.yml/ubuntu-latest-20.x-results/vsce/__tests__/__results__/unit
     system:
-      test-count: npm-jest
+      test-count: npm-jest:packages/cli:packages/sdk
   "zowe/zowe-cli-db2-plugin":
     unit:
       junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
