@@ -103,14 +103,17 @@ async function checkLcovArtifact(repo, type, workflow, artifact, dirname) {
     return { lineCoverage, hitLines, foundLines, branchCoverage, hitBranches, foundBranches };
 };
 
-async function checkTestCount(repo, type, tools) {
+async function checkTestCount(repo, type, tools, ...subDirs) {
     const tempDir = await gitCloneDir(repo);
     await exec.exec("npm", ["install", "--ignore-scripts", "--silent"], { cwd: tempDir });
-    const output = await exec.getExecOutput("npm", ["run", `test:${type}`, "--", "--listTests"], { cwd: tempDir });
     let numTests = 0;
-    for (const testFile of output.stdout.trim().split("\n").filter(line => line.includes(tempDir))) {
-        const testContents = stripComments(fs.readFileSync(testFile, "utf-8"));
-        numTests += (testContents.match(/\bit\(/g) || []).length;
+    for (const subDir of (subDirs.length ? subDirs : [""])) {
+        const output = await exec.getExecOutput("npm", ["run", `test:${type}`, "--", "--listTests"],
+            { cwd: path.join(tempDir, subDir) });
+        for (const testFile of output.stdout.trim().split("\n").filter(line => line.includes(tempDir))) {
+            const testContents = stripComments(fs.readFileSync(testFile, "utf-8"));
+            numTests += (testContents.match(/\bit\(/g) || []).length;
+        }
     }
     return { numTests };
 };
@@ -132,7 +135,7 @@ async function checkTestCount(repo, type, tools) {
                         covData = { ...covData, ...await checkLcovArtifact(repoName, testType, ...splitAndAppend(covConfig, "/", 3)) };
                         break;
                     case "test-count":
-                        covData = { ...covData, ...await checkTestCount(repoName, testType, covConfig) };
+                        covData = { ...covData, ...await checkTestCount(repoName, testType, ...covConfig.split(":")) };
                         break;
                     default:
                         throw new Error("Unsupported coverage type " + covType);
