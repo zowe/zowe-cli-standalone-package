@@ -118,6 +118,7 @@ jobs:
         npm pack @zowe/imperative@${{ steps.versions.outputs.packages_imperative }}
         npm pack @zowe/core-for-zowe-sdk@${{ steps.versions.outputs.package_core-for-zowe-sdk }}
         npm pack @zowe/provisioning-for-zowe-sdk@${{ steps.versions.outputs.packages_provisioning-for-zowe-sdk }}
+        npm pack @zowe/secrets-for-zowe-sdk@${{ steps.versions.outputs.packages_secrets-for-zowe-sdk }}
         npm pack @zowe/zos-console-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-console-for-zowe-sdk }}
         npm pack @zowe/zos-files-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-files-for-zowe-sdk }}
         npm pack @zowe/zos-jobs-for-zowe-sdk@${{ steps.versions.outputs.packages_zos-jobs-for-zowe-sdk }}
