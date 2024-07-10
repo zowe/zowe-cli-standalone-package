@@ -118,14 +118,14 @@ jobs:
           path: errors-${{ env.RUN_OS }}.log
 
   smoke-test-macos-x86:
-    runs-on: macos-12
+    runs-on: macos-13
     needs: setup
     if: github.event.schedule || inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
       SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
-      RUN_OS: macos-12
+      RUN_OS: macos-13
     steps:
       - name: Checkout
         uses: actions/checkout@v4
