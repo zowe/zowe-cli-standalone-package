@@ -123,7 +123,7 @@ tags:
     rc: 1
   zowe-v2-lts:
     version: 2.17.0
-    rc: 3
+    rc: 4
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
