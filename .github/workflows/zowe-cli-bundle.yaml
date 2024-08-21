@@ -178,17 +178,27 @@ jobs:
 
     - name: Find Current PR
       id: find-pr
-      if: ${{ steps.publish.outcome == 'success' && inputs.release-type == 'release' }}
+      if: ${{ steps.publish.outcome == 'success' || inputs.dry-run == true }}
       uses: jwalton/gh-find-current-pr@v1
       with:
-        state: all
+        state: ${{ inputs.release-type == 'release' && 'all' || 'open' }}
 
     - name: Comment on PR
-      if: ${{ steps.find-pr.outputs.number }}
+      if: ${{ steps.find-pr.outputs.number && inputs.dry-run == false && inputs.release-type == 'release' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         number: ${{ steps.find-pr.outputs.pr }}
         path: summary.md
+
+    - name: Comment on PR (Dry Run)
+      if: ${{ steps.find-pr.outputs.number && inputs.dry-run == true }}
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        number: ${{ steps.find-pr.outputs.pr }}
+        message: |
+          Dry run build succeeded for Zowe CLI bundle v${{ env.BUNDLE_VERSION }} (`${{ inputs.package-tag }}`)!
+
+          To create a Release Candidate bundle, run the workflow [here](https://github.com/zowe/zowe-cli-standalone-package/actions/workflows/zowe-cli-bundle.yaml) for this branch and select type "release".
 
   test:
     needs: build
