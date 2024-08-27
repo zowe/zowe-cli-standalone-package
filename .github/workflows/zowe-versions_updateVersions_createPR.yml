@@ -55,7 +55,7 @@ jobs:
           done
 
           # Update zowe-versions.yaml tags section (always sets rc = 1)
-          sed -i -E "/$zowe_version:/ { n; s/(version: ).*/\1$version/; s/(rc: )[0-9]+/\11/ }" zowe-versions.yaml
+          sed -i -E "/$zowe_version:/ { n; s/(version: ).*/\1$version/; n; s/(rc: )[0-9]+/\11/ }" zowe-versions.yaml
 
 
       - name: Commit and Push Changes
