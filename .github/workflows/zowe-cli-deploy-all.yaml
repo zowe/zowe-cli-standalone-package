@@ -243,6 +243,8 @@ jobs:
     needs: [setup, smoke-test-status]
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     strategy:
       fail-fast: false
       max-parallel: 1
