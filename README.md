@@ -31,13 +31,6 @@ This repository contains a GitHub workflow that runs every night to mirror @zowe
 
 To deploy an individual package, run the workflow zowe-cli-deploy-component.yaml. Specify the package name without the scope (e.g., `core-for-zowe-sdk`) and a space-separated list of tags to publish (e.g., `latest next`).
 
-When a Zowe release has been staged but is not yet GA, it is expected that the Zowe bundle version hosted on zowe.org and the version defined in zowe-versions.yaml@master will differ. During this period, the workflow runs in "staging mode" which means that:
-* Packages with "next" tag are not published if their date is newer than the snapshot date defined in zowe-versions.yaml
-* Packages with other tags are not published if their version is newer than the one defined in zowe-versions.yaml
-  * For the "latest" tag, it is assumed that the 1st tag listed for a package in zowe-versions.yaml is aliased with @latest
-
-Packages defined in the "extras" section of zowe-versions.yaml will always be published and are unaffected by staging mode since they are not included in Zowe CLI bundles.
-
 ## External Packages
 
 If you develop a Zowe CLI plug-in that meets the following criteria:
@@ -51,10 +44,10 @@ Then you can follow these steps to automate publishing your plug-in to NPM:
     ```yaml
     extras:
       sample-plugin-for-zowe-cli:
-        zowe-v1-lts: true
         zowe-v2-lts: true
+        zowe-v3-lts: true
     ```
-    This enables nightly automation to publish the "latest" (included by default), "zowe-v1-lts", and "zowe-v2-lts" tags. The list of tags should match the ones you want to publish for your plug-in.
+    This enables nightly automation to publish the "latest" (included by default), "zowe-v2-lts", and "zowe-v3-lts" tags. The list of tags should match the ones you want to publish for your plug-in.
 2. (optional) In your plug-in's repository, add the following GitHub workflow:
     ```yaml
     name: Publish to NPM

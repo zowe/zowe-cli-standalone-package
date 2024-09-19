@@ -42,6 +42,7 @@ jobs:
       dry-run: ${{ github.event_name != 'schedule' }}
       package-tag: zowe-v3-lts
       release-type: snapshot
+
   # build-next:
   #   uses: ./.github/workflows/zowe-cli-bundle.yaml
   #   permissions:

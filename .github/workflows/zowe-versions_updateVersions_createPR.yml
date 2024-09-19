@@ -8,7 +8,7 @@ on:
         required: true
       zowe_version:
         description: "Zowe Version Tag"
-        default: zowe-v2-lts
+        default: zowe-v3-lts
         required: true
         type: choice
         options:
