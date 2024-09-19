@@ -36,6 +36,8 @@ jobs:
   build-v3-lts:
     if: ${{ github.event_name != 'pull_request' || startsWith(github.head_ref, 'v3') }}
     uses: ./.github/workflows/zowe-cli-bundle.yaml
+    permissions:
+      pull-requests: write
     secrets:
       JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
     with:
