@@ -88,17 +88,17 @@ packages:
     next: true
     zowe-v1-lts: 4.0.11
     zowe-v2-lts: 5.0.6
-    zowe-v3-lts: 6.0.0
+    zowe-v3-lts: 6.0.0-next.202403011419
   cics-for-zowe-cli:
     next: true
     zowe-v1-lts: 4.0.11
     zowe-v2-lts: 5.0.6
-    zowe-v3-lts: 6.0.0
+    zowe-v3-lts: 6.0.0-next.202403011419
   db2-for-zowe-cli:
     next: true
     zowe-v1-lts: 4.1.13
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 6.0.0
+    zowe-v3-lts: 5.0.9
   ims-for-zowe-cli:
     next: true
     zowe-v1-lts: 2.0.5
@@ -107,7 +107,7 @@ packages:
     next: true
     zowe-v1-lts: 2.0.4
     zowe-v2-lts: 3.0.1
-    zowe-v3-lts: 4.0.0
+    zowe-v3-lts: 4.0.0-next.202409091752
   secure-credential-store-for-zowe-cli:
     next: false
     zowe-v1-lts: 4.1.12
@@ -115,7 +115,7 @@ packages:
     next: true
     zowe-v1-lts: 1.8.8
     zowe-v2-lts: 2.1.9
-    zowe-v3-lts: 3.0.0
+    zowe-v3-lts: 3.0.0-next.202409101453
 
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
 # These packages will be mirrored from Artifactory to npmjs.org nightly.
