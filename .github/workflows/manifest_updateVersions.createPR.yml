@@ -8,12 +8,13 @@ on:
         required: true
       zowe_version:
         description: "Zowe Version Tag"
-        default: zowe-v2-lts
+        default: zowe-v3-lts
         required: true
         type: choice
         options:
         - zowe-v1-lts
         - zowe-v2-lts
+        - zowe-v3-lts
 
 jobs:
   update_versions_and_create_pr:
@@ -24,8 +25,10 @@ jobs:
         run: |
           if [[ "${{ github.event.inputs.zowe_version }}" == "zowe-v1-lts" ]]; then
             echo "defaultBranch=v1.x/rc" >> $GITHUB_ENV
-          else
+          elif [[ "${{ github.event.inputs.zowe_version }}" == "zowe-v2-lts" ]]; then
             echo "defaultBranch=v2.x/rc" >> $GITHUB_ENV
+          else
+            echo "defaultBranch=v3.x/rc" >> $GITHUB_ENV
           fi
 
       - name: Checkout zowe-install-packaging
@@ -52,12 +55,14 @@ jobs:
           repoAndComponent[cli]=zowe-cli
           repoAndComponent[cics-for-zowe-cli]=zowe-cli-cics-plugin
           repoAndComponent[db2-for-zowe-cli]=zowe-cli-db2-plugin
-          repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
           repoAndComponent[mq-for-zowe-cli]=zowe-cli-mq-plugin
           repoAndComponent[zos-ftp-for-zowe-cli]=zowe-cli-ftp-plugin
 
           zowe_version=${{ github.event.inputs.zowe_version }}
 
+          if [[ "$zowe_version" =~ "zowe-v[12]-lts" ]]; then
+            repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
+          fi
           if [[ "$zowe_version" == "zowe-v1-lts" ]]; then
             repoAndComponent[secure-credential-store-for-zowe-cli]=zowe-cli-scs-plugin
           fi

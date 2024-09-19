@@ -22,11 +22,6 @@ on:
         description: "Tags to be distributed from Artifactory (separate multiple by spaces)"
         default: "latest"
         required: true
-      force-publish:
-        description: "Force publishing package and ignore code freeze"
-        default: false
-        required: false
-        type: boolean
 
 permissions:
   issues: write
@@ -69,7 +64,6 @@ jobs:
       id: deploy
       run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
-        FORCE_PUBLISH: ${{ inputs.force-publish }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Issue

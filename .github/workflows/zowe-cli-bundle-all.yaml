@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-v1-lts:
-    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'v2') }}
+    if: ${{ github.event_name != 'pull_request' || startsWith(github.head_ref, 'v1') }}
     uses: ./.github/workflows/zowe-cli-bundle.yaml
     permissions:
       pull-requests: write
@@ -22,7 +22,7 @@ jobs:
       release-type: snapshot
 
   build-v2-lts:
-    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'v1') }}
+    if: ${{ github.event_name != 'pull_request' || startsWith(github.head_ref, 'v2') }}
     uses: ./.github/workflows/zowe-cli-bundle.yaml
     permissions:
       pull-requests: write
@@ -31,6 +31,18 @@ jobs:
     with:
       dry-run: ${{ github.event_name != 'schedule' }}
       package-tag: zowe-v2-lts
+      release-type: snapshot
+
+  build-v3-lts:
+    if: ${{ github.event_name != 'pull_request' || startsWith(github.head_ref, 'v3') }}
+    uses: ./.github/workflows/zowe-cli-bundle.yaml
+    permissions:
+      pull-requests: write
+    secrets:
+      JF_ARTIFACTORY_TOKEN: ${{ secrets.JF_ARTIFACTORY_TOKEN }}
+    with:
+      dry-run: ${{ github.event_name != 'schedule' }}
+      package-tag: zowe-v3-lts
       release-type: snapshot
 
   # build-next:

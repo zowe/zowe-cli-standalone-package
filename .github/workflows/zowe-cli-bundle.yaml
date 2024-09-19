@@ -19,12 +19,13 @@ on:
     inputs:
       package-tag:
         description: "Specify package tag to bundle"
-        default: zowe-v2-lts
+        default: zowe-v3-lts
         required: true
         type: choice
         options:
         - zowe-v1-lts
         - zowe-v2-lts
+        - zowe-v3-lts
         # - next
       release-type:
         description: "Specify type of deployment"
@@ -105,9 +106,11 @@ jobs:
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cics-for-zowe-cli@${{ steps.versions.outputs.packages_cics-for-zowe-cli }}
         npm pack @zowe/db2-for-zowe-cli@${{ steps.versions.outputs.packages_db2-for-zowe-cli }}
-        npm pack @zowe/ims-for-zowe-cli@${{ steps.versions.outputs.packages_ims-for-zowe-cli }}
         npm pack @zowe/mq-for-zowe-cli@${{ steps.versions.outputs.packages_mq-for-zowe-cli }}
         npm pack @zowe/zos-ftp-for-zowe-cli@${{ steps.versions.outputs.packages_zos-ftp-for-zowe-cli }}
+        if [[ "${{ inputs.package-tag }}" =~ "zowe-v[12]-lts" ]]; then
+          npm pack @zowe/ims-for-zowe-cli@${{ steps.versions.outputs.packages_ims-for-zowe-cli }}
+        fi
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *

@@ -61,6 +61,8 @@ async function getPackageInfo(pkg, opts="", prop="version") {
 }
 
 async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
+    // We no longer skip publishing npm packages during the Zowe RC test period
+    return false;
     if (process.env.FORCE_PUBLISH === 'true') {
         return false;
     }
