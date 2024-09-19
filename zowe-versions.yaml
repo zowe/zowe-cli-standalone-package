@@ -1,126 +1,121 @@
 # Define @zowe-scoped packages that are included in CLI bundles on zowe.org.
-# These packages will be mirrored from Artifactory to npmjs.org nightly, unless
-# there is a new Zowe release staged but not yet GA. If there is, we are in
-# staging mode and package versions will be locked down (see README.md).
+# These packages will be mirrored from Artifactory to npmjs.org nightly.
 #
 # The @latest tag is assumed for all packages and does not need to be listed
-# here. If there are other tags listed, the 1st one must be an alias of the
-# @latest tag. For example:
+# here. All other tags to deploy should be listed, for example:
 #   sample-plugin-for-zowe-cli:
-#     zowe-v1-lts: 2.0.0  # Same version for @latest and @zowe-v1-lts
-#     next: true  # Specify whether package has a @next prerelease tag
+#     next: true  # Specify true if package has @next prerelease tag
+#     zowe-v1-lts: 2.0.0  # Specify version number for Zowe V1 bundle
 #
-# The bundle pipeline will use the versions listed here for LTS tags, and the
-# latest version for @next that is before the tags.next.snapshot date defined
-# below. The nightly deployment pipeline will not use these versions at all,
-# except in staging mode to determine whether it should skip publishing.
+# The bundle pipeline uses the versions listed here for LTS tags, and the latest
+# version for @next that is before the tags.next.snapshot date defined below.
 packages:
   # Core CLI and SDKs
   perf-timing:
-    zowe-v2-lts: 1.0.7
-    zowe-v1-lts: 1.0.7
     next: false
+    zowe-v1-lts: 1.0.7
+    zowe-v2-lts: 1.0.7
   imperative:
+    next: true
+    zowe-v1-lts: 4.18.24
     zowe-v2-lts: 5.27.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 4.18.24
-    next: true
   cli-test-utils:
+    next: true
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    next: true
   secrets-for-zowe-sdk:
+    next: true
     zowe-v2-lts: 7.18.6
     zowe-v3-lts: 8.0.0
-    next: true
   core-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-uss-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   provisioning-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-console-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-files-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-logs-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zosmf-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-workflows-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-jobs-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   zos-tso-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.0
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   cli:
+    next: true
+    zowe-v1-lts: 6.40.28
     zowe-v2-lts: 7.29.1
     zowe-v3-lts: 8.0.0
-    zowe-v1-lts: 6.40.28
-    next: true
   # CLI plug-ins
   cics-for-zowe-sdk:
+    next: true
+    zowe-v1-lts: 4.0.11
     zowe-v2-lts: 5.0.6
     zowe-v3-lts: 6.0.0
-    zowe-v1-lts: 4.0.11
-    next: true
   cics-for-zowe-cli:
+    next: true
+    zowe-v1-lts: 4.0.11
     zowe-v2-lts: 5.0.6
     zowe-v3-lts: 6.0.0
-    zowe-v1-lts: 4.0.11
-    next: true
   db2-for-zowe-cli:
+    next: true
+    zowe-v1-lts: 4.1.13
     zowe-v2-lts: 5.0.9
     zowe-v3-lts: 6.0.0
-    zowe-v1-lts: 4.1.13
-    next: true
   ims-for-zowe-cli:
-    zowe-v2-lts: 3.0.1
-    zowe-v1-lts: 2.0.5
     next: true
+    zowe-v1-lts: 2.0.5
+    zowe-v2-lts: 3.0.1
   mq-for-zowe-cli:
+    next: true
+    zowe-v1-lts: 2.0.4
     zowe-v2-lts: 3.0.1
     zowe-v3-lts: 4.0.0
-    zowe-v1-lts: 2.0.4
-    next: true
   secure-credential-store-for-zowe-cli:
-    zowe-v1-lts: 4.1.12
     next: false
+    zowe-v1-lts: 4.1.12
   zos-ftp-for-zowe-cli:
+    next: true
+    zowe-v1-lts: 1.8.8
     zowe-v2-lts: 2.1.9
     zowe-v3-lts: 3.0.0
-    zowe-v1-lts: 1.8.8
-    next: true
 
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
 # These packages will be mirrored from Artifactory to npmjs.org nightly.
