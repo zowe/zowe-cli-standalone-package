@@ -4,6 +4,17 @@ on:
   schedule:
   - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      skip-sdk-smoke-tests:
+        description: "Skips smoke tests on the SDKs, and only smoke-tests the CLI and plug-ins"
+        default: false
+        required: false
+        type: boolean
+      skip-smoke-tests:
+        description: "Skips all smoke tests"
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   setup:
@@ -13,10 +24,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
@@ -28,9 +39,212 @@ jobs:
       id: matrix
       run: node scripts/get-package-matrix.js
 
-  deploy:
+  smoke-test-windows:
+    runs-on: windows-latest
     needs: setup
+    if: github.event.schedule || inputs.skip-smoke-tests != true
+    continue-on-error: true
+    env:
+      DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      RUN_OS: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Use Node.JS LTS
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Run Script
+        id: run
+        run: |
+          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
+          node scripts/smoke-test-components.js
+
+      - name: Upload Status Artifact
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ env.RUN_OS }}
+          path: status-${{ env.RUN_OS }}.json
+
+      - name: Upload Error Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: errors-${{ env.RUN_OS }}
+          path: errors-${{ env.RUN_OS }}.log
+
+  smoke-test-ubuntu:
     runs-on: ubuntu-latest
+    needs: setup
+    if: github.event.schedule || inputs.skip-smoke-tests != true
+    continue-on-error: true
+    env:
+      DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      RUN_OS: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Use Node.JS LTS
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Run Script
+        id: run
+        run: |
+          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
+          node scripts/smoke-test-components.js
+
+      - name: Upload Status Artifact
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ env.RUN_OS }}
+          path: status-${{ env.RUN_OS }}.json
+
+      - name: Upload Error Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: errors-${{ env.RUN_OS }}
+          path: errors-${{ env.RUN_OS }}.log
+
+  smoke-test-macos-x86:
+    runs-on: macos-13
+    needs: setup
+    if: github.event.schedule || inputs.skip-smoke-tests != true
+    continue-on-error: true
+    env:
+      DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      RUN_OS: macos-13
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Use Node.JS LTS
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Downgrade Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.5'
+      
+      - name: Run Script
+        id: run
+        run: |
+          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
+          node scripts/smoke-test-components.js
+
+      - name: Upload Status Artifact
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ env.RUN_OS }}
+          path: status-${{ env.RUN_OS }}.json
+
+      - name: Upload Error Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: errors-${{ env.RUN_OS }}
+          path: errors-${{ env.RUN_OS }}.log
+
+  smoke-test-macos-arm:
+    runs-on: macos-14
+    needs: setup
+    if: github.event.schedule || inputs.skip-smoke-tests != true
+    continue-on-error: true
+    env:
+      DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
+      SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
+      RUN_OS: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Use Node.JS LTS
+        uses: actions/setup-node@v4
+
+      - name: Install Dependencies
+        run: npm ci
+      
+      - name: Run Script
+        id: run
+        run: |
+          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
+          node scripts/smoke-test-components.js
+
+      - name: Upload Status Artifact
+        if: ${{ success() || failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-${{ env.RUN_OS }}
+          path: status-${{ env.RUN_OS }}.json
+
+      - name: Upload Error Artifact
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: errors-${{ env.RUN_OS }}
+          path: errors-${{ env.RUN_OS }}.log
+
+  smoke-test-status:
+    runs-on: ubuntu-latest
+    needs: [smoke-test-windows, smoke-test-ubuntu, smoke-test-macos-x86, smoke-test-macos-arm]
+    if: ${{ (github.event.schedule || inputs.skip-smoke-tests != true) && (always()) }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+  
+    - name: Use Node.JS LTS
+      uses: actions/setup-node@v4
+
+    - name: Install Dependencies
+      run: npm ci
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: status-*
+  
+    - name: Run Script
+      run: node scripts/smoke-test-status.js
+
+    - name: Upload Publish Artifact
+      if: ${{ success() || failure() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: publish-list
+        path: publish-list.json
+    
+    - name: Create Issue
+      uses: JasonEtco/create-an-issue@v2
+      if: ${{ needs.smoke-test-windows.result != 'success' || needs.smoke-test-ubuntu.result != 'success' || needs.smoke-test-macos-x86.result != 'success' || needs.smoke-test-macos-arm.result != 'success' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      with:
+        filename: .github/smoke-test-failed.md
+        update_existing: true
+
+  deploy:
+    needs: [setup, smoke-test-status]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -45,10 +259,10 @@ jobs:
         echo "PKG_TAGS=${PKG_TAGS}" >> $GITHUB_ENV
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
@@ -60,6 +274,12 @@ jobs:
       run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
       env:
         NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      if: ${{ github.event.schedule || inputs.skip-smoke-tests != true }}
+      with:
+        name: publish-list
 
     - name: Deploy Package
       id: deploy

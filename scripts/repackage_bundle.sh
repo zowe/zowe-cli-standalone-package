@@ -32,6 +32,7 @@ do
     node -e "package = require('./package.json');
         delete package.scripts.prepare;
         delete package.scripts.prepack;
+        delete package.scripts.postpack;
         require('fs').writeFileSync('package.json', JSON.stringify(package, null, 2), 'utf8')"
 
     npm install --verbose --legacy-peer-deps --ignore-scripts --omit=dev

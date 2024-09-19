@@ -22,6 +22,14 @@ on:
         description: "Tags to be distributed from Artifactory (separate multiple by spaces)"
         default: "latest"
         required: true
+      force-publish:
+        description: "Force publishing package and ignore code freeze"
+        default: false
+        required: false
+        type: boolean
+
+permissions:
+  issues: write
 
 jobs:
   deploy:
@@ -33,19 +41,19 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: 'zowe/zowe-cli-standalone-package'
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
-    
+
     # Python 3.12 breaks node-gyp < 10, breaking current versions of Node 18/20 (as of Nov 9, 2023) - awharn
     - name: Downgrade Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11.5'
 
@@ -61,6 +69,7 @@ jobs:
       id: deploy
       run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
+        FORCE_PUBLISH: ${{ inputs.force-publish }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Issue
