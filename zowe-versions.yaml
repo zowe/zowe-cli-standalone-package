@@ -98,7 +98,7 @@ packages:
     next: true
     zowe-v1-lts: 4.1.13
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 5.0.9
+    zowe-v3-lts: 6.0.0-next.202408142011
   ims-for-zowe-cli:
     next: true
     zowe-v1-lts: 2.0.5
