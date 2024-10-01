@@ -140,7 +140,7 @@ tags:
     rc: 6
   zowe-v3-lts:
     version: 3.0.0
-    rc: 2
+    rc: 3
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
