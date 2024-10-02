@@ -16,6 +16,10 @@ on:
         - zowe-v2-lts
         - zowe-v3-lts
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update_versions_and_create_pr:
     runs-on: ubuntu-latest
