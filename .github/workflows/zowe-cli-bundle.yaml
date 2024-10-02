@@ -1,8 +1,5 @@
 name: Zowe CLI Bundle
 
-permissions:
-  id-token: write
-
 on:
   workflow_call:
     inputs:
@@ -51,6 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       pull-requests: write
     steps:
     - name: Checkout
