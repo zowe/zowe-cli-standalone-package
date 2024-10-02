@@ -24,8 +24,8 @@ if (fs.existsSync(uploadSpecFile)) {
 }
 uploadSpecJson.files.push({ pattern: sourcePath, target: targetPath });
 
-// check for an associated sigstore signature
-if (fs.existsSync(`${sourcePath}.bundle`)) {
+// check for an associated sigstore signature, in case of wildcard let jfrog cli find it
+if (fs.existsSync(`${sourcePath}.bundle`) || sourcePath.includes('*')) {
     uploadSpecJson.files.push({ pattern: `${sourcePath}.bundle`, target: targetPath})
 }
 
