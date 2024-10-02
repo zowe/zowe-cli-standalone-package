@@ -23,6 +23,12 @@ if (fs.existsSync(uploadSpecFile)) {
     uploadSpecJson = jsonfile.readFileSync(uploadSpecFile);
 }
 uploadSpecJson.files.push({ pattern: sourcePath, target: targetPath });
+
+// check for an associated sigstore signature
+if (fs.existsSync(`${sourcePath}.bundle`)) {
+    uploadSpecFile.files.push({ pattern: `${sourcePath}.bundle`, target: targetPath})
+}
+
 jsonfile.writeFileSync(uploadSpecFile, uploadSpecJson, { spaces: 4 });
 
 if (!fs.existsSync(summaryFile)) {
