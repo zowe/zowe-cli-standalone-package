@@ -48,6 +48,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      id-token: write
       pull-requests: write
     steps:
     - name: Checkout
@@ -164,6 +165,16 @@ jobs:
         name: 'zowe-cli-bundle_${{ inputs.package-tag }}'
         path: '*.zip'
 
+    - name: Sigstore sign bundles
+      uses: zowe-actions/shared-actions/sigstore-sign-artifacts@main
+      with:
+        artifacts: |
+          zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip
+          zowe-cli-plugins-${{ env.BUNDLE_VERSION }}.zip
+          zowe-nodejs-sdk*-${{ env.BUNDLE_VERSION }}.zip  
+          zowe-python-sdk*-${{ env.BUNDLE_VERSION }}.zip
+
+    # prepare-upload attachs the sigstore bundles as well
     - name: Add Bundles to Spec
       run: |
         node scripts/prepare-upload.js "zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip" \
