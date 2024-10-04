@@ -134,7 +134,7 @@ extras:
 tags:
   zowe-v1-lts:
     version: 1.28.8
-    rc: 1
+    rc: 2
   zowe-v2-lts:
     version: 2.18.0
     rc: 6
