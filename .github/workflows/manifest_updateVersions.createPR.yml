@@ -64,7 +64,7 @@ jobs:
 
           zowe_version=${{ github.event.inputs.zowe_version }}
 
-          if [[ "$zowe_version" =~ zowe-v[12]-lts ]]; then
+          if [[ "$zowe_version" =~ ^zowe-v[12]-lts$ ]]; then
             repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
           fi
           if [[ "$zowe_version" == "zowe-v1-lts" ]]; then

@@ -108,7 +108,7 @@ jobs:
         npm pack @zowe/db2-for-zowe-cli@${{ steps.versions.outputs.packages_db2-for-zowe-cli }}
         npm pack @zowe/mq-for-zowe-cli@${{ steps.versions.outputs.packages_mq-for-zowe-cli }}
         npm pack @zowe/zos-ftp-for-zowe-cli@${{ steps.versions.outputs.packages_zos-ftp-for-zowe-cli }}
-        if [[ "${{ inputs.package-tag }}" =~ zowe-v[12]-lts ]]; then
+        if [[ "${{ inputs.package-tag }}" =~ ^zowe-v[12]-lts$ ]]; then
           npm pack @zowe/ims-for-zowe-cli@${{ steps.versions.outputs.packages_ims-for-zowe-cli }}
         fi
         bash ../scripts/repackage_bundle.sh *.tgz
