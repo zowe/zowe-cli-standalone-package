@@ -109,7 +109,7 @@ jobs:
         npm pack @zowe/db2-for-zowe-cli@${{ steps.versions.outputs.packages_db2-for-zowe-cli }}
         npm pack @zowe/mq-for-zowe-cli@${{ steps.versions.outputs.packages_mq-for-zowe-cli }}
         npm pack @zowe/zos-ftp-for-zowe-cli@${{ steps.versions.outputs.packages_zos-ftp-for-zowe-cli }}
-        if [[ "${{ inputs.package-tag }}" =~ "zowe-v[12]-lts" ]]; then
+        if [[ "${{ inputs.package-tag }}" =~ ^zowe-v[12]-lts$ ]]; then
           npm pack @zowe/ims-for-zowe-cli@${{ steps.versions.outputs.packages_ims-for-zowe-cli }}
         fi
         bash ../scripts/repackage_bundle.sh *.tgz
@@ -202,6 +202,7 @@ jobs:
       if: ${{ steps.find-pr.outputs.number && inputs.dry-run == false && inputs.release-type == 'release' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        header: ${{ inputs.release-type }}
         number: ${{ steps.find-pr.outputs.pr }}
         path: summary.md
 
@@ -209,6 +210,7 @@ jobs:
       if: ${{ steps.find-pr.outputs.number && inputs.dry-run == true }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        header: ${{ inputs.release-type }}
         number: ${{ steps.find-pr.outputs.pr }}
         message: |
           Dry run build succeeded for Zowe CLI bundle v${{ env.BUNDLE_VERSION }} (`${{ inputs.package-tag }}`)!
@@ -240,7 +242,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         check-latest: true
-    
+
     # Python 3.12 breaks node-gyp < 10, breaking current versions of Node 18/20 (as of Nov 9, 2023) - awharn
     - name: Downgrade Python
       uses: actions/setup-python@v5
