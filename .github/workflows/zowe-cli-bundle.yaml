@@ -191,6 +191,7 @@ jobs:
       if: ${{ steps.find-pr.outputs.number && inputs.dry-run == false && inputs.release-type == 'release' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        header: ${{ inputs.release-type }}
         number: ${{ steps.find-pr.outputs.pr }}
         path: summary.md
 
@@ -198,6 +199,7 @@ jobs:
       if: ${{ steps.find-pr.outputs.number && inputs.dry-run == true }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        header: ${{ inputs.release-type }}
         number: ${{ steps.find-pr.outputs.pr }}
         message: |
           Dry run build succeeded for Zowe CLI bundle v${{ env.BUNDLE_VERSION }} (`${{ inputs.package-tag }}`)!
