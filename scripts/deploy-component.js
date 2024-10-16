@@ -61,7 +61,7 @@ async function deploy(pkgName, pkgTag) {
     } catch (err) {
         const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
-        await utils.execAndGetStderr("curl", ["-fs", "-o", fullPkgName, tgzUrl]);
+        await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
         await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
         await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
