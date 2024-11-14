@@ -146,7 +146,7 @@ jobs:
           pip3 download --no-binary charset-normalizer,pyrsistent,pyyaml --pre zowe-python-sdk-bundle
           # Download Secrets SDK binary wheels for all platforms
           curl -fs https://pypi.org/project/zowe-secrets-for-zowe-sdk/#files |
-            grep -Eo 'href="[^"]+\.whl"' | cut -d '"' -f 2 |
+            grep -Eo 'href="https://[^"]+\.whl"' | cut -d '"' -f 2 |
             while read -r url; do curl -fLOJ $url; done
         else
           pip3 download --no-binary charset-normalizer,pyyaml zowe
