@@ -17,7 +17,7 @@ const data = require(_path);
 (async () => {
   const filterPkgs = async (obj, key) => {
     const _obj = {};
-    for (const pkg of Object.keys(obj[key])) {
+    for (const pkg of Object.keys(obj[key] || {})) {
       if (obj[key][pkg].dev) continue;
       if (obj[key][pkg].peer) continue;
       if (obj[key][pkg].extraneous) continue;

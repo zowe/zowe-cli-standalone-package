@@ -9,6 +9,7 @@
 # Copyright Contributors to the Zowe Project.
 #
 ###
+set -e
 
 die () {
     echo "$@"
@@ -46,7 +47,7 @@ npmDeps=`node -e "package = require('./package.json');
     Object.entries(package.peerDependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));"`
 for pkgSpec in $npmDeps; do
     echo "Validating dependency $pkgSpec..."
-    npm view $pkgSpec || exit 1
+    npm view $pkgSpec || die "Validation of $pkgSpec failed"
 done
 
 # Update npm-shrinkwrap.json if necessary
@@ -56,6 +57,7 @@ if [ -e "npm-shrinkwrap.json" ]; then
 
     # Rewrite the shrinkwrap file with only production dependencies and public npm resolved URLs
     node "../../scripts/rewrite-shrinkwrap.js"
+    (! grep -q zowe.jfrog.io npm-shrinkwrap.json) || die "Private registry found in shrinkwrap file"
 fi
 
 npm pack
