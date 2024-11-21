@@ -9,6 +9,7 @@
 # Copyright Contributors to the Zowe Project.
 #
 ###
+set -e
 
 die () {
     echo "$@"
