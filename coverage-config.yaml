@@ -38,12 +38,6 @@ projects:
       junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/integration
     system:
       test-count: npm-jest
-  "zowe/zowe-cli-scs-plugin":
-    unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit/coverage
-    system:
-      test-count: npm-jest
   "zowe/zowe-explorer-vscode#main":
     unit:
       junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/results/unit
