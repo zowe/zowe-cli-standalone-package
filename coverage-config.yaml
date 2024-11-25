@@ -17,7 +17,7 @@ projects:
     unit-vsce:
       junit-artifact: main.yml/ubuntu-latest-20.x-results/vsce/__tests__/__results__/unit
     system:
-      test-count: npm-jest:packages/cli:packages/sdk
+      test-count: npm-jest:packages/cli,packages/sdk
   "zowe/zowe-cli-db2-plugin":
     unit:
       junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
@@ -38,16 +38,10 @@ projects:
       junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/integration
     system:
       test-count: npm-jest
-  "zowe/zowe-cli-scs-plugin":
-    unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit/coverage
-    system:
-      test-count: npm-jest
   "zowe/zowe-explorer-vscode#main":
     unit:
-      junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit
-      lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-results/unit/coverage
+      junit-artifact: zowe-explorer-ci.yml/zowe-explorer-results/results/unit
+      lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-results/results/unit/coverage
     unit-api:
       junit-artifact: zowe-explorer-ci.yml/zowe-explorer-api-results/unit
       lcov-artifact: zowe-explorer-ci.yml/zowe-explorer-api-results/unit/coverage
@@ -55,4 +49,4 @@ projects:
       junit-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit
       lcov-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit/coverage
     integration:
-      junit-artifact: theia-zowe-explorer-ci.yml/theia-zowe-explorer-results/integration
+      wdio-artifact: zowe-explorer-ci.yml/zowe-explorer-results/__tests__/__integration__/bdd/results

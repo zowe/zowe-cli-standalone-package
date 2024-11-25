@@ -3,6 +3,7 @@ const path = require("path");
 const exec = require("@actions/exec");
 const github = require("@actions/github");
 const AdmZip = require("adm-zip");
+const glob = require("glob");
 const jsYaml = require("js-yaml");
 const parseLcov = require("parse-lcov");
 const stripComments = require("strip-comments");
@@ -75,9 +76,16 @@ async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
     if (tempDir == null) {
         return {};
     }
-    const junitFile = path.join(tempDir, dirname, "junit.xml");
-    const junitInfo = xmlJs.xml2js(fs.readFileSync(junitFile, "utf-8"), { compact: true });
-    const numTests = parseInt(junitInfo.testsuites._attributes.tests);
+    const junitFiles = [];
+    if (type === "wdio") {
+        junitFiles.push(...glob.sync(path.join(tempDir, dirname, "wdio-*-junit-reporter.log")));
+    } else {
+        junitFiles.push(path.join(tempDir, dirname, "junit.xml"));
+    }
+    const numTests = junitFiles.reduce((sum, filePath) => {
+        const junitInfo = xmlJs.xml2js(fs.readFileSync(filePath, "utf-8"), { compact: true });
+        return sum + parseInt(junitInfo.testsuites._attributes.tests);
+    }, 0);
     return { numTests };
 };
 
@@ -135,7 +143,10 @@ async function checkTestCount(repo, type, tools, ...subDirs) {
                         covData = { ...covData, ...await checkLcovArtifact(repoName, testType, ...splitAndAppend(covConfig, "/", 3)) };
                         break;
                     case "test-count":
-                        covData = { ...covData, ...await checkTestCount(repoName, testType, ...covConfig.split(":")) };
+                        covData = { ...covData, ...await checkTestCount(repoName, testType, ...covConfig.split(/[:,]/)) };
+                        break;
+                    case "wdio-artifact":
+                        covData = { ...covData, ...await checkJunitArtifact(repoName, "wdio", ...splitAndAppend(covConfig, "/", 3)) };
                         break;
                     default:
                         throw new Error("Unsupported coverage type " + covType);
