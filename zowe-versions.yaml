@@ -139,8 +139,8 @@ tags:
     version: 2.18.0
     rc: 6
   zowe-v3-lts:
-    version: 3.0.0
-    rc: 2
+    version: 3.1.0
+    rc: 1
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
