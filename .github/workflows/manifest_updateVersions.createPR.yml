@@ -57,7 +57,7 @@ jobs:
         run: |
           declare -A repoAndComponent
           repoAndComponent[cli]=zowe-cli
-          repoAndComponent[cics-for-zowe-cli]=zowe-cli-cics-plugin
+          repoAndComponent[cics-for-zowe-cli]=cics-for-zowe-client
           repoAndComponent[db2-for-zowe-cli]=zowe-cli-db2-plugin
           repoAndComponent[mq-for-zowe-cli]=zowe-cli-mq-plugin
           repoAndComponent[zos-ftp-for-zowe-cli]=zowe-cli-ftp-plugin
