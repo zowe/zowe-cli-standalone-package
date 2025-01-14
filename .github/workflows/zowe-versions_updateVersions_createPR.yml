@@ -12,7 +12,6 @@ on:
         required: true
         type: choice
         options:
-        - zowe-v1-lts
         - zowe-v2-lts
         - zowe-v3-lts
 

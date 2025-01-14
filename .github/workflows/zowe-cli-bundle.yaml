@@ -23,7 +23,6 @@ on:
         required: true
         type: choice
         options:
-        - zowe-v1-lts
         - zowe-v2-lts
         - zowe-v3-lts
         # - next
@@ -94,9 +93,6 @@ jobs:
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
         npm pack @zowe/cli@${{ steps.versions.outputs.packages_cli }}
-        if [[ "${{ inputs.package-tag }}" == "zowe-v1-lts" ]]; then
-          npm pack @zowe/secure-credential-store-for-zowe-cli@${{ steps.versions.outputs.packages_secure-credential-store-for-zowe-cli }}
-        fi
         bash ../scripts/repackage_bundle.sh *.tgz
         mv zowe-cli-package.zip ../zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip
         rm -rf *
@@ -142,15 +138,7 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        if [[ "${{ inputs.package-tag }}" != "zowe-v1-lts" ]]; then
-          pip3 download --no-binary charset-normalizer,pyrsistent,pyyaml --pre zowe-python-sdk-bundle
-          # Download Secrets SDK binary wheels for all platforms
-          curl -fs https://pypi.org/project/zowe-secrets-for-zowe-sdk/#files |
-            grep -Eo 'href="https://[^"]+\.whl"' | cut -d '"' -f 2 |
-            while read -r url; do curl -fLOJ $url; done
-        else
-          pip3 download --no-binary charset-normalizer,pyyaml zowe
-        fi
+        pip3 download --no-binary charset-normalizer,pyyaml zowe
         TZ=UTC find . -exec touch -t 197001010000.00 {} +
         TZ=UTC zip -roX zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
