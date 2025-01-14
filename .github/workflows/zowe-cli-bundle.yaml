@@ -138,7 +138,11 @@ jobs:
       run: |
         mkdir -p temp && cd temp
         mkdir -p licenses && cd licenses && cp /tmp/zowe_licenses_cli.zip zowe_licenses_cli.zip && cd ..
-        pip3 download --no-binary charset-normalizer,pyyaml zowe
+        pip3 download --no-binary charset-normalizer,pyrsistent,pyyaml --pre zowe-python-sdk-bundle
+        # Download Secrets SDK binary wheels for all platforms
+        curl -fs https://pypi.org/project/zowe-secrets-for-zowe-sdk/#files |
+          grep -Eo 'href="https://[^"]+\.whl"' | cut -d '"' -f 2 |
+          while read -r url; do curl -fLOJ $url; done
         TZ=UTC find . -exec touch -t 197001010000.00 {} +
         TZ=UTC zip -roX zowe-sdk.zip *
         mv zowe-sdk.zip ../zowe-python-sdk-${{ env.BUNDLE_VERSION }}.zip
