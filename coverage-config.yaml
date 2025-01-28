@@ -1,10 +1,10 @@
 projects:
   "zowe/zowe-cli":
     unit:
-      junit-artifact: zowe-cli.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli.yml/ubuntu-latest-20.x-results/unit/coverage
+      junit-artifact: zowe-cli.yml/Linux-20.x-results/unit
+      lcov-artifact: zowe-cli.yml/Linux-20.x-results/unit/coverage
     integration:
-      junit-artifact: zowe-cli.yml/ubuntu-latest-20.x-results/integration
+      junit-artifact: zowe-cli.yml/Linux-20.x-results/integration
     system:
       test-count: npm-jest
   "zowe/cics-for-zowe-client#main":
