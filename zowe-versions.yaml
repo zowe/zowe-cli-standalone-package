@@ -110,7 +110,7 @@ extras:
 tags:
   zowe-v2-lts:
     version: 2.18.1
-    rc: 1
+    rc: 4
   zowe-v3-lts:
     version: 3.1.0
     rc: 1
