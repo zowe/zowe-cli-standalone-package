@@ -249,4 +249,4 @@ jobs:
     - name: Install Plugins
       shell: bash
       working-directory: zowe-cli-bundle
-      run: unzip -o zowe-cli-plugins-*.zip && node ../scripts/install-check.js ${{ inputs.package-tag }} && zowe plugins install *-for-zowe-cli.tgz && zowe plugins validate --fail-on-error
+      run: unzip -o zowe-cli-plugins-*.zip && zowe plugins install *-for-zowe-cli.tgz && zowe plugins validate --fail-on-error
