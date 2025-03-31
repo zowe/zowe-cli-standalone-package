@@ -81,8 +81,8 @@ packages:
     zowe-v3-lts: 6.2.4
   db2-for-zowe-cli:
     next: true
-    zowe-v2-lts: 5.0.12
-    zowe-v3-lts: 6.1.0
+    zowe-v2-lts: 5.0.13
+    zowe-v3-lts: 6.1.1
   ims-for-zowe-cli:
     next: true
     zowe-v2-lts: 3.0.1
@@ -109,8 +109,8 @@ extras:
 # Define version info for the latest staged Zowe release.
 tags:
   zowe-v2-lts:
-    version: 2.18.1
-    rc: 4
+    version: 2.18.2
+    rc: 1
   zowe-v3-lts:
     version: 3.1.0
     rc: 1
