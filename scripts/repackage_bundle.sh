@@ -66,7 +66,7 @@ do
     # Validate the zoweVersion property in package.json for Zowe CLI
     if [[ $tar = "zowe-cli-8"* ]]; then
         zowe_ver=`jq -r .zoweVersion package.json`
-        if [[ $zowe_ver != $BUNDLE_VERSION_SHORT ]]; then
+        if [[ $BUNDLE_VERSION_SHORT != "${zowe_ver#v}"* ]]; then
             echo "zoweVersion in package.json ($zowe_ver) does not match bundle version ($BUNDLE_VERSION_SHORT)"
             exit 1
         fi
