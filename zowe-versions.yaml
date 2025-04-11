@@ -69,7 +69,7 @@ packages:
   cli:
     next: true
     zowe-v2-lts: 7.29.10
-    zowe-v3-lts: 8.18.1
+    zowe-v3-lts: 8.18.2
   # CLI plug-ins
   cics-for-zowe-sdk:
     next: true
@@ -113,7 +113,7 @@ tags:
     rc: 1
   zowe-v3-lts:
     version: 3.2.0
-    rc: 1
+    rc: 2
   # next:
   #   version: 2.0.0
   #   snapshot: '2022-04-15'
