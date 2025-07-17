@@ -107,7 +107,7 @@ extras:
   secrets-for-kubernetes-for-zowe-cli:
     next: true
   cics-for-zowe-explorer-api:
-    next: true
+    # next: true
     zowe-v3-lts: true
 # Define version info for the latest staged Zowe release.
 tags:
