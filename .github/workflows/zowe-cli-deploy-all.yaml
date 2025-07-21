@@ -60,9 +60,7 @@ jobs:
       
       - name: Run Script
         id: run
-        run: |
-          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
-          node scripts/smoke-test-components.js
+        run: node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}
@@ -99,9 +97,7 @@ jobs:
       
       - name: Run Script
         id: run
-        run: |
-          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
-          node scripts/smoke-test-components.js
+        run: node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}
@@ -143,9 +139,7 @@ jobs:
       
       - name: Run Script
         id: run
-        run: |
-          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
-          node scripts/smoke-test-components.js
+        run: node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}
@@ -182,9 +176,7 @@ jobs:
       
       - name: Run Script
         id: run
-        run: |
-          npm config set "@zowe:registry" "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"
-          node scripts/smoke-test-components.js
+        run: node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}

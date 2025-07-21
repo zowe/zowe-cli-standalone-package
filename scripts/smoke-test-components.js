@@ -12,16 +12,32 @@ const errors = [];
 async function test(pkgName, pkgTag) {
     core.info(`Verifying that package ${pkgName} with tag ${pkgTag} can be installed`);
     let installError;
+    const tempDir = fs.mkdtempSync(os.tmpdir() + "/zowe");
+    
     try {
+        // First try with npm-local-release registry
+        await utils.execAndGetStderr("npm", ["config", "set", `${PKG_SCOPE}:registry`, "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/"],
+            { cwd: tempDir });
         await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`],
-            { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") });
-        return true;
+            { cwd: tempDir });
     } catch (err) {
-        installError = err;
-        core.error(installError);
-        errors.push(installError.stack);
-        return false;
+        core.warning(`Failed to install ${PKG_SCOPE}/${pkgName}@${pkgTag} from npm-local-release: ${err.message}`);
+        
+        try {
+            // Fallback: Configure npm to also use npm-release registry and try again
+            core.info(`Trying fallback registry for ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
+            await utils.execAndGetStderr("npm", ["config", "set", `${PKG_SCOPE}:registry`, "https://zowe.jfrog.io/zowe/api/npm/npm-release/"],
+                { cwd: tempDir });
+            await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`],
+                { cwd: tempDir });
+        } catch (fallbackErr) {
+            installError = fallbackErr;
+            core.error(`Both registries failed for ${PKG_SCOPE}/${pkgName}@${pkgTag}: ${installError.message}`);
+            errors.push(`Primary error: ${err.stack}\nFallback error: ${fallbackErr.stack}`);
+            return false;
+        }
     }
+    return true;
 }
 
 function getTags(tagArray) {
