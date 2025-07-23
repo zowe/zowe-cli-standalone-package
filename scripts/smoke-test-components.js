@@ -11,9 +11,14 @@ const errors = [];
 
 async function test(pkgName, pkgTag) {
     core.info(`Verifying that package ${pkgName} with tag ${pkgTag} can be installed`);
+    const installArgs = [];
+    if (pkgName.includes("zowe-explorer-api")) {
+        // Override @zowe:registry for ZE API package since it isn't published to Artifactory
+        installArgs.push("--@zowe:registry=https://registry.npmjs.org/");
+    }
     let installError;
     try {
-        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`],
+        await utils.execAndGetStderr("npm", ["install", `${PKG_SCOPE}/${pkgName}@${pkgTag}`, ...installArgs],
             { cwd: fs.mkdtempSync(os.tmpdir() + "/zowe") });
         return true;
     } catch (err) {
