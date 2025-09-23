@@ -14,14 +14,10 @@ const glob = require("glob");
     object.sort((a, b) => a.compare.localeCompare(b.compare));
 
     for (const entry of object){
-        if (entry.arch == "arm64" && entry.package == "db2-for-zowe-cli") {
-            list.push([entry.package, entry.tag, entry.platform, entry.arch, "Not Supported 😢"]);
-        } else {
-            list.push([entry.package, entry.tag, entry.platform, entry.arch, entry.success ? "Succeeded ✅" : "Failed ❌"]);
-            if (successObj[entry.package] == undefined) { successObj[entry.package] = {};}
-            if (successObj[entry.package][entry.tag] == undefined || successObj[entry.package][entry.tag] != false) {
-                successObj[entry.package][entry.tag] = entry.success;
-            }
+        list.push([entry.package, entry.tag, entry.platform, entry.arch, entry.success ? "Succeeded ✅" : "Failed ❌"]);
+        if (successObj[entry.package] == undefined) { successObj[entry.package] = {};}
+        if (successObj[entry.package][entry.tag] == undefined || successObj[entry.package][entry.tag] != false) {
+            successObj[entry.package][entry.tag] = entry.success;
         }
     }
 
