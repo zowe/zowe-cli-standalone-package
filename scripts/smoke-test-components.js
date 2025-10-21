@@ -59,12 +59,7 @@ function getTags(tagArray) {
             continue;
         }
 
-        if (process.arch == "arm64" && name == "db2-for-zowe-cli") {
-            // Don't even try, we don't expect this to work
-            success = false;
-        } else {
-            success = await test(name, tag);
-        }
+        success = await test(name, tag);
         results.push({
             arch: process.arch,
             platform: process.platform,
