@@ -245,6 +245,7 @@ jobs:
     uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
     permissions:
       issues: write
+      id-token: write
     strategy:
       fail-fast: false
       max-parallel: 1

@@ -25,6 +25,7 @@ on:
 
 permissions:
   issues: write
+  id-token: write
 
 jobs:
   deploy:
