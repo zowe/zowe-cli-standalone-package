@@ -242,65 +242,17 @@ jobs:
   deploy:
     needs: [setup, smoke-test-status]
     if: always()
-    runs-on: ubuntu-latest
+    uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
     permissions:
       issues: write
+      id-token: write
     strategy:
       fail-fast: false
       max-parallel: 1
       matrix:
         package: ${{ fromJson(needs.setup.outputs.deploy-matrix) }}
-
-    steps:
-    - name: Set Environment Variables
-      run: |
-        read -r PKG_NAME PKG_TAGS <<< "${{ matrix.package }}"
-        echo "PKG_NAME=${PKG_NAME}" >> $GITHUB_ENV
-        echo "PKG_TAGS=${PKG_TAGS}" >> $GITHUB_ENV
-
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Use Node.js LTS
-      uses: actions/setup-node@v4
-      with:
-        node-version: 'lts/*'
-        cache: ${{ (!env.ACT && 'npm') || '' }}
-
-    - name: Install Dependencies
-      run: npm ci
-
-    - name: NPM Login
-      run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
-
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      if: ${{ github.event.schedule || inputs.skip-smoke-tests != true }}
-      with:
-        name: publish-list
-
-    - name: Deploy Package
-      id: deploy
-      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Create Issue
-      if: ${{ failure() }}
-      uses: JasonEtco/create-an-issue@v2
-      env:
-        ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        WORKFLOW_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      with:
-        filename: .github/deploy-failed.md
-        update_existing: true
-
-    - name: Close Issue
-      if: ${{ success() }}
-      uses: lee-dohm/close-matching-issues@v2
-      with:
-        query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
-        token: ${{ secrets.GITHUB_TOKEN }}
+    secrets: inherit
+    with:
+      pkg-name: ${{ matrix.package.pkgName }}
+      pkg-tags: ${{ matrix.package.tags }}
+      cli-deploy-all-workflow-id: ${{( github.event.schedule || inputs.skip-smoke-tests != true ) && github.run_id || '' }}

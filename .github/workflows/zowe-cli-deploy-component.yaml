@@ -9,6 +9,10 @@ on:
       pkg-tags:
         required: true
         type: string
+      cli-deploy-all-workflow-id:
+        description: "The workflow ID from the CLI Deploy All Workflow. This should NOT be specified by any other calling workflow."
+        required: false
+        type: string
     secrets:
       NPM_PUBLIC_TOKEN:
         required: true
@@ -25,6 +29,8 @@ on:
 
 permissions:
   issues: write
+  id-token: write
+  actions: read  
 
 jobs:
   deploy:
@@ -33,6 +39,7 @@ jobs:
     env:
       PKG_NAME: ${{ inputs.pkg-name }}
       PKG_TAGS: ${{ inputs.pkg-tags }}
+      NPM_CONFIG_PROVENANCE: "false"
 
     steps:
     - name: Checkout
@@ -52,13 +59,25 @@ jobs:
       with:
         python-version: '3.11.5'
 
+    - name: Upgrade NPM
+      run: npm install -g npm@latest
+
     - name: Install Dependencies
       run: npm ci
 
+    ## Remove once OIDC is configured
     - name: NPM Login
       run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
       env:
         NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+
+    - name: Download Workflow Artifact From Deploy All
+      if: ${{ inputs.cli-deploy-all-workflow-id }}
+      uses: actions/download-artifact@v4
+      with:
+        name: publish-list
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        run-id: ${{ inputs.cli-deploy-all-workflow-id }}
 
     - name: Deploy Package
       id: deploy
