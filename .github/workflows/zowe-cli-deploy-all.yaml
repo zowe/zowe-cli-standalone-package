@@ -255,3 +255,4 @@ jobs:
     with:
       pkg-name: ${{ matrix.package.pkgName }}
       pkg-tags: ${{ matrix.package.tags }}
+      cli-deploy-all-workflow-id: ${{( github.event.schedule || inputs.skip-smoke-tests != true ) && github.run_id || '' }}
