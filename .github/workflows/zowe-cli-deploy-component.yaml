@@ -39,6 +39,7 @@ jobs:
     env:
       PKG_NAME: ${{ inputs.pkg-name }}
       PKG_TAGS: ${{ inputs.pkg-tags }}
+      NPM_CONFIG_PROVENANCE: "false"
 
     steps:
     - name: Checkout
@@ -58,9 +59,13 @@ jobs:
       with:
         python-version: '3.11.5'
 
+    - name: Upgrade NPM
+      run: npm install -g npm@latest
+
     - name: Install Dependencies
       run: npm ci
 
+    ## Remove once OIDC is configured
     - name: NPM Login
       run: bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
       env:
