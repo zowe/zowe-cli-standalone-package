@@ -246,6 +246,7 @@ jobs:
     permissions:
       issues: write
       id-token: write
+      actions: read
     strategy:
       fail-fast: false
       max-parallel: 1
