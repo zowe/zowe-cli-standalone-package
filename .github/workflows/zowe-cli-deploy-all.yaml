@@ -65,7 +65,7 @@ jobs:
           node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
-        if: ${{ success() || failure() }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: status-${{ env.RUN_OS }}
@@ -104,7 +104,7 @@ jobs:
           node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
-        if: ${{ success() || failure() }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: status-${{ env.RUN_OS }}
@@ -148,7 +148,7 @@ jobs:
           node scripts/smoke-test-components.js
 
       - name: Upload Status Artifact
-        if: ${{ success() || failure() }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: status-${{ env.RUN_OS }}
@@ -223,7 +223,7 @@ jobs:
       run: node scripts/smoke-test-status.js
 
     - name: Upload Publish Artifact
-      if: ${{ success() || failure() }}
+      if: ${{ !cancelled() }} 
       uses: actions/upload-artifact@v4
       with:
         name: publish-list
@@ -241,7 +241,7 @@ jobs:
 
   deploy:
     needs: [setup, smoke-test-status]
-    if: !cancelled()
+    if: ${{ !cancelled() }}
     uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
     permissions:
       issues: write
