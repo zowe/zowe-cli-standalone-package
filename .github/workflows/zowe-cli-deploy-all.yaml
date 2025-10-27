@@ -241,7 +241,7 @@ jobs:
 
   deploy:
     needs: [setup, smoke-test-status]
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.smoke-test-status.result == 'success' }}
     uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
     permissions:
       issues: write
