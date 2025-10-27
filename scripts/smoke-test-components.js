@@ -33,7 +33,8 @@ function getTags(tagArray) {
     tagList = JSON.parse(tagArray);
     const ourPackages = [];
     for (const item of tagList) {
-        const [packageName, ...pkgTags] = [item.pkgName, item.tags.split(" ")];
+        const packageName = item.pkgName;
+        const pkgTags = item.tags.split(" ");
         for (const tag of pkgTags) {
             const package = {
                 name: packageName,
