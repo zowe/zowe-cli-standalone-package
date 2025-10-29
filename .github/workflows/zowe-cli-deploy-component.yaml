@@ -80,6 +80,7 @@ jobs:
       id: deploy
       run: |
         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
+        cat .npmrc
         node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
