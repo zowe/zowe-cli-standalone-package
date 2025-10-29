@@ -80,7 +80,6 @@ jobs:
       run: |
         echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
         echo "omit-lockfile-registry-resolved=true" >> .npmrc
-        sleep 15
 
     - name: Deploy Package
       id: deploy
