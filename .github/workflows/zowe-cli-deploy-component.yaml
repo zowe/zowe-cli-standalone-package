@@ -76,12 +76,14 @@ jobs:
       with:
         package-name: "@zowe/${{ env.PKG_NAME }}"
 
+    - name: Replace .npmrc
+      run: |
+        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+        echo "omit-lockfile-registry-resolved=true" >> .npmrc
+
     - name: Deploy Package
       id: deploy
-      run: |
-        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> .npmrc
-        cat .npmrc
-        node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
+      run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
