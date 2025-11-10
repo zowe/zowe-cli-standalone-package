@@ -24,18 +24,10 @@ const data = require(_path);
 
       _obj[pkg] = obj[key][pkg];
 
-      // Check if the package didn't resolve to public NPM
-      if (_obj[pkg].resolved && !_obj[pkg].resolved.startsWith("https://registry.npmjs.org")) {
-        const pkgPos = pkg.lastIndexOf("node_modules") + "node_modules".length + 1;
-
-        // Check (and fail) if the package isn't a scoped package
-        if(!pkg.startsWith("@") && pkg[pkgPos] !== "@") {
-          console.error("Problematic package:", pkg);
-          throw "Problematic package:" + pkg;
-        }
-
-        _obj[pkg].resolved = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.tarball");
-        _obj[pkg].integrity = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.integrity");
+      // If the package is @zowe-scoped, replace Artifactory SHA with public NPM one
+      if (pkg.startsWith("@zowe/")) {
+        console.log(`Updating integrity field for ${pkg}`);
+        _obj[pkg].integrity = await getPackageInfo(pkg + "@" + _obj[pkg].version, "", "dist.integrity");
       }
     }
     obj[key] = _obj;
