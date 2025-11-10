@@ -47,13 +47,13 @@ npmDeps=`node -e "package = require('./package.json');
     Object.entries(package.peerDependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));"`
 for pkgSpec in $npmDeps; do
     echo "Validating dependency $pkgSpec..."
-    npm view $pkgSpec || die "Validation of $pkgSpec failed"
+    npm view $pkgSpec dist.tarball || die "Validation of $pkgSpec failed"
 done
 
 # Update npm-shrinkwrap.json if necessary
 if [ -e "npm-shrinkwrap.json" ]; then
     # Create a production environment (taking in consideration the npm-shrinkwrap)
-    npm install --only=prod --ignore-scripts
+    npm install --omit=dev --ignore-scripts --save=false
 
     # Rewrite the shrinkwrap file with only production dependencies and public npm resolved URLs
     node "../../scripts/rewrite-shrinkwrap.js"
