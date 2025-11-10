@@ -54,22 +54,18 @@ async function deploy(pkgName, pkgTag) {
         return;
     }
 
-    // try {
-    //     oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
-    //     core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-    //     await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
-    // } catch (err) {
-    //     const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
-    //     const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
-    //     await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
-    //     await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
-    //     pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
-    //     await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
-    // }
-    const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
-    const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
-    await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
-    await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+    try {
+        oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
+        core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
+        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
+    } catch (err) {
+        const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
+        const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
+        await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
+        await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+        pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
+        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
+    }
 
     core.info("Waiting for published version to appear on NPM registry");
     let taggedVersion;

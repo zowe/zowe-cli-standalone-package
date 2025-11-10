@@ -30,9 +30,7 @@ const data = require(_path);
       if (posix.dirname(pkg) === "node_modules/@zowe") {
         const pkgPos = pkg.lastIndexOf("node_modules") + "node_modules".length + 1;
         console.log(`Updating integrity field for ${pkg}`);
-        console.log("before", _obj[pkg].integrity);
         _obj[pkg].integrity = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.integrity");
-        console.log("after", _obj[pkg].integrity);
       }
     }
     obj[key] = _obj;
@@ -41,6 +39,5 @@ const data = require(_path);
   await filterPkgs(data, "packages");
   await filterPkgs(data, "dependencies");
 
-  console.log(data);
   fs.writeFileSync(_path, JSON.stringify(data, null, 2) + "\n" );
 })();
