@@ -31,6 +31,7 @@ const data = require(_path);
         console.log(`Updating integrity field for ${pkg}`);
         console.log("before", _obj[pkg].integrity);
         _obj[pkg].integrity = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.integrity");
+        delete _obj[pkg].resolved;
         console.log("after", _obj[pkg].integrity);
       }
     }
