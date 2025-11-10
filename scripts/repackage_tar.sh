@@ -47,7 +47,7 @@ npmDeps=`node -e "package = require('./package.json');
     Object.entries(package.peerDependencies || {}).forEach(([name, version]) => console.log(name + '@' + version));"`
 for pkgSpec in $npmDeps; do
     echo "Validating dependency $pkgSpec..."
-    npm view $pkgSpec || die "Validation of $pkgSpec failed"
+    npm view $pkgSpec dist.tarball || die "Validation of $pkgSpec failed"
 done
 
 # Update npm-shrinkwrap.json if necessary

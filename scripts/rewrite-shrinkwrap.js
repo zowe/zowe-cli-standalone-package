@@ -9,6 +9,7 @@
  */
 
 const fs = require("fs");
+const { posix } = require("path");
 const getPackageInfo = require(__dirname + "/utils").getPackageInfo;
 
 const _path = __dirname + "/../temp/package/npm-shrinkwrap.json";
@@ -25,7 +26,7 @@ const data = require(_path);
       _obj[pkg] = obj[key][pkg];
 
       // If the package is @zowe-scoped, replace Artifactory SHA with public NPM one
-      if (pkg.startsWith("@zowe/")) {
+      if (posix.dirname(pkg) === "node_modules/@zowe") {
         console.log(`Updating integrity field for ${pkg}`);
         console.log("before", _obj[pkg].integrity);
         _obj[pkg].integrity = await getPackageInfo(pkg + "@" + _obj[pkg].version, "", "dist.integrity");
@@ -38,5 +39,6 @@ const data = require(_path);
   await filterPkgs(data, "packages");
   await filterPkgs(data, "dependencies");
 
+  console.log(data);
   fs.writeFileSync(_path, JSON.stringify(data, null, 2) + "\n" );
 })();
