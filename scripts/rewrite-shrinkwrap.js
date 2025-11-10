@@ -27,9 +27,10 @@ const data = require(_path);
 
       // If the package is @zowe-scoped, replace Artifactory SHA with public NPM one
       if (posix.dirname(pkg) === "node_modules/@zowe") {
+        const pkgPos = pkg.lastIndexOf("node_modules") + "node_modules".length + 1;
         console.log(`Updating integrity field for ${pkg}`);
         console.log("before", _obj[pkg].integrity);
-        _obj[pkg].integrity = await getPackageInfo(pkg + "@" + _obj[pkg].version, "", "dist.integrity");
+        _obj[pkg].integrity = await getPackageInfo(pkg.substring(pkg.startsWith("@") ? 0 : pkgPos) + "@" + _obj[pkg].version, "", "dist.integrity");
         console.log("after", _obj[pkg].integrity);
       }
     }
