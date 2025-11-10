@@ -32,6 +32,7 @@ async function deploy(pkgName, pkgTag) {
     }
 
     core.info(`📦 Deploying package ${PKG_SCOPE}/${pkgName}@${pkgTag}`);
+    fs.rmSync(__dirname + "/../.npmrc", { force: true });
     const pkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS);
     let oldPkgVersion;
     try {
