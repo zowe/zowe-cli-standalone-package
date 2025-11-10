@@ -53,7 +53,7 @@ done
 # Update npm-shrinkwrap.json if necessary
 if [ -e "npm-shrinkwrap.json" ]; then
     # Create a production environment (taking in consideration the npm-shrinkwrap)
-    npm install --only=prod --ignore-scripts
+    npm install --omit=dev --ignore-scripts
 
     # Rewrite the shrinkwrap file with only production dependencies and public npm resolved URLs
     node "../../scripts/rewrite-shrinkwrap.js"
