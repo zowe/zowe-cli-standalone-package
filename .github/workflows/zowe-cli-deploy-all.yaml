@@ -118,14 +118,14 @@ jobs:
           path: errors-${{ env.RUN_OS }}.log
 
   smoke-test-macos-x86:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     needs: setup
     if: github.event.schedule || inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
       SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
-      RUN_OS: macos-13
+      RUN_OS: macos-15-intel
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -162,14 +162,14 @@ jobs:
           path: errors-${{ env.RUN_OS }}.log
 
   smoke-test-macos-arm:
-    runs-on: macos-14
+    runs-on: macos-15
     needs: setup
     if: github.event.schedule || inputs.skip-smoke-tests != true
     continue-on-error: true
     env:
       DEPLOY_MATRIX: ${{ needs.setup.outputs.deploy-matrix }}
       SKIP_SDKS: ${{ inputs.skip-sdk-smoke-tests == true || ''}}
-      RUN_OS: macos-14
+      RUN_OS: macos-15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
