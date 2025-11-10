@@ -27,7 +27,9 @@ const data = require(_path);
       // If the package is @zowe-scoped, replace Artifactory SHA with public NPM one
       if (pkg.startsWith("@zowe/")) {
         console.log(`Updating integrity field for ${pkg}`);
+        console.log("before", _obj[pkg].integrity);
         _obj[pkg].integrity = await getPackageInfo(pkg + "@" + _obj[pkg].version, "", "dist.integrity");
+        console.log("after", _obj[pkg].integrity);
       }
     }
     obj[key] = _obj;
