@@ -52,6 +52,7 @@ done
 
 # Update npm-shrinkwrap.json if necessary
 if [ -e "npm-shrinkwrap.json" ]; then
+    cat npm-shrinkwrap.json
     # Create a production environment (taking in consideration the npm-shrinkwrap)
     npm install --omit=dev --ignore-scripts
 
