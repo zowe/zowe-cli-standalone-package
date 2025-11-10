@@ -14,7 +14,6 @@ const getPackageInfo = require(__dirname + "/utils").getPackageInfo;
 
 const _path = __dirname + "/../temp/package/npm-shrinkwrap.json";
 const data = require(_path);
-console.log(data);
 
 (async () => {
   const filterPkgs = async (obj, key) => {
