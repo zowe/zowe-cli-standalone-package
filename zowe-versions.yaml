@@ -74,11 +74,11 @@ packages:
   cics-for-zowe-sdk:
     next: true
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 6.14.0
+    zowe-v3-lts: 6.13.2
   cics-for-zowe-cli:
     next: true
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 6.14.0
+    zowe-v3-lts: 6.13.2
   db2-for-zowe-cli:
     next: true
     zowe-v2-lts: 5.0.19
