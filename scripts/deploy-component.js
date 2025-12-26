@@ -46,7 +46,7 @@ async function deploy(pkgName, pkgTag) {
         core.warning(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} will not be published because it failed to ` +
             `install`);
         return;
-    } else if (oldPkgVersion === pkgVersion) {
+    } else if (oldPkgVersion === pkgVersion && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists`);
         return;
     } else if (pkgTag !== pkgVersion && await utils.shouldSkipPublish(pkgName, pkgTag, pkgVersion)) {
@@ -62,14 +62,15 @@ async function deploy(pkgName, pkgTag) {
     } catch {}
     if (versionExists && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);    
+        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
     } else {
         const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
         await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
         await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
-        if (!DRY_RUN) await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
+        if (DRY_RUN) return;
+        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
