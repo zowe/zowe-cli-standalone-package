@@ -17,6 +17,7 @@ const jsYaml = require("js-yaml");
 
 const utils = require(__dirname + "/utils");
 
+const DRY_RUN = process.env.DRY_RUN === "true";
 const PKG_SCOPE = "@zowe";
 const SOURCE_REGISTRY = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
 const TARGET_REGISTRY = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
@@ -54,22 +55,26 @@ async function deploy(pkgName, pkgTag) {
         return;
     }
 
+    let versionExists = false;
     try {
         oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
+        versionExists = true;
+    } catch {}
+    if (versionExists && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
-    } catch (err) {
+        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);    
+    } else {
         const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
         await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
         await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
-        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
+        if (!DRY_RUN) await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
     let taggedVersion;
-    let versionExists = false;
+    versionExists = false;
     while (!versionExists || taggedVersion !== pkgVersion) {
         if (!versionExists) {
             versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`,

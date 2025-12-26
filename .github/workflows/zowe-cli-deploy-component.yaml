@@ -26,6 +26,11 @@ on:
         description: "Tags to be distributed from Artifactory (separate multiple by spaces)"
         default: "latest"
         required: true
+      dry-run:
+        description: "Test repackaging only and skip publish step"
+        default: false
+        required: false
+        type: boolean
 
 permissions:
   issues: write
@@ -50,7 +55,8 @@ jobs:
     - name: Use Node.js LTS
       uses: actions/setup-node@v4
       with:
-        node-version: 'lts/*'
+        # Stay back one major release to avoid bugs in unstable npm versions
+        node-version: 'lts/-1'
         cache: ${{ (!env.ACT && 'npm') || '' }}
 
     # Python 3.12 breaks node-gyp < 10, breaking current versions of Node 18/20 (as of Nov 9, 2023) - awharn
@@ -97,6 +103,7 @@ jobs:
       id: deploy
       run: node scripts/deploy-component.js ${{ env.PKG_NAME }} ${{ env.PKG_TAGS }}
       env:
+        DRY_RUN: ${{ inputs.dry-run }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     - name: NPM Logout
