@@ -21,7 +21,7 @@ jobs:
 
     - run: |
         node scripts/coverage-report.js
-        npx csv2md coverage-report.csv >> $GITHUB_STEP_SUMMARY
+        npx csv-to-markdown-table --delim ',' --headers < coverage-report.csv >> $GITHUB_STEP_SUMMARY
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
