@@ -59,7 +59,9 @@ async function deploy(pkgName, pkgTag) {
     try {
         oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
         versionExists = true;
-    } catch {}
+    } catch (err) {
+        core.info(`Could not find package ${PKG_SCOPE}/${pkgName}@${pkgVersion}: ${err.message}`);
+    }
     if (versionExists && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
         await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
