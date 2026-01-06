@@ -23,7 +23,7 @@
     "@actions/exec": "^1.1.0",
     "@actions/github": "^6.0.0",
     "adm-zip": "^0.5.10",
-    "csv2md": "^1.1.0",
+    "csv-to-markdown-table": "^1.6.3",
     "delay": "^5.0.0",
     "env-cmd": "^10.1.0",
     "flat": "^5.0.2",
@@ -36,8 +36,5 @@
     "shebang-regex": "^2.0.0",
     "strip-comments": "^2.0.1",
     "xml-js": "^1.6.11"
-  },
-  "overrides": {
-    "yargs-parser": "~13.1.2"
   }
 }
