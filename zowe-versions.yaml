@@ -16,11 +16,11 @@ packages:
   imperative:
     # next: true
     zowe-v2-lts: 5.27.14
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   cli-test-utils:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   secrets-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.18.6
@@ -28,56 +28,56 @@ packages:
   core-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-uss-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   provisioning-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-console-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-files-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-logs-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zosmf-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-workflows-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-jobs-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   zos-tso-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.4
+    zowe-v3-lts: 8.29.11
   cli:
     # next: true
     zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.5
+    zowe-v3-lts: 8.29.11
   # CLI plug-ins
   cics-for-zowe-sdk:
     # next: true
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 6.13.2
+    zowe-v3-lts: 6.17.0
   cics-for-zowe-cli:
     # next: true
     zowe-v2-lts: 5.0.9
-    zowe-v3-lts: 6.13.2
+    zowe-v3-lts: 6.17.0
   db2-for-zowe-cli:
     # next: true
     zowe-v2-lts: 5.0.19
@@ -114,7 +114,7 @@ tags:
     version: 2.18.5
     rc: 1
   zowe-v3-lts:
-    version: 3.4.0
+    version: 3.4.1
     rc: 1
   # next:
   #   version: 2.0.0
