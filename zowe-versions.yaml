@@ -67,8 +67,8 @@ packages:
     zowe-v3-lts: 8.29.11
   cli:
     # next: true
-    zowe-v2-lts: 7.29.20
-    zowe-v3-lts: 8.29.11
+    zowe-v2-lts: 7.29.21
+    zowe-v3-lts: 8.29.12
   # CLI plug-ins
   cics-for-zowe-sdk:
     # next: true
