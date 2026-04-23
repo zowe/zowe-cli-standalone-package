@@ -96,6 +96,7 @@ packages:
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
 # These packages will be mirrored from Artifactory to npmjs.org nightly.
 extras:
+  zowex-for-zowe-sdk: {}
   tasks-for-zowe-cli:
     next: true
   zos-make-for-zowe-cli:
