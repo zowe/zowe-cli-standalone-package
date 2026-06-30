@@ -51,13 +51,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Use Node.JS LTS
         uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Run Script
         id: run
         run: |
@@ -90,13 +90,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Use Node.JS LTS
         uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Run Script
         id: run
         run: |
@@ -129,7 +129,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Use Node.JS LTS
         uses: actions/setup-node@v4
 
@@ -140,7 +140,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.5'
-      
+
       - name: Run Script
         id: run
         run: |
@@ -173,13 +173,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Use Node.JS LTS
         uses: actions/setup-node@v4
 
       - name: Install Dependencies
         run: npm ci
-      
+
       - name: Run Script
         id: run
         run: |
@@ -207,7 +207,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-  
+
     - name: Use Node.JS LTS
       uses: actions/setup-node@v4
 
@@ -218,17 +218,17 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: status-*
-  
+
     - name: Run Script
       run: node scripts/smoke-test-status.js
 
     - name: Upload Publish Artifact
-      if: ${{ !cancelled() }} 
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: publish-list
         path: publish-list.json
-    
+
     - name: Create Issue
       uses: JasonEtco/create-an-issue@v2
       if: ${{ needs.smoke-test-windows.result != 'success' || needs.smoke-test-ubuntu.result != 'success' || needs.smoke-test-macos-x86.result != 'success' || needs.smoke-test-macos-arm.result != 'success' }}
@@ -242,7 +242,7 @@ jobs:
   deploy:
     needs: [setup, smoke-test-status]
     if: ${{ !cancelled() && (inputs.skip-smoke-tests == true || needs.smoke-test-status.result == 'success') }}
-    uses: zowe/zowe-cli-standalone-package/.github/workflows/zowe-cli-deploy-component.yaml@master
+    uses: ./.github/workflows/zowe-cli-deploy-component.yaml
     permissions:
       issues: write
       id-token: write
