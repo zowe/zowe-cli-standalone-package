@@ -122,7 +122,7 @@ jobs:
         update_existing: true
 
     - name: Close Issue
-      if: ${{ success() && github.event_name == 'workflow_call' }}
+      if: ${{ success() && inputs.cli-deploy-all-workflow-id }}
       uses: lee-dohm/close-matching-issues@v2
       with:
         query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
