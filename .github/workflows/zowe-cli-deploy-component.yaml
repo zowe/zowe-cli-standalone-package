@@ -35,7 +35,7 @@ on:
 permissions:
   issues: write
   id-token: write
-  actions: read  
+  actions: read
 
 jobs:
   deploy:
@@ -48,12 +48,12 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       with:
         repository: 'zowe/zowe-cli-standalone-package'
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         # Stay back one major release to avoid bugs in unstable npm versions
         node-version: 'lts/-1'
@@ -61,7 +61,7 @@ jobs:
 
     # Python 3.12 breaks node-gyp < 10, breaking current versions of Node 18/20 (as of Nov 9, 2023) - awharn
     - name: Downgrade Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
       with:
         python-version: '3.11.5'
 
@@ -70,7 +70,7 @@ jobs:
 
     - name: Download Workflow Artifact From Deploy All
       if: ${{ inputs.cli-deploy-all-workflow-id }}
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         name: publish-list
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -80,7 +80,7 @@ jobs:
       if: false
       continue-on-error: true
       id: oidc
-      uses: electron/npm-trusted-auth-action@418d14975a3ff06683cc4580a4eba437f0f017f1
+      uses: electron/npm-trusted-auth-action@418d14975a3ff06683cc4580a4eba437f0f017f1 # 418d14975a3ff06683cc4580a4eba437f0f017f1
       with:
         package-name: "@zowe/${{ env.PKG_NAME }}"
 
@@ -105,14 +105,14 @@ jobs:
       env:
         DRY_RUN: ${{ inputs.dry-run }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
+
     - name: NPM Logout
       if: ${{ always() && steps.oidc.outcome == 'success' }}
       run: "npm logout"
 
     - name: Create Issue
       if: ${{ failure() }}
-      uses: JasonEtco/create-an-issue@v2
+      uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2
       env:
         ERROR_REPORT: ${{ steps.deploy.outputs.errors }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -120,3 +120,10 @@ jobs:
       with:
         filename: .github/deploy-failed.md
         update_existing: true
+
+    - name: Close Issue
+      if: ${{ success() && inputs.cli-deploy-all-workflow-id }}
+      uses: lee-dohm/close-matching-issues@e9e43aad2fa6f06a058cedfd8fb975fd93b56d8f # v2
+      with:
+        query: '"Failed to deploy @zowe/${{ env.PKG_NAME }}" in:title'
+        token: ${{ secrets.GITHUB_TOKEN }}
