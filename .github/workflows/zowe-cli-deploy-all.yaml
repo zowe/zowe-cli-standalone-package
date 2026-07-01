@@ -24,10 +24,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
     - name: Use Node.js LTS
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version: 'lts/*'
         cache: ${{ (!env.ACT && 'npm') || '' }}
@@ -50,10 +50,10 @@ jobs:
       RUN_OS: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 
       - name: Install Dependencies
         run: npm ci
@@ -66,14 +66,14 @@ jobs:
 
       - name: Upload Status Artifact
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: status-${{ env.RUN_OS }}
           path: status-${{ env.RUN_OS }}.json
 
       - name: Upload Error Artifact
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: errors-${{ env.RUN_OS }}
           path: errors-${{ env.RUN_OS }}.log
@@ -89,10 +89,10 @@ jobs:
       RUN_OS: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 
       - name: Install Dependencies
         run: npm ci
@@ -105,14 +105,14 @@ jobs:
 
       - name: Upload Status Artifact
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: status-${{ env.RUN_OS }}
           path: status-${{ env.RUN_OS }}.json
 
       - name: Upload Error Artifact
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: errors-${{ env.RUN_OS }}
           path: errors-${{ env.RUN_OS }}.log
@@ -128,16 +128,16 @@ jobs:
       RUN_OS: macos-15-intel
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Downgrade Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.11.5'
 
@@ -149,14 +149,14 @@ jobs:
 
       - name: Upload Status Artifact
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: status-${{ env.RUN_OS }}
           path: status-${{ env.RUN_OS }}.json
 
       - name: Upload Error Artifact
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: errors-${{ env.RUN_OS }}
           path: errors-${{ env.RUN_OS }}.log
@@ -172,10 +172,10 @@ jobs:
       RUN_OS: macos-15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Use Node.JS LTS
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 
       - name: Install Dependencies
         run: npm ci
@@ -188,14 +188,14 @@ jobs:
 
       - name: Upload Status Artifact
         if: ${{ success() || failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: status-${{ env.RUN_OS }}
           path: status-${{ env.RUN_OS }}.json
 
       - name: Upload Error Artifact
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: errors-${{ env.RUN_OS }}
           path: errors-${{ env.RUN_OS }}.log
@@ -206,16 +206,16 @@ jobs:
     if: ${{ (github.event.schedule || inputs.skip-smoke-tests != true) && (always()) }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
     - name: Use Node.JS LTS
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
 
     - name: Install Dependencies
       run: npm ci
 
     - name: Download Artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
       with:
         pattern: status-*
 
@@ -224,13 +224,13 @@ jobs:
 
     - name: Upload Publish Artifact
       if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
       with:
         name: publish-list
         path: publish-list.json
 
     - name: Create Issue
-      uses: JasonEtco/create-an-issue@v2
+      uses: JasonEtco/create-an-issue@1b14a70e4d8dc185e5cc76d3bec9eab20257b2c5 # v2
       if: ${{ needs.smoke-test-windows.result != 'success' || needs.smoke-test-ubuntu.result != 'success' || needs.smoke-test-macos-x86.result != 'success' || needs.smoke-test-macos-arm.result != 'success' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
