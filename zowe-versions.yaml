@@ -15,11 +15,11 @@ packages:
     zowe-v2-lts: 1.0.7
   imperative:
     # next: true
-    zowe-v2-lts: 5.27.14
+    zowe-v2-lts: 5.27.18
     zowe-v3-lts: 8.32.0
   cli-test-utils:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   secrets-for-zowe-sdk:
     # next: true
@@ -27,60 +27,60 @@ packages:
     zowe-v3-lts: 8.32.0
   core-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-uss-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   provisioning-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-console-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-files-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-logs-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zosmf-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-workflows-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-jobs-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   zos-tso-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.20
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   cli:
     # next: true
-    zowe-v2-lts: 7.29.21
+    zowe-v2-lts: 7.29.27
     zowe-v3-lts: 8.32.0
   # CLI plug-ins
   cics-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 5.0.9
+    zowe-v2-lts: 5.0.11
     zowe-v3-lts: 6.21.0
   cics-for-zowe-cli:
     # next: true
-    zowe-v2-lts: 5.0.9
+    zowe-v2-lts: 5.0.11
     zowe-v3-lts: 6.21.0
   db2-for-zowe-cli:
     # next: true
-    zowe-v2-lts: 5.0.19
+    zowe-v2-lts: 5.0.22
     zowe-v3-lts: 6.1.12
   ims-for-zowe-cli:
     # next: true
@@ -112,7 +112,7 @@ extras:
 # Define version info for the latest staged Zowe release.
 tags:
   zowe-v2-lts:
-    version: 2.18.5
+    version: 2.18.6
     rc: 1
   zowe-v3-lts:
     version: 3.5.0
