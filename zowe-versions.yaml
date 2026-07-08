@@ -87,7 +87,7 @@ packages:
     zowe-v2-lts: 3.0.1
   mq-for-zowe-cli:
     # next: true
-    zowe-v2-lts: 3.0.1
+    zowe-v2-lts: 3.0.2
     zowe-v3-lts: 4.0.0
   zos-ftp-for-zowe-cli:
     # next: true
