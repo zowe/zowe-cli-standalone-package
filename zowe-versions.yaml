@@ -15,11 +15,11 @@ packages:
     zowe-v2-lts: 1.0.7
   imperative:
     # next: true
-    zowe-v2-lts: 5.27.19
+    zowe-v2-lts: 5.27.21
     zowe-v3-lts: 8.32.0
   cli-test-utils:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   secrets-for-zowe-sdk:
     # next: true
@@ -27,47 +27,47 @@ packages:
     zowe-v3-lts: 8.32.0
   core-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-uss-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   provisioning-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-console-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-files-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-logs-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zosmf-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-workflows-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-jobs-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   zos-tso-for-zowe-sdk:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   cli:
     # next: true
-    zowe-v2-lts: 7.29.28
+    zowe-v2-lts: 7.29.30
     zowe-v3-lts: 8.32.0
   # CLI plug-ins
   cics-for-zowe-sdk:
