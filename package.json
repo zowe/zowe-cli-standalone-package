@@ -22,7 +22,7 @@
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.0",
     "@actions/github": "^6.0.0",
-    "adm-zip": "^0.5.10",
+    "adm-zip": "^0.6.0",
     "csv-to-markdown-table": "^1.6.3",
     "delay": "^5.0.0",
     "env-cmd": "^10.1.0",
