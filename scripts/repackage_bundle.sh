@@ -16,7 +16,7 @@ mkdir -p packed
 # Loop through each tar (representing an `npm pack`), and create new tars with packed dependencies.
 for tar in "$@"
 do
-    mkdir -p temp
+    mkdir temp
     tar xzf $tar -C temp
 
     # Changes the package.json format
