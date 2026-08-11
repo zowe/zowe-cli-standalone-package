@@ -22,7 +22,7 @@ tarfile=$1;
 registry=$2;
 newversion=$3;
 
-mkdir temp
+mkdir -p temp
 tar xzf $tarfile -C temp
 cd temp
 cd package
