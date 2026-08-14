@@ -35,13 +35,15 @@ fi
 
 # Unholy one liner which replace registry and repository with blank strings. Should convert this to javascript file soonTM.
 # Also remove prepare script which may require dev dependencies like Husky - https://github.com/typicode/husky/issues/914
-# Also remove prepack script which may require scripts from the project repo
+# Also remove pre-/post-pack scripts which may require scripts from the project repo
+# TODO Pre-/post-pack scripts can be restored after CLI V2 is updated to stop using them
 # Takes in package.json, outputs package_new.json
 node -e "package = require('./package.json');
     package.publishConfig.registry='$registry';
     package.version='$newversion';
     delete package.scripts.prepare;
     delete package.scripts.prepack;
+    delete package.scripts.postpack;
     require('fs').writeFileSync('package_new.json', JSON.stringify(package, null, 2), 'utf8')"
 # Move the old package JSON to build dir so we can publish as a Jenkins artifact?
 mv package.json ../../$tarfile.json
