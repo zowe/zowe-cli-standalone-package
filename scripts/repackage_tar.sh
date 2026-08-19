@@ -27,12 +27,6 @@ tar xzf $tarfile -C temp
 cd temp
 cd package
 
-# Skip repackaging if dependencies are already bundled
-if (grep -q '"bundleDependencies":' package.json); then
-    rm -rf ../../temp/
-    exit 0
-fi
-
 # Unholy one liner which replace registry and repository with blank strings. Should convert this to javascript file soonTM.
 # Also remove prepare script which may require dev dependencies like Husky - https://github.com/typicode/husky/issues/914
 # Also remove pre-/post-pack scripts which may require scripts from the project repo
