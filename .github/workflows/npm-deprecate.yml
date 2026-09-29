@@ -32,7 +32,9 @@ jobs:
         VERSION: ${{ inputs.package-version }}
 
     - name: Log workflow inputs
-      run: echo '${{ toJson(inputs) }}'
+      run: echo "$INPUTS_JSON"
+      env:
+        INPUTS_JSON: ${{ toJson(inputs) }}
 
   npm-deprecate:
     runs-on: ubuntu-slim
