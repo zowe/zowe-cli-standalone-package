@@ -18,13 +18,11 @@ on:
         type: string
 
 jobs:
-  npm-deprecate:
+  validate-version:
     runs-on: ubuntu-slim
-    environment: danger
 
     steps:
     - name: Validate version format
-      id: validate-version
       run: |
         if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?(\+[A-Za-z0-9.]+)?$ ]]; then
           echo "::error::Invalid version '$VERSION' - expected semver format, e.g. 1.0.0 or 1.0.0-rc.1"
@@ -33,8 +31,16 @@ jobs:
       env:
         VERSION: ${{ inputs.package-version }}
 
+    - name: Log workflow inputs
+      run: echo '${{ toJson(inputs) }}'
+
+  npm-deprecate:
+    runs-on: ubuntu-slim
+    needs: validate-version
+    environment: danger
+
+    steps:
     - name: Deprecate npm package
-      if: ${{ steps.validate-version.outcome == 'success' }}
       run: |
         echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
         npm deprecate ${{ inputs.package-name }}@${{ inputs.package-version }} "${{ inputs.deprecation-message }}"
