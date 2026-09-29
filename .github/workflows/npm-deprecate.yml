@@ -1,0 +1,42 @@
+name: Deprecate NPM Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: "Name of NPM package"
+        required: true
+        type: string
+      package-version:
+        description: "Version of NPM package"
+        required: true
+        type: string
+      deprecation-message:
+        description: "Deprecation warning message (leave blank to undeprecate)"
+        default: ""
+        required: false
+        type: string
+
+jobs:
+  npm-deprecate:
+    runs-on: ubuntu-slim
+    environment: danger
+
+    steps:
+    - name: Validate version format
+      id: validate-version
+      run: |
+        if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.]+)?(\+[A-Za-z0-9.]+)?$ ]]; then
+          echo "::error::Invalid version '$VERSION' - expected semver format, e.g. 1.0.0 or 1.0.0-rc.1"
+          exit 1
+        fi
+      env:
+        VERSION: ${{ inputs.package-version }}
+
+    - name: Deprecate npm package
+      if: ${{ steps.validate-version.outcome == 'success' }}
+      run: |
+        echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+        npm deprecate ${{ inputs.package-name }}@${{ inputs.package-version }} "${{ inputs.deprecation-message }}"
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
