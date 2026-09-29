@@ -37,6 +37,6 @@ jobs:
       if: ${{ steps.validate-version.outcome == 'success' }}
       run: |
         echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-        npm deprecate ${{ inputs.package-name }}@${{inputs.package-version}} "${{ inputs.deprecation-message }}"
+        npm deprecate ${{ inputs.package-name }}@${{ inputs.package-version }} "${{ inputs.deprecation-message }}"
       env:
         NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
