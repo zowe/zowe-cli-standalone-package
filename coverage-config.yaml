@@ -1,45 +1,45 @@
 projects:
   "zowe/zowe-cli":
     unit:
-      junit-artifact: zowe-cli.yml/Linux-20.x-results/unit
-      lcov-artifact: zowe-cli.yml/Linux-20.x-results/unit/coverage
+      junit-artifact: zowe-cli.yml/Linux-24.x-results/unit
+      lcov-artifact: zowe-cli.yml/Linux-24.x-results/unit/coverage
     integration:
-      junit-artifact: zowe-cli.yml/Linux-20.x-results/integration
+      junit-artifact: zowe-cli.yml/Linux-24.x-results/integration
     system:
       test-count: npm-jest
   "zowe/cics-for-zowe-client#main":
     unit-cli:
-      junit-artifact: main.yml/ubuntu-latest-20.x-results/cli/__tests__/__results__/unit
-      lcov-artifact: main.yml/ubuntu-latest-20.x-results/cli/__tests__/__results__/unit/coverage
+      junit-artifact: main.yml/ubuntu-latest-24.x-results/cli/__tests__/__results__/unit
+      lcov-artifact: main.yml/ubuntu-latest-24.x-results/cli/__tests__/__results__/unit/coverage
     unit-sdk:
-      junit-artifact: main.yml/ubuntu-latest-20.x-results/sdk/__tests__/__results__/unit
-      lcov-artifact: main.yml/ubuntu-latest-20.x-results/sdk/__tests__/__results__/unit/coverage
+      junit-artifact: main.yml/ubuntu-latest-24.x-results/sdk/__tests__/__results__/unit
+      lcov-artifact: main.yml/ubuntu-latest-24.x-results/sdk/__tests__/__results__/unit/coverage
     unit-vsce:
-      junit-artifact: main.yml/ubuntu-latest-20.x-results/vsce/__tests__/__results__/unit
-      lcov-artifact: main.yml/ubuntu-latest-20.x-results/vsce/__tests__/__results__/unit/coverage
+      junit-artifact: main.yml/ubuntu-latest-24.x-results/vsce/__tests__/__results__/unit
+      lcov-artifact: main.yml/ubuntu-latest-24.x-results/vsce/__tests__/__results__/unit/coverage
     unit-vsce-api:
-      junit-artifact: main.yml/ubuntu-latest-20.x-results/vsce-api/__tests__/__results__/unit
-      lcov-artifact: main.yml/ubuntu-latest-20.x-results/vsce-api/__tests__/__results__/unit/coverage
+      junit-artifact: main.yml/ubuntu-latest-24.x-results/vsce-api/__tests__/__results__/unit
+      lcov-artifact: main.yml/ubuntu-latest-24.x-results/vsce-api/__tests__/__results__/unit/coverage
     system:
       test-count: npm-jest:packages/cli,packages/sdk
   "zowe/zowe-cli-db2-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit/coverage
     system:
       test-count: npm-jest
   "zowe/zowe-cli-ftp-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit/coverage
     system:
       test-count: npm-jest
   "zowe/zowe-cli-mq-plugin":
     unit:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit
-      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/unit/coverage
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit
+      lcov-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/unit/coverage
     integration:
-      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-20.x-results/integration
+      junit-artifact: zowe-cli-plugin.yml/ubuntu-latest-24.x-results/integration
     system:
       test-count: npm-jest
   "zowe/zowe-explorer-vscode#main":
