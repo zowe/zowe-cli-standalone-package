@@ -29,6 +29,8 @@ Before every Zowe release goes GA, we need to align with the code freeze dates a
 
 This repository contains a GitHub workflow that runs every night to mirror @zowe-scoped packages from Artifactory to npmjs.org. The list of packages to deploy is defined in zowe-versions.yaml.
 
+Packages that specify `publishConfig.registry` in `package.json` are repackaged with `scripts/repackage_tar.sh` to point to npmjs.org. Packages that omit it are published from the original `.tgz` to preserve the original SHA hash.
+
 To deploy an individual package, run the workflow zowe-cli-deploy-component.yaml. Specify the package name without the scope (e.g., `core-for-zowe-sdk`) and a space-separated list of tags to publish (e.g., `latest next`).
 
 ## External Packages
