@@ -10,6 +10,7 @@
 
 const fs = require("fs");
 const os = require("os");
+const path = require("path");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
 const delay = require("delay");
@@ -23,6 +24,7 @@ const SOURCE_REGISTRY = "https://zowe.jfrog.io/zowe/api/npm/npm-local-release/";
 const TARGET_REGISTRY = process.env.NPM_REGISTRY || "https://registry.npmjs.org/";
 const TEMP_NPM_TAG = "untagged";
 const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
+const TARGET_OPTS = `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`;
 const FAILED_VERSIONS = [];
 
 async function deploy(pkgName, pkgTag) {
@@ -37,7 +39,7 @@ async function deploy(pkgName, pkgTag) {
     const pkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS);
     let oldPkgVersion;
     try {
-        oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`);
+        oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, TARGET_OPTS);
     } catch (err) {
         core.warning(err);  // Do not error out
     }
@@ -57,22 +59,35 @@ async function deploy(pkgName, pkgTag) {
 
     let versionExists = false;
     try {
-        oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`);
+        oldPkgVersion = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgVersion}`, TARGET_OPTS);
         versionExists = true;
     } catch (err) {
         core.info(`Could not find package ${PKG_SCOPE}/${pkgName}@${pkgVersion}: ${err.message}`);
     }
     if (versionExists && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag]);
+        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag,
+            TARGET_OPTS]);
     } else {
-        const tgzUrl = await utils.getPackageInfo(`${PKG_SCOPE}/${pkgName}@${pkgTag}`, VIEW_OPTS, "dist.tarball");
+        const pkgSpec = `${PKG_SCOPE}/${pkgName}@${pkgVersion}`;
+        const tgzUrl = await utils.getPackageInfo(pkgSpec, VIEW_OPTS, "dist.tarball");
         const fullPkgName = `${pkgName}-${pkgVersion}.tgz`;
         await utils.execAndGetStderr("curl", ["-fsL", "-o", fullPkgName, tgzUrl]);
-        await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+        const manifest = JSON.parse((await exec.getExecOutput("tar", ["-xOf", fullPkgName, "package/package.json"],
+            { silent: true })).stdout);
+        if (manifest.publishConfig?.registry != null) {
+            core.info(`Repackaging ${pkgSpec} because publishConfig.registry is specified`);
+            await utils.execAndGetStderr("bash", ["scripts/repackage_tar.sh", fullPkgName, TARGET_REGISTRY, pkgVersion]);
+        } else {
+            if (manifest.name !== `${PKG_SCOPE}/${pkgName}` || manifest.version !== pkgVersion) {
+                throw new Error(`Cannot mirror ${pkgSpec}: tarball contains ${manifest.name}@${manifest.version}`);
+            }
+            core.info(`Mirroring ${pkgSpec} unchanged`);
+        }
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
         if (DRY_RUN) return;
-        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag]);
+        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag,
+            "--registry", TARGET_REGISTRY, TARGET_OPTS]);
     }
 
     core.info("Waiting for published version to appear on NPM registry");
@@ -81,17 +96,17 @@ async function deploy(pkgName, pkgTag) {
     while (!versionExists || taggedVersion !== pkgVersion) {
         if (!versionExists) {
             versionExists = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`,
-                "version"], { ignoreReturnCode: true })).stdout.trim().length > 0;
+                "version", TARGET_OPTS], { ignoreReturnCode: true })).stdout.trim().length > 0;
         } else {
             taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
-                "version"], { ignoreReturnCode: true })).stdout.trim();
+                "version", TARGET_OPTS], { ignoreReturnCode: true })).stdout.trim();
         }
         await delay(1000);
     }
     let isUntagged = false;
     if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag
         isUntagged = true;
-        await utils.execAndGetStderr("npm", ["dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG]);
+        await utils.execAndGetStderr("npm", ["dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG, TARGET_OPTS]);
     }
 
     core.info("Verifying that deployed package can be installed");
@@ -105,7 +120,7 @@ async function deploy(pkgName, pkgTag) {
     if (installError != null) {
         if (oldPkgVersion != null && !isUntagged) {
             core.info(`Install failed, reverting tag ${pkgTag} to v${oldPkgVersion}`);
-            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag],
+            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag, TARGET_OPTS],
                 { ignoreReturnCode: true });
         }
         FAILED_VERSIONS.push(pkgVersion);
