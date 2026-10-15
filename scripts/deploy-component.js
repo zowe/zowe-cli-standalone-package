@@ -26,7 +26,7 @@ const TEMP_NPM_TAG = "untagged";
 const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
 const TARGET_OPTS = `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`;
 const FAILED_VERSIONS = [];
-const OIDC_NPM_VERSION = 11;
+const OIDC_NPM_VERSION = "^11.21.0";
 
 async function deploy(pkgName, pkgTag) {
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
@@ -86,7 +86,7 @@ async function deploy(pkgName, pkgTag) {
         }
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
         if (DRY_RUN) return;
-        await utils.execAndGetStderr("npx", [`npm@${OIDC_NPM_VERSION}`, "publish", fullPkgName, "--access", "public", "--tag", pkgTag,
+        await utils.execAndGetStderr("npx", [`npm@${OIDC_NPM_VERSION}`, "publish", fullPkgName, "--provenance", "false", "--access", "public", "--tag", pkgTag,
             "--registry", TARGET_REGISTRY, TARGET_OPTS]);
     }
 
