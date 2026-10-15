@@ -26,6 +26,7 @@ const TEMP_NPM_TAG = "untagged";
 const VIEW_OPTS = `--${PKG_SCOPE}:registry=${SOURCE_REGISTRY}`;
 const TARGET_OPTS = `--${PKG_SCOPE}:registry=${TARGET_REGISTRY}`;
 const FAILED_VERSIONS = [];
+const OIDC_NPM_VERSION = "^11.21.0";
 
 async function deploy(pkgName, pkgTag) {
     const zoweVersions = jsYaml.load(fs.readFileSync(__dirname + "/../zowe-versions.yaml", "utf-8"));
@@ -66,8 +67,7 @@ async function deploy(pkgName, pkgTag) {
     }
     if (versionExists && !DRY_RUN) {
         core.info(`Package ${PKG_SCOPE}/${pkgName}@${pkgVersion} already exists, adding tag ${pkgTag}`);
-        await utils.execAndGetStderr("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag,
-            TARGET_OPTS]);
+        await utils.execAndGetStderr("npx", [`npm@${OIDC_NPM_VERSION}`, "dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${pkgVersion}`, pkgTag, TARGET_OPTS]);
     } else {
         const pkgSpec = `${PKG_SCOPE}/${pkgName}@${pkgVersion}`;
         const tgzUrl = await utils.getPackageInfo(pkgSpec, VIEW_OPTS, "dist.tarball");
@@ -86,7 +86,7 @@ async function deploy(pkgName, pkgTag) {
         }
         pkgTag = pkgTag !== pkgVersion ? pkgTag : TEMP_NPM_TAG;
         if (DRY_RUN) return;
-        await utils.execAndGetStderr("npm", ["publish", fullPkgName, "--access", "public", "--tag", pkgTag,
+        await utils.execAndGetStderr("npx", [`npm@${OIDC_NPM_VERSION}`, "publish", fullPkgName, "--provenance", "false", "--access", "public", "--tag", pkgTag,
             "--registry", TARGET_REGISTRY, TARGET_OPTS]);
     }
 
@@ -106,7 +106,7 @@ async function deploy(pkgName, pkgTag) {
     let isUntagged = false;
     if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag
         isUntagged = true;
-        await utils.execAndGetStderr("npm", ["dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG, TARGET_OPTS]);
+        await utils.execAndGetStderr("npx", [`npm@${OIDC_NPM_VERSION}`, "dist-tag", "rm", `${PKG_SCOPE}/${pkgName}`, TEMP_NPM_TAG, TARGET_OPTS]);
     }
 
     core.info("Verifying that deployed package can be installed");
@@ -120,8 +120,7 @@ async function deploy(pkgName, pkgTag) {
     if (installError != null) {
         if (oldPkgVersion != null && !isUntagged) {
             core.info(`Install failed, reverting tag ${pkgTag} to v${oldPkgVersion}`);
-            await exec.exec("npm", ["dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag, TARGET_OPTS],
-                { ignoreReturnCode: true });
+            await exec.exec("npx", [`npm@${OIDC_NPM_VERSION}`, "dist-tag", "add", `${PKG_SCOPE}/${pkgName}@${oldPkgVersion}`, pkgTag, TARGET_OPTS], { ignoreReturnCode: true });
         }
         FAILED_VERSIONS.push(pkgVersion);
         throw installError;
