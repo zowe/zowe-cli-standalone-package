@@ -101,7 +101,7 @@ async function deploy(pkgName, pkgTag) {
             taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
                 "version", TARGET_OPTS], { ignoreReturnCode: true })).stdout.trim();
         }
-        await delay(1000);
+        await delay(15000);
     }
     let isUntagged = false;
     if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag
