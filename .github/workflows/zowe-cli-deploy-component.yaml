@@ -76,28 +76,31 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         run-id: ${{ inputs.cli-deploy-all-workflow-id }}
 
-    - name: Exchange OIDC Token
-      if: false
-      continue-on-error: true
-      id: oidc
-      uses: electron/npm-trusted-auth-action@418d14975a3ff06683cc4580a4eba437f0f017f1 # 418d14975a3ff06683cc4580a4eba437f0f017f1
-      with:
-        package-name: "@zowe/${{ env.PKG_NAME }}"
+    # - name: Exchange OIDC Token
+    #   if: false
+    #   continue-on-error: true
+    #   id: oidc
+    #   uses: electron/npm-trusted-auth-action@418d14975a3ff06683cc4580a4eba437f0f017f1 # 418d14975a3ff06683cc4580a4eba437f0f017f1
+    #   with:
+    #     package-name: "@zowe/${{ env.PKG_NAME }}"
 
-    - name: Replace .npmrc
-      if: ${{ steps.oidc.outcome == 'success' }}
-      run: |
-        echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-        echo "omit-lockfile-registry-resolved=true" >> ~/.npmrc
+    # - name: Replace .npmrc
+    #   if: ${{ steps.oidc.outcome == 'success' }}
+    #   run: |
+    #     echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    #     echo "omit-lockfile-registry-resolved=true" >> ~/.npmrc
 
-    - name: NPM Login (backup)
-      if: ${{ steps.oidc.outcome == 'skipped' || steps.oidc.outcome == 'failure' }}
-      run: |
-        bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
-        echo "omit-lockfile-registry-resolved=true" >> ~/.npmrc
-        echo "::add-mask::$NPM_TOKEN"
-      env:
-        NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
+    - name: Set npm configuration setting
+      run: npm config set -g omit-lockfile-registry-resolved=true
+
+    # - name: NPM Login (backup)
+    #   if: ${{ steps.oidc.outcome == 'skipped' || steps.oidc.outcome == 'failure' }}
+    #   run: |
+    #     bash scripts/npm_login.sh ${{ env.NPM_REGISTRY || 'https://registry.npmjs.org/' }}
+    #     echo "omit-lockfile-registry-resolved=true" >> ~/.npmrc
+    #     echo "::add-mask::$NPM_TOKEN"
+    #   env:
+    #     NPM_TOKEN: ${{ secrets.NPM_PUBLIC_TOKEN }}
 
     - name: Deploy Package
       id: deploy
@@ -106,9 +109,9 @@ jobs:
         DRY_RUN: ${{ inputs.dry-run }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: NPM Logout
-      if: ${{ always() && steps.oidc.outcome == 'success' }}
-      run: "npm logout"
+    # - name: NPM Logout
+    #   if: ${{ always() && steps.oidc.outcome == 'success' }}
+    #   run: "npm logout"
 
     - name: Create Issue
       if: ${{ failure() }}
