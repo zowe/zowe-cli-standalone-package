@@ -35,7 +35,6 @@ jobs:
       - name: Checkout zowe-install-packaging
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          persist-credentials: false
           repository: 'zowe/zowe-install-packaging'
           ref: ${{ env.defaultBranch }}
           token: ${{ secrets.ZOWE_ROBOT_TOKEN }}
