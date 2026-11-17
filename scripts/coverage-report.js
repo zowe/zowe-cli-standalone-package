@@ -169,6 +169,6 @@ async function checkTestCount(repo, type, tools, ...subDirs) {
     process.exitCode = 1;
 }).finally(() => {
     for (const tempDir of [...Object.values(artifactCache), ...Object.values(gitCloneCache)]) {
-        fs.rmdirSync(tempDir, { recursive: true, force: true });
+        fs.rmSync(tempDir, { recursive: true, force: true });
     }
 });
