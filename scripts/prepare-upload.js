@@ -9,7 +9,6 @@
  */
 
 const fs = require("fs");
-const glob = require("glob");
 const jsonfile = require("jsonfile");
 
 const sourcePath = process.argv[2];
@@ -34,6 +33,6 @@ jsonfile.writeFileSync(uploadSpecFile, uploadSpecJson, { spaces: 4 });
 if (!fs.existsSync(summaryFile)) {
     fs.writeFileSync(summaryFile, "The following artifacts have been published:\n");
 }
-for (const filename of glob.sync(sourcePath)) {
+for (const filename of fs.globSync(sourcePath)) {
     fs.appendFileSync(summaryFile, `* [${filename}](${artifactoryBaseUrl}${targetPath}${filename})\n`);
 }

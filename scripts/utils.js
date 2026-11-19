@@ -12,9 +12,12 @@ const childProcess = require("child_process");
 const fs = require("fs");
 const jsYaml = require("js-yaml");
 const moment = require("moment");
-const fetch = require("node-fetch");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
+
+async function delay(msec) {
+    return new Promise(resolve => setTimeout(resolve, msec));
+}
 
 async function execAndGetStderr(commandLine, args, opts={}) {
     const cmdOutput = await exec.getExecOutput(commandLine, args, { ignoreReturnCode: true, ...opts });

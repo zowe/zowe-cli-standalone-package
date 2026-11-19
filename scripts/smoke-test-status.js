@@ -1,10 +1,9 @@
 const core = require("@actions/core");
 const fs = require("fs");
 const path = require("path");
-const glob = require("glob");
 
 (async () => {
-    const hostFiles = glob.sync("status-*/status-*.json");
+    const hostFiles = fs.globSync("status-*/status-*.json");
     const object = [];
     const list = [];
     const successObj = {};
