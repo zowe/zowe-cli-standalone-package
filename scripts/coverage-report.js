@@ -64,9 +64,10 @@ async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
     } else {
         junitFiles.push(path.join(tempDir, dirname, "junit.xml"));
     }
+    const parser = new XMLParser({ ignoreAttributes: false });
     const numTests = junitFiles.reduce((sum, filePath) => {
-        const junitInfo = (new XMLParser()).parse(fs.readFileSync(filePath, "utf-8"));
-        return sum + parseInt(junitInfo.testsuites._attributes.tests);
+        const junitInfo = parser.parse(fs.readFileSync(filePath, "utf-8"));
+        return sum + parseInt(junitInfo.testsuites["@_tests"]);
     }, 0);
     return { numTests };
 };
