@@ -223,6 +223,10 @@ jobs:
         name: 'zowe-cli-bundle_${{ inputs.package-tag }}'
         path: 'zowe-cli-bundle'
 
+    - name: Install Libraries
+      if: ${{ runner.os == 'Linux' }}
+      run: sudo apt-get install -y libxml2
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
