@@ -13,7 +13,6 @@ const os = require("os");
 const path = require("path");
 const core = require("@actions/core");
 const exec = require("@actions/exec");
-const delay = require("delay");
 const jsYaml = require("js-yaml");
 
 const utils = require(__dirname + "/utils");
@@ -101,7 +100,7 @@ async function deploy(pkgName, pkgTag) {
             taggedVersion = (await exec.getExecOutput("npm", ["view", `${PKG_SCOPE}/${pkgName}@${pkgTag}`,
                 "version", TARGET_OPTS], { ignoreReturnCode: true })).stdout.trim();
         }
-        await delay(15000);
+        await utils.delay(15000);
     }
     let isUntagged = false;
     if (pkgTag === TEMP_NPM_TAG) {  // Remove temporary npm tag because npm forces us to publish with dist-tag

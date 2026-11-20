@@ -40,11 +40,11 @@ const processFiles = (header, findRegex, filePaths) => {
 }
 
 // process all Java/JS -ish comment-style files
-require("glob")("{" + includeDirs + "}" + "{/**/*.java,/**/*.js,/**/*.ts,/**/*.gradle,/**/*.groovy}", (globErr, filePaths) => {
+fs.glob("{" + includeDirs + "}" + "{/**/*.java,/**/*.js,/**/*.ts,/**/*.gradle,/**/*.groovy}", (globErr, filePaths) => {
     if (globErr) {
         throw globErr;
     }
-    
+
     const header = "/*\n" + fs.readFileSync("LICENSE_HEADER").toString().split(/\r?\n/g).map((line) => {
         return " " + ("* " + line).trim();
     }).join(require("os").EOL) + require("os").EOL + " */" + require("os").EOL + require("os").EOL;
@@ -56,11 +56,11 @@ require("glob")("{" + includeDirs + "}" + "{/**/*.java,/**/*.js,/**/*.ts,/**/*.g
 });
 
 // process all HTML/XML -ish comment-style files
-require("glob")("{" + includeDirs + "}" + "{/**/*.html,/**/*.htm,/**/*.xml}", (globErr, filePaths) => {
+fs.glob("{" + includeDirs + "}" + "{/**/*.html,/**/*.htm,/**/*.xml}", (globErr, filePaths) => {
     if (globErr) {
         throw globErr;
     }
-    
+
     const header = "<!--\n" + fs.readFileSync("LICENSE_HEADER").toString().split(/\r?\n/g).map((line) => {
         return "    " + (line).trim();
     }).join(require("os").EOL) + require("os").EOL + "-->" + require("os").EOL + require("os").EOL;

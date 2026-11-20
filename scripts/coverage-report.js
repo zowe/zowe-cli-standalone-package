@@ -1,13 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const exec = require("@actions/exec");
-const github = require("@actions/github");
-const AdmZip = require("adm-zip");
-const glob = require("glob");
+const { XMLParser } = require("fast-xml-parser");
 const jsYaml = require("js-yaml");
 const parseLcov = require("parse-lcov");
 const stripComments = require("strip-comments");
-const xmlJs = require("xml-js");
 
 const artifactCache = {};
 const gitCloneCache = {};
@@ -22,38 +19,23 @@ async function artifactDir(repoSpec, workflowId, artifactName) {
     const cacheKey = `${repoName}/${workflowId}/${artifactName}`;
     let tempDir = artifactCache[cacheKey];
     if (tempDir == null) {
-        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
-        const [owner, repo] = repoName.split("/");
-        const lastSuccessfulRunId = (await octokit.rest.actions.listWorkflowRuns({
-            owner, repo,
-            workflow_id: workflowId,
-            branch: branchName ?? "master",
-            status: "success",
-            per_page: 1
-        })).data.workflow_runs[0].id;
-        const artifactData = (await octokit.rest.actions.listWorkflowRunArtifacts({
-            owner, repo,
-            run_id: lastSuccessfulRunId
-        })).data.artifacts.find((a) => a.name === artifactName);
-        let artifactRaw;
-        try {
-            process.stdout.write(`Downloading ${artifactName}... `);
-            artifactRaw = Buffer.from((await octokit.rest.actions.downloadArtifact({
-                owner, repo,
-                artifact_id: artifactData.id,
-                archive_format: "zip"
-            })).data);
-            console.log(`${artifactRaw.byteLength.toLocaleString()} bytes received`);
-        } catch (error) {
-            console.log(error.message);
-            if (error.status === 410) {
+        const listArgs = ["--branch", branchName ?? "master", "--json", "databaseId", "--limit", "1", "--repo",
+            repoName, "--status", "success", "--workflow", workflowId];
+        const listResult = await exec.getExecOutput("gh", ["run", "list", ...listArgs]);
+        const lastSuccessfulRunId = JSON.parse(listResult.stdout)[0].databaseId;
+
+        tempDir = fs.mkdtempSync(repoName.split("/")[0]);
+        const downloadArgs = [lastSuccessfulRunId, "--dir", tempDir, "--name", artifactName, "--repo", repoName];
+        const downloadResult = await exec.getExecOutput("gh", ["run", "download", ...downloadArgs],
+            { ignoreReturnCode: true });
+        if (downloadResult.exitCode !== 0) {
+            const message = downloadResult.stderr.trim();
+            fs.rmSync(tempDir, { recursive: true, force: true });
+            if (message.includes("no valid artifacts found to download")) {
                 return;  // Ignore error if artifact has expired
-            } else {
-                throw error;
             }
+            throw new Error(`gh run download failed with exit code ${downloadResult.exitCode}: ${message}`);
         }
-        tempDir = fs.mkdtempSync(owner);
-        new AdmZip(artifactRaw).extractAllTo(tempDir);
         artifactCache[cacheKey] = tempDir;
     }
     return tempDir;
@@ -78,13 +60,15 @@ async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
     }
     const junitFiles = [];
     if (type === "wdio") {
-        junitFiles.push(...glob.sync(path.join(tempDir, dirname, "wdio-*-junit-reporter.log")));
+        junitFiles.push(...fs.globSync(path.join(tempDir, dirname, "wdio-*-junit-reporter.log")));
     } else {
-        junitFiles.push(path.join(tempDir, dirname, "junit.xml"));
+        junitFiles.push(dirname.endsWith(".xml") ? path.join(tempDir, dirname) :
+            path.join(tempDir, dirname, "junit.xml"));
     }
+    const parser = new XMLParser({ ignoreAttributes: false });
     const numTests = junitFiles.reduce((sum, filePath) => {
-        const junitInfo = xmlJs.xml2js(fs.readFileSync(filePath, "utf-8"), { compact: true });
-        return sum + parseInt(junitInfo.testsuites._attributes.tests);
+        const junitInfo = parser.parse(fs.readFileSync(filePath, "utf-8"));
+        return sum + parseInt(junitInfo.testsuites["@_tests"]);
     }, 0);
     return { numTests };
 };

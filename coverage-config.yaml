@@ -54,3 +54,9 @@ projects:
       lcov-artifact: zowe-explorer-ftp-ci.yml/zowe-explorer-ftp-extension-results/unit/coverage
     integration:
       wdio-artifact: zowe-explorer-ci.yml/zowe-explorer-results/__tests__/__integration__/bdd/results
+  "zowe/zo#main":
+    unit:
+      junit-artifact: build.yml/unit-test-results/sdk/results/unit
+      lcov-artifact: build.yml/unit-test-results/sdk/results/unit/coverage
+    native:
+      junit-artifact: zos-build.yml/zos-test-results/test-results.xml
