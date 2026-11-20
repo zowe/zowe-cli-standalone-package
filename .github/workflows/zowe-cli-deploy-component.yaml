@@ -39,7 +39,8 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Switch back to ubuntu-latest after https://github.com/ibmdb/node-ibm_db/issues/1083 is fixed
+    runs-on: ubuntu-24.04
 
     env:
       PKG_NAME: ${{ inputs.pkg-name }}
