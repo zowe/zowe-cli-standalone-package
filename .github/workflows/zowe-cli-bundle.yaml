@@ -152,7 +152,7 @@ jobs:
         path: '*.zip'
 
     - name: Sigstore sign bundles
-      uses: zowe-actions/shared-actions/sigstore-sign-artifacts@72642521ff74c356cc344f10212f83cbf5ed103c # main
+      uses: zowe-actions/shared-actions/sigstore-sign-artifacts@be9a557203e3b69aa263dd985c6149a34b1c773b # main
       with:
         artifacts: |
           zowe-cli-package-${{ env.BUNDLE_VERSION }}.zip
