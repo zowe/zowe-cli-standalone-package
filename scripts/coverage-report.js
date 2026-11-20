@@ -62,7 +62,8 @@ async function checkJunitArtifact(repo, type, workflow, artifact, dirname) {
     if (type === "wdio") {
         junitFiles.push(...fs.globSync(path.join(tempDir, dirname, "wdio-*-junit-reporter.log")));
     } else {
-        junitFiles.push(path.join(tempDir, dirname, "junit.xml"));
+        junitFiles.push(dirname.endsWith(".xml") ? path.join(tempDir, dirname) :
+            path.join(tempDir, dirname, "junit.xml"));
     }
     const parser = new XMLParser({ ignoreAttributes: false });
     const numTests = junitFiles.reduce((sum, filePath) => {
