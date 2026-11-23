@@ -11,8 +11,6 @@
 # version for @next that is before the tags.next.snapshot date defined below.
 packages:
   # Core CLI and SDKs
-  perf-timing:
-    zowe-v2-lts: 1.0.7
   imperative:
     # next: true
     zowe-v2-lts: 5.27.21
@@ -82,9 +80,6 @@ packages:
     # next: true
     zowe-v2-lts: 5.0.22
     zowe-v3-lts: 6.1.19
-  ims-for-zowe-cli:
-    # next: true
-    zowe-v2-lts: 3.0.1
   mq-for-zowe-cli:
     # next: true
     zowe-v2-lts: 3.0.2
@@ -96,19 +91,17 @@ packages:
 # Define extra @zowe-scoped packages that are not included in the Zowe bundle.
 # These packages will be mirrored from Artifactory to npmjs.org nightly.
 extras:
-  zowex-for-zowe-sdk: {}
-  tasks-for-zowe-cli:
-    next: true
-  zos-make-for-zowe-cli:
-    next: true
+  cics-for-zowe-explorer-api:
+    # next: true
+    zowe-v3-lts: true
   id-federation-for-zowe-cli:
     next: true
     zowe-v2-lts: true
   secrets-for-kubernetes-for-zowe-cli:
     next: true
-  cics-for-zowe-explorer-api:
-    # next: true
-    zowe-v3-lts: true
+  # tasks-for-zowe-cli:
+  #   next: true
+  zowex-for-zowe-sdk: {}
 # Define version info for the latest staged Zowe release.
 tags:
   zowe-v2-lts:
