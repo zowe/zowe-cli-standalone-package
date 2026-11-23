@@ -61,8 +61,17 @@ jobs:
 
           zowe_version=${{ github.event.inputs.zowe_version }}
 
+          # Components whose npm dist-tag differs from the Zowe version tag
+          declare -A distTagOverride
+
           if [[ "$zowe_version" =~ ^zowe-v[12]-lts$ ]]; then
             repoAndComponent[ims-for-zowe-cli]=zowe-cli-ims-plugin
+          fi
+
+          # Zowex SDK is only in the v3 manifest and is published under the "latest" dist-tag
+          if [[ "$zowe_version" == "zowe-v3-lts" ]]; then
+            repoAndComponent[zowex-for-zowe-sdk]=zowex
+            distTagOverride[zowex-for-zowe-sdk]=latest
           fi
 
           echo "This PR updates the following package versions in manifest.json.template for \`$zowe_version\`" >> description.txt
@@ -71,7 +80,8 @@ jobs:
           for component in "${!repoAndComponent[@]}"; do
               repo="${repoAndComponent[$component]}"
               current_version=$(grep -A 2 "\"repository\": \"$repo\"" manifest.json.template | awk -F '"' '/"tag":/ {print $4}')
-              new_version=v$(npm view @zowe/$component "dist-tags.$zowe_version" --@zowe:registry=https://zowe.jfrog.io/zowe/api/npm/npm-local-release/)
+              dist_tag="${distTagOverride[$component]:-$zowe_version}"
+              new_version=v$(npm view @zowe/$component "dist-tags.$dist_tag" --@zowe:registry=https://zowe.jfrog.io/zowe/api/npm/npm-local-release/)
               if [[ "$new_version" != "$current_version" ]]; then
                   echo "| $component | $current_version | $new_version |" >> description.txt
                   # Replaces the version number. If it doesn't match on the first line after the component, it goes to the next line and checks again.
