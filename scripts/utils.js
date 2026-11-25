@@ -101,6 +101,7 @@ async function shouldSkipPublish(pkgName, pkgTag, pkgVersion) {
     }
 }
 
+exports.delay = delay;
 exports.execAndGetStderr = execAndGetStderr;
 exports.getNextVersion = getNextVersion;
 exports.getPackageInfo = getPackageInfo;
