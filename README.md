@@ -33,6 +33,8 @@ Packages that specify `publishConfig.registry` in `package.json` are repackaged 
 
 To deploy an individual package, run the workflow zowe-cli-deploy-component.yaml. Specify the package name without the scope (e.g., `core-for-zowe-sdk`) and a space-separated list of tags to publish (e.g., `latest next`).
 
+The workflow checks registry visibility and verifies installation after publishing or updating a dist-tag. If either check fails, confirm the version and dist-tag on npmjs.org before retrying; the registry may already have accepted the update.
+
 ## External Packages
 
 If you develop a Zowe CLI plug-in that meets the following criteria:
